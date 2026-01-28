@@ -61,10 +61,15 @@ export default defineConfig({
       }
     },
 
-    // {
-    //   name: 'webkit',
-    //   use: { ...devices['Desktop Safari'] },
-    // },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'],
+        headless: true,
+        screenshot: 'only-on-failure',
+        video: 'off',
+        trace: 'retain-on-first-failure'
+      }
+    },
 
     /* Test against mobile viewports. */
     // {

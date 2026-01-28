@@ -1,12 +1,10 @@
-import {test} from '@playwright/test'
-import {HomePage} from '../../pageObjects/HomePage'
+import {test} from '../../fixtures/POManager'
 
 
-test.only('Home page fucntionality checks', async ({page}) =>
+test.only('Home page fucntionality checks', async ({homePage, header, footer}) =>
 {
-    const homePage = new HomePage(page);
     await homePage.navigateToURL();
-    await homePage.headersCheck();
-    await homePage.MainbodyCheck();
-    await homePage.FooterCheck();
+    await header.headerCheck();
+    await homePage.homePageCheck();
+    await footer.FooterCheck();
 })
