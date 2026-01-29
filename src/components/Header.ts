@@ -41,4 +41,11 @@ export class Header extends BaseComponent
         // Check Checkout
         await expect.soft(this.page.locator('a[href*="route=checkout/checkout"]')).toBeVisible();
     }
+
+    async gotoCheckout()
+    {
+        //await this.page.locator('a[href*="route=checkout/checkout"]').click();
+        await this.page.getByTitle('Checkout').click();
+        await expect(this.page.getByRole('heading', {name: 'Checkout', level:1})).toBeVisible();
+    }
 }

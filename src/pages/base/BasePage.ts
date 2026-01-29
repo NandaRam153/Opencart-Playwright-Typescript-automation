@@ -24,4 +24,9 @@ export abstract class BasePage
     {
         await expect(locator).toBeVisible();
     }
+
+    async waitForSoftVisible(locator: Locator) 
+    {
+        await expect.soft(locator).toBeVisible();
+    }
 }

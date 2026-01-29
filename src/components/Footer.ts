@@ -4,7 +4,7 @@ import {BaseComponent} from '../pages/base/BaseComponent';
 
 export class Footer extends BaseComponent
 {
-    async FooterCheck()
+    async footerCheck()
     {
         const footColumnHeaders: string[] = ['Information', 'Customer Service', 'Extras', 'My Account'];
         const footerLinks: string[] = ['About Us', 'Delivery Information', 'Privacy Policy', 'Contact Us', 'Returns', 'Site Map', 

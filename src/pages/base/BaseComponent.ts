@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 
 export abstract class BaseComponent 
@@ -8,5 +8,10 @@ export abstract class BaseComponent
     constructor(page: Page) 
     {
         this.page = page;
+    }
+
+    async click(locator: Locator) 
+    {
+        await locator.click();
     }
 }

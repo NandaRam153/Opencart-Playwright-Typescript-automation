@@ -1,13 +1,13 @@
 
 # Opencart Playwright Typescript Automation
 
-Automated functional and e2e testing for Opencart using Playwright and TypeScript.
+Automated functional and end-to-end (E2E) testing for Opencart using Playwright and TypeScript.
 
 ## Features
-- Page Object Model for maintainable code
-- Fixtures for easy test setup
+- Page Object Model (POM) for maintainable, reusable code
+- Playwright fixtures for easy test setup
 - HTML test reports
-- Docker support
+- Docker and Docker Compose support for containerized execution
 
 ## Project Structure
 ```
@@ -20,27 +20,81 @@ Automated functional and e2e testing for Opencart using Playwright and TypeScrip
 └── test-results/                 # Test results
 ```
 
-## Getting Started
-1. Clone & install:
+## Prerequisites
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- [npm](https://www.npmjs.com/)
+- [Docker](https://www.docker.com/) (for running in containers)
+
+## Setup
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/NandaRam153/Opencart-Playwright-Typescript-automation.git
+    cd Opencart-Playwright-Typescript-automation
+    ```
+2. Install dependencies:
+    ```sh
+    npm install
+    ```
+
+## Running Tests
+
+### Locally (on your machine)
+- Run all tests (headless):
    ```sh
-   git clone https://github.com/NandaRam153/Opencart-Playwright-Typescript-automation.git
-   cd Opencart-Playwright-Typescript-automation
-   npm install
+   npm test
    ```
-2. Run tests:
+- Run tests with UI:
    ```sh
-   npm test            # Headless
-   npm run test:headed # With UI
-   npm run report      # View report
+   npm run test:headed
+   ```
+- Debug tests:
+   ```sh
+   npm run test:debug
+   ```
+- View HTML report:
+   ```sh
+   npm run report
    ```
 
+
+### Using Docker
+
+- **Build and run tests in Docker:**
+   ```sh
+   npm run test:docker
+   ```
+- **Debug in Docker (get a shell):**
+   ```sh
+   npm run test:docker:debug
+   ```
+
+### Using Docker Compose
+
+- **Run all tests with Docker Compose (recommended for CI and team environments):**
+   ```sh
+   docker-compose up --build
+   ```
+  This will build the Docker image (if needed) and execute all Playwright tests inside a container. Test results and HTML reports will be available in the `playwright-report/` and `test-results/` folders on your host machine.
+
+- **Alternative (if defined in package.json):**
+   ```sh
+   npm run test:docker:compose
+   ```
+  This command will run Docker Compose using the configuration in your project.
+
+**Note:**
+- You can customize the `docker-compose.yml` to change test commands, mount volumes, or adjust environment variables as needed.
+- Make sure Docker is running before executing these commands.
+
+Test results and HTML reports will be available in the `playwright-report/` and `test-results/` folders.
+
 ## Writing Tests
-- Add tests in `tests/Functional/`
+- Add new test files in `tests/Functional/`
 - Use POM classes from `pageObjects/`
 - Use fixtures from `fixtures/POManager.ts`
 
 ## Example
-See `tests/Functional/HomePageFunctionalityCheck.spec.ts` for a sample test.
+See `tests/Functional/HomePageFunctionalityCheck.spec.ts` for a sample test using the HomePage page object and fixtures.
 
 ## License
 ISC
