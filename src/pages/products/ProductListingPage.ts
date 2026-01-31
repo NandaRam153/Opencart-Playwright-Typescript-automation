@@ -13,10 +13,15 @@ export class ProductListingPage extends BasePage
         await this.goto(path);
     }
 
-    async getProductByName(name: string) 
+    async getProductByName(product: string) 
     {
-        return this.page.locator('.product-thumb')
-            .filter({ has: this.page.getByRole('link', { name }) });
+        return this.page.locator('.product-thumb', {
+            has: this.page.getByRole('link', { name: product })});
+    }
+
+    async CheckProductListed(product: string)
+    {
+        expect(await this.getProductByName(product)).toBeVisible();
     }
 
     async addToCartProductByName(name: string)
@@ -25,13 +30,19 @@ export class ProductListingPage extends BasePage
         await card.getByRole('button', {name: 'Add to Cart'}).click();
     }
 
+    async addToWishListProductByName(product: string)
+    {
+        const productCard = await this.getProductByName(product);
+        await productCard.locator('button[onclick^="wishlist.add"]').click();
+        await this.page.waitForLoadState('domcontentloaded');
+    }
+
     async productAddedMessage(product: string)
     {
         const message = this.page.locator('.alert.alert-success.alert-dismissible');
         await expect.soft(message).toContainText(product);
         await expect.soft(message).toContainText('shopping cart');
     }
-
 
     async getProductCount(): Promise<number> 
     {

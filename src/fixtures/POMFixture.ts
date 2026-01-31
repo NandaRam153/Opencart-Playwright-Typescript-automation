@@ -6,6 +6,9 @@ import { Ribbon } from '../components/Ribbon';
 import { ProductListingPage } from '../pages/products/ProductListingPage';
 import { CheckoutPage } from '../pages/mainPages/CheckoutPage';
 import { OrderPlacementResultPage } from '../pages/mainPages/OrderPlacementResultPage';
+import { LoginPage } from '../pages/mainPages/LoginPage';
+import { WishListPage } from '../pages/mainPages/WishListPage';
+import { LogoutPage } from '../pages/mainPages/LogoutPage';
 
 
 export const test = base.extend<{
@@ -16,6 +19,9 @@ export const test = base.extend<{
     productListingPage: ProductListingPage;
     checkoutPage: CheckoutPage;
     orderPlacementResultPage: OrderPlacementResultPage;
+    loginPage: LoginPage;
+    wishListPage: WishListPage;
+    logoutPage: LogoutPage;
 }>(
   {
     homePage: async ({ page }, use) => 
@@ -51,5 +57,20 @@ export const test = base.extend<{
     orderPlacementResultPage: async ({ page }, use) => 
     {
       await use(new OrderPlacementResultPage(page));
+    },
+
+    loginPage: async ({ page }, use) => 
+    {
+      await use(new LoginPage(page));
+    },
+
+    wishListPage: async ({ page }, use) => 
+    {
+      await use(new WishListPage(page));
+    },
+
+    logoutPage: async ({ page }, use) => 
+    {
+      await use(new LogoutPage(page));
     }
 });

@@ -44,8 +44,31 @@ export class Header extends BaseComponent
 
     async gotoCheckout()
     {
-        //await this.page.locator('a[href*="route=checkout/checkout"]').click();
         await this.page.getByTitle('Checkout').click();
         await expect(this.page.getByRole('heading', {name: 'Checkout', level:1})).toBeVisible();
+    }
+
+    async searchForProduct(product: string)
+    {
+        await this.page.getByPlaceholder('search').fill(product);
+        await this.page.locator('.btn.btn-default.btn-lg').click();
+    }
+
+    async gotoWishlist()
+    {
+        await this.page.locator('#wishlist-total').click();
+        await expect(this.page.getByRole('heading', {name: "Returning Customer", level: 2})).toBeVisible();
+    }
+
+    async logout()
+    {
+        const accountBtn = this.page.getByTitle('My Account');
+        await accountBtn.click();
+
+        const accountMenu = this.page.locator('[role="menu"], .account-menu, .dropdown-menu').filter({
+            has: this.page.getByRole('link', { name: 'Logout' })
+        });
+
+        await accountMenu.getByRole('link', { name: 'Logout' }).click();
     }
 }

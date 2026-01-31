@@ -24,7 +24,7 @@ export class Ribbon extends BaseComponent
         await Promise.all(ribbonMenu.map(ribbon => expect.soft(this.page.getByRole('link', {name: ribbon})).toBeVisible()));
     }
 
-    async OpenProductPage()
+    async openProductPage()
     {
         const product = 'Cameras'
         await this.click(this.page.getByRole('link', {name: product}));

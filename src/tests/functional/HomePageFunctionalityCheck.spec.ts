@@ -1,4 +1,4 @@
-import {test} from '../../fixtures/POManager'
+import {test} from '../../fixtures/POMFixture'
 
 
 test('Home page fucntionality checks', async ({homePage, header, footer, ribbon}) =>

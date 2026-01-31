@@ -16,7 +16,7 @@ export default defineConfig({
   // 30 sec is default acrosss tests
     timeout: 30 * 1000,
   expect: {
-    timeout: 5 * 1000
+    timeout: 5 * 1000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -46,7 +46,8 @@ export default defineConfig({
         headless: true,
         screenshot: 'only-on-failure',
         video: 'off',
-        trace: 'retain-on-first-failure'
+        trace: 'retain-on-first-failure',
+        actionTimeout: 5 * 1000,  // for any action wait time is 2 secs.
        },
     },
 
@@ -57,7 +58,8 @@ export default defineConfig({
         headless: true,
         screenshot: 'only-on-failure',
         video: 'off',
-        trace: 'retain-on-first-failure'
+        trace: 'retain-on-first-failure',
+        actionTimeout: 5 * 1000,
       }
     },
 
@@ -67,7 +69,8 @@ export default defineConfig({
         headless: true,
         screenshot: 'only-on-failure',
         video: 'off',
-        trace: 'retain-on-first-failure'
+        trace: 'retain-on-first-failure',
+        actionTimeout: 5 * 1000,
       }
     },
 
@@ -89,6 +92,18 @@ export default defineConfig({
     // {
     //   name: 'Google Chrome',
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
+    // },
+
+    // {
+    //   name: 'e2e',
+    //   testMatch: /.OrderCreation.spec.ts/,
+    //   use: {
+    //     headless: true,
+    //     screenshot: 'only-on-failure',
+    //     video: 'off',
+    //     trace: 'retain-on-first-failure',
+    //     actionTimeout: 2 * 1000,  // for any action wait time is 2 secs.
+    //   }
     // },
   ],
 

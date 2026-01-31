@@ -1,6 +1,5 @@
 import { IBillingDetails } from '../models/IBillingDetails';
 
-
 export const billingData: IBillingDetails = 
 {
     firstName: 'Nanda',

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Uses Playwright &amp; Typescript to automate e2e work flow of Opencart website",
   "main": "index.js",
-  "scripts": {    
+  "scripts": {
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
@@ -12,7 +12,7 @@
     "test:docker:debug": "docker run -it --rm --entrypoint sh playwright-tests",
     "test:docker:compose": "docker-compose up --build",
     "report:docker": "docker run --rm -v $(pwd)/playwright-report:/app/playwright-report playwright-tests npx playwright show-report"
-    },
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NandaRam153/Opencart-Playwright-Typescript-automation.git"
@@ -26,7 +26,8 @@
   },
   "homepage": "https://github.com/NandaRam153/Opencart-Playwright-Typescript-automation#readme",
   "devDependencies": {
-    "@playwright/test": "^1.58.0",
-    "@types/node": "^25.0.10"
+    "@playwright/test": "^1.58.1",
+    "@types/node": "^25.0.10",
+    "playwright": "^1.58.1"
   }
 }
