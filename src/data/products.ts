@@ -1,4 +1,4 @@
-import { IProduct } from '../models/IProduct'
+import { IProduct } from '@opencart-auto/pw-core'
 
 export const products: Record<string, IProduct> = 
 {

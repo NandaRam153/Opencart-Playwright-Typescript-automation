@@ -1,5 +1,5 @@
 import {expect} from '@playwright/test'
-import { BasePage } from '../base/BasePage';
+import { BasePage } from '@opencart-auto/pw-core';
 
 
 export class OrderPlacementResultPage extends BasePage

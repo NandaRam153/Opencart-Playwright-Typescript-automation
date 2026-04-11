@@ -1,6 +1,5 @@
 import {test, expect} from '@playwright/test';
-import { BasePage } from '../base/BasePage';
-import { billingData } from '../../data/billingDetails';
+import { BasePage, IBillingDetails } from '@opencart-auto/pw-core';
 
 
 export class CheckoutPage extends BasePage
@@ -13,7 +12,7 @@ export class CheckoutPage extends BasePage
         await this.page.locator('#button-account').click();
     }
 
-    async fillBillingDetails(data: typeof billingData) 
+    async fillBillingDetails(data: IBillingDetails) 
     {
         await this.page.getByPlaceholder('First Name').fill(data.firstName);
         await this.page.getByPlaceholder('Last Name').fill(data.lastName);
@@ -48,7 +47,7 @@ export class CheckoutPage extends BasePage
         await this.page.locator('#button-confirm').click();
     }
 
-    async completeGuestCheckout(data: typeof billingData) 
+    async completeGuestCheckout(data: IBillingDetails) 
     {
         await this.selectGuestCheckout();
         await this.fillBillingDetails(data);

@@ -56,6 +56,25 @@ Automated functional and end-to-end (E2E) testing for Opencart using Playwright 
    npm run report
    ```
 
+#### Run a Specific Test File
+- Run a specific test file:
+   ```sh
+   npx playwright test tests/Functional/YourTestFile.spec.ts
+   ```
+- Run a specific test by its title:
+   ```sh
+   npx playwright test -g "your test name"
+   ```
+
+#### Debug a Specific Test
+- Debug a specific test file:
+   ```sh
+   npx playwright test tests/Functional/YourTestFile.spec.ts --debug
+   ```
+- Debug a specific test by its title:
+   ```sh
+   npx playwright test -g "your test name" --debug
+   ```
 
 ### Using Docker
 

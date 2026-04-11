@@ -1,4 +1,4 @@
-import { IBillingDetails } from '../models/IBillingDetails';
+import { IBillingDetails } from '@opencart-auto/pw-core';
 
 export const billingData: IBillingDetails = 
 {

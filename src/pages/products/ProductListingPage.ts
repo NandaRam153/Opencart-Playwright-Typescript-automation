@@ -1,4 +1,4 @@
-import { BasePage } from '../base/BasePage';
+import { BasePage } from '@opencart-auto/pw-core';
 import { expect } from '@playwright/test';
 
 

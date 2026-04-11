@@ -1,5 +1,5 @@
 import {expect, type Page} from '@playwright/test';
-import {BaseComponent} from '../pages/base/BaseComponent';
+import {BaseComponent} from '@opencart-auto/pw-core';
 
 
 export class Footer extends BaseComponent

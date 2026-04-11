@@ -1,5 +1,5 @@
 import {expect} from '@playwright/test'
-import { BasePage } from '../base/BasePage';
+import { BasePage } from '@opencart-auto/pw-core';
 
 
 export class LogoutPage extends BasePage
@@ -8,7 +8,6 @@ export class LogoutPage extends BasePage
     {
         await this.page.waitForURL('**/logout**');
         await this.page.mouse.move(0, 0); // defocus hover menus
-        //await this.page.keyboard.press('Escape');
 
         await expect(this.page.getByRole('heading', {name: "Account Logout", level:1})).toBeVisible(); 
         await this.page.getByRole('link', {name: "Continue"}).click();
