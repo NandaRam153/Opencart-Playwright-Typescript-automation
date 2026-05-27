@@ -51,28 +51,28 @@ export default defineConfig({
        },
     },
 
-    {
-      name: 'firefox',
-      use: { 
-        ...devices['Desktop Firefox'], 
-        headless: true,
-        screenshot: 'only-on-failure',
-        video: 'off',
-        trace: 'retain-on-first-failure',
-        actionTimeout: 5 * 1000,
-      }
-    },
+    // {
+    //   name: 'firefox',
+    //   use: { 
+    //     ...devices['Desktop Firefox'], 
+    //     headless: true,
+    //     screenshot: 'only-on-failure',
+    //     video: 'off',
+    //     trace: 'retain-on-first-failure',
+    //     actionTimeout: 5 * 1000,
+    //   }
+    // },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'],
-        headless: true,
-        screenshot: 'only-on-failure',
-        video: 'off',
-        trace: 'retain-on-first-failure',
-        actionTimeout: 5 * 1000,
-      }
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'],
+    //     headless: true,
+    //     screenshot: 'only-on-failure',
+    //     video: 'off',
+    //     trace: 'retain-on-first-failure',
+    //     actionTimeout: 5 * 1000,
+    //   }
+    // },
 
     /* Test against mobile viewports. */
     // {

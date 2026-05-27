@@ -11,11 +11,27 @@ Automated functional and end-to-end (E2E) testing for Opencart using Playwright 
 
 ## Project Structure
 ```
-├── fixtures/POManager.ts         # Playwright fixtures and PO manager
-├── pageObjects/                  # Page Object Model classes
-├── tests/Functional/             # Functional test cases
+├── src/
+│   ├── components/               # Shared page components (Header, Footer, Ribbon)
+│   ├── data/                     # Test data (products, billing details)
+│   ├── fixtures/
+│   │   └── POMFixture.ts         # Playwright fixtures
+│   ├── models/                   # TypeScript interfaces
+│   └── pages/
+│       ├── mainPages/            # Home, Login, Checkout, WishList, etc.
+│       └── products/             # Product listing pages
+│   └── tests/
+│       ├── seed.spec.ts          # Seed / scaffolding test
+│       ├── e2e/                  # End-to-end tests
+│       ├── functional/           # Functional tests
+│       └── integration/          # Integration tests
+├── packages/
+│   └── pw-core/                  # Shared core library (interfaces, utilities)
+├── specs/                        # Test plans
 ├── playwright.config.ts          # Playwright config
 ├── package.json                  # Project dependencies/scripts
+├── Dockerfile                    # Docker build definition
+├── docker-compose.yml            # Docker Compose config
 ├── playwright-report/            # HTML reports
 └── test-results/                 # Test results
 ```
@@ -59,7 +75,7 @@ Automated functional and end-to-end (E2E) testing for Opencart using Playwright 
 #### Run a Specific Test File
 - Run a specific test file:
    ```sh
-   npx playwright test tests/Functional/YourTestFile.spec.ts
+   npx playwright test src/tests/functional/YourTestFile.spec.ts
    ```
 - Run a specific test by its title:
    ```sh
@@ -69,7 +85,7 @@ Automated functional and end-to-end (E2E) testing for Opencart using Playwright 
 #### Debug a Specific Test
 - Debug a specific test file:
    ```sh
-   npx playwright test tests/Functional/YourTestFile.spec.ts --debug
+   npx playwright test src/tests/functional/YourTestFile.spec.ts --debug
    ```
 - Debug a specific test by its title:
    ```sh
@@ -108,12 +124,15 @@ Automated functional and end-to-end (E2E) testing for Opencart using Playwright 
 Test results and HTML reports will be available in the `playwright-report/` and `test-results/` folders.
 
 ## Writing Tests
-- Add new test files in `tests/Functional/`
-- Use POM classes from `pageObjects/`
-- Use fixtures from `fixtures/POManager.ts`
+- Add new functional tests under `src/tests/functional/`
+- Add new integration tests under `src/tests/integration/`
+- Add new E2E tests under `src/tests/e2e/`
+- Use POM classes from `src/pages/`
+- Use fixtures from `src/fixtures/POMFixture.ts`
+- Add test data in `src/data/`
 
 ## Example
-See `tests/Functional/HomePageFunctionalityCheck.spec.ts` for a sample test using the HomePage page object and fixtures.
+See [src/tests/functional/HomePageFunctionalityCheck.spec.ts](src/tests/functional/HomePageFunctionalityCheck.spec.ts) for a sample functional test using the POM and fixtures.
 
 ## License
 ISC
