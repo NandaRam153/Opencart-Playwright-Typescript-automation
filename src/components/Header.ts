@@ -60,6 +60,11 @@ export class Header extends BaseComponent
         await expect(this.page.getByRole('heading', {name: "Returning Customer", level: 2})).toBeVisible();
     }
 
+    async verifyCartCount(expectedCount: number)
+    {
+        await expect(this.page.locator('#cart-total')).toContainText(`${expectedCount} item(s)`);
+    }
+
     async logout()
     {
         const accountBtn = this.page.getByTitle('My Account');

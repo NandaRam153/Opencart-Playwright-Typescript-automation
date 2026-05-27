@@ -2,12 +2,16 @@ FROM mcr.microsoft.com/playwright:v1.58.0-jammy
 
 WORKDIR /app
 
-# Install deps first (better caching)
+# Copy root and workspace package.json files (better caching)
 COPY package*.json ./
+COPY packages/pw-core/package.json ./packages/pw-core/
 RUN npm ci
 
-# Copy tests
+# Copy everything else
 COPY . .
+
+# Build the workspace package
+RUN npm run build --workspace=packages/pw-core
 
 # Run tests by default
 CMD ["npx", "playwright", "test"]
