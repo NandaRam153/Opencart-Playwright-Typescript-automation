@@ -1,42 +1,67 @@
 import { Locator, expect } from '@playwright/test';
 
+/**
+ * Soft assertions collect multiple failures — use in audit/*Check methods.
+ */
+export const SoftAssertions = {
+    async visible(locator: Locator, message?: string) {
+        await expect.soft(locator, message).toBeVisible();
+    },
 
-export class Assertions 
-{
-    // Element is visible
-    static async visible(locator: Locator, message?: string) 
-    {
-     await expect.soft(locator, message).toBeVisible();
-    }
-
-    // Element is hidden
-    static async hidden(locator: Locator, message?: string) 
-    {
+    async hidden(locator: Locator, message?: string) {
         await expect.soft(locator, message).toBeHidden();
-    }
+    },
 
-    // Element contains text
-    static async containsText(locator: Locator, text: string | string[], message?: string) 
-    {
+    async containsText(locator: Locator, text: string | RegExp | (string | RegExp)[], message?: string) {
         await expect.soft(locator, message).toContainText(text);
-    }
+    },
 
-    // Element has exact text
-    static async hasText(locator: Locator, text: string | string[], message?: string) 
-    {
+    async hasText(locator: Locator, text: string | RegExp | (string | RegExp)[], message?: string) {
         await expect.soft(locator, message).toHaveText(text);
-    }
+    },
 
-    // Element count check
-    static async count(locator: Locator, expected: number, message?: string) 
-    {
+    async count(locator: Locator, expected: number, message?: string) {
         await expect.soft(locator, message).toHaveCount(expected);
-    }
+    },
 
-    // At least one element exists
-    static async atLeastOne(locator: Locator, message?: string) 
-    {
+    async atLeastOne(locator: Locator, message?: string) {
         const count = await locator.count();
         expect.soft(count, message).toBeGreaterThan(0);
-    }
+    },
+};
+
+/**
+ * Hard assertions fail fast — use in flows, actions, and post-condition checks.
+ */
+export const HardAssertions = {
+    async visible(locator: Locator, message?: string) {
+        await expect(locator, message).toBeVisible();
+    },
+
+    async hidden(locator: Locator, message?: string) {
+        await expect(locator, message).toBeHidden();
+    },
+
+    async containsText(locator: Locator, text: string | RegExp | (string | RegExp)[], message?: string) {
+        await expect(locator, message).toContainText(text);
+    },
+
+    async hasText(locator: Locator, text: string | RegExp | (string | RegExp)[], message?: string) {
+        await expect(locator, message).toHaveText(text);
+    },
+
+    async count(locator: Locator, expected: number, message?: string) {
+        await expect(locator, message).toHaveCount(expected);
+    },
+
+    async atLeastOne(locator: Locator, message?: string) {
+        const count = await locator.count();
+        expect(count, message).toBeGreaterThan(0);
+    },
+};
+
+/** @deprecated Use SoftAssertions or HardAssertions directly. */
+export class Assertions {
+    static soft = SoftAssertions;
+    static hard = HardAssertions;
 }

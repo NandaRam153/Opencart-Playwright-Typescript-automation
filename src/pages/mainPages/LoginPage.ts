@@ -1,5 +1,4 @@
-import {expect} from '@playwright/test'
-import { BasePage } from '@opencart-auto/pw-core';
+import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
 
 
 export class LoginPage extends BasePage
@@ -8,7 +7,7 @@ export class LoginPage extends BasePage
     {
         await this.page.getByPlaceholder('E-Mail Address').fill(user);
         await this.page.getByPlaceholder('Password').fill(password);
-        await this.page.getByRole('button', {name: "Login"}).click();
+        await Wait.click(this.page.getByRole('button', { name: 'Login' }));
 
         const loginError = this.page.getByText('No match for E-Mail Address and/or Password.');
         const loginFailed = await loginError
@@ -21,6 +20,6 @@ export class LoginPage extends BasePage
             );
         }
 
-        await expect(this.page.getByRole('heading', {name: "My Wish List"})).toBeVisible();
+        await HardAssertions.visible(this.page.getByRole('heading', { name: 'My Wish List' }));
     }
 }

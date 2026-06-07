@@ -1,33 +1,37 @@
-import {expect, type Page} from '@playwright/test';
-import { BaseComponent } from '@opencart-auto/pw-core';
+import { HardAssertions, SoftAssertions, BaseComponent } from '@opencart-auto/pw-core';
+import { products } from '../data/products';
 
 
 export class Ribbon extends BaseComponent
 {
     async ribbonCheck()
     {
-        const ribbonMenuWithDDL: string[][] = [['Desktops', 'Show All Desktops'], ['Laptops & Notebooks', 'Show All Laptops & Notebooks'], 
-                        ['Components', 'Show All Components'], ['MP3 Players', 'Show All MP3 Players']];
-        const ribbonMenu: string[] =['Tablets', 'Software', 'Phones & PDAs', 'Cameras' ];  
-        let locator;
+        const ribbonMenuWithDDL: string[][] = [
+            ['Desktops', 'Show All Desktops'],
+            ['Laptops & Notebooks', 'Show All Laptops & Notebooks'],
+            ['Components', 'Show All Components'],
+            ['MP3 Players', 'Show All MP3 Players'],
+        ];
+        const ribbonMenu: string[] = ['Tablets', 'Software', 'Phones & PDAs', 'Cameras'];
 
         for (const ribbon of ribbonMenuWithDDL)
         {
-            locator = this.page.getByRole('link', {name: ribbon[0]});
+            const locator = this.page.getByRole('link', { name: ribbon[0] });
             if (await locator.isVisible())
             {
                 await locator.click();
-                await expect(this.page.getByRole('link', {name: ribbon[1]})).toHaveCount(1);
+                await SoftAssertions.count(this.page.getByRole('link', { name: ribbon[1] }), 1);
             }
         }
-        // Parallel assertions for all from ribbonMenu
-        await Promise.all(ribbonMenu.map(ribbon => expect.soft(this.page.getByRole('link', {name: ribbon})).toBeVisible()));
+
+        await Promise.all(
+            ribbonMenu.map((ribbon) => SoftAssertions.visible(this.page.getByRole('link', { name: ribbon })))
+        );
     }
 
-    async openProductPage()
+    async openProductPage(category = products.NIKON_D300.category!)
     {
-        const product = 'Cameras'
-        await this.click(this.page.getByRole('link', {name: product}));
-        await expect(this.page.getByRole('heading', {name: product, level: 2})).toBeVisible();
+        await this.click(this.page.getByRole('link', { name: category }));
+        await HardAssertions.visible(this.page.getByRole('heading', { name: category, level: 2 }));
     }
 }

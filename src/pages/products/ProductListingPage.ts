@@ -1,73 +1,55 @@
-import { BasePage } from '@opencart-auto/pw-core';
-import { expect } from '@playwright/test';
+import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
 
 
 export class ProductListingPage extends BasePage 
 {
-    // Common locators
     productCards = this.page.locator('.product-thumb');
     categoryHeader = this.page.getByRole('heading', { level: 2 });
-
-    async open(path: string) 
-    {
-        await this.goto(path);
-    }
 
     getProductByName(product: string) 
     {
         return this.page.locator('.product-thumb', {
-            has: this.page.getByRole('link', { name: product })});
+            has: this.page.getByRole('link', { name: product }),
+        });
     }
 
-    async CheckProductListed(product: string)
+    async checkProductListed(product: string)
     {
-        await expect(this.getProductByName(product)).toBeVisible();
+        await HardAssertions.visible(this.getProductByName(product));
     }
 
     async addToCartProductByName(name: string)
     {
         const card = this.getProductByName(name);
-        await card.getByRole('button', {name: 'Add to Cart'}).click();
+        await Wait.click(card.getByRole('button', { name: 'Add to Cart' }));
     }
 
     async addToWishListProductByName(product: string)
     {
         const productCard = this.getProductByName(product);
-        await productCard.locator('button[onclick^="wishlist.add"]').click();
-        await this.page.waitForLoadState('domcontentloaded');
+        await Wait.click(productCard.locator('button[onclick^="wishlist.add"]'));
+        await Wait.forDOM(this.page);
     }
 
     async productAddedMessage(product: string)
     {
         const message = this.page.locator('.alert.alert-success.alert-dismissible');
-        await expect.soft(message).toContainText(product);
-        await expect.soft(message).toContainText('shopping cart');
+        await HardAssertions.containsText(message, product);
+        await HardAssertions.containsText(message, 'shopping cart');
     }
 
     async getProductCount(): Promise<number> 
     {
-        return await this.productCards.count();
+        return this.productCards.count();
     }
 
     async verifyCategory(title: string) 
     {
-        await expect(this.categoryHeader).toHaveText(title);
+        await HardAssertions.hasText(this.categoryHeader, title);
     }
 
     async verifyAtLeastOneProduct() 
     {
-        await expect(this.productCards.first()).toBeVisible();
-    }
-
-    async verifyOnlyProductsFrom(expectedNames: string[]) 
-    {
-        const names = await this.productCards
-            .locator('.caption a')
-            .allTextContents();
-
-        for (const name of names) 
-        {
-            expect(expectedNames).toContain(name);
-        }
+        await HardAssertions.visible(this.productCards.first());
     }
 }

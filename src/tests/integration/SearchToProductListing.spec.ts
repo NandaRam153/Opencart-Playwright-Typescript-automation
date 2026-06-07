@@ -11,7 +11,7 @@ test.describe('Search → Product Listing', () => {
     test('searching by exact product name lists that product', async ({ header, productListingPage }) => {
         await header.searchForProduct('Nikon');
 
-        await productListingPage.CheckProductListed(products.NIKON_D300.name);
+        await productListingPage.checkProductListed(products.NIKON_D300.name);
     });
 
     test('searching by brand name returns at least one result', async ({ header, productListingPage }) => {
@@ -24,13 +24,13 @@ test.describe('Search → Product Listing', () => {
     test('searching by brand name lists a known product from that brand', async ({ header, productListingPage }) => {
         await header.searchForProduct('Canon');
 
-        await productListingPage.CheckProductListed(products.CANON_EOS_5D.name);
+        await productListingPage.checkProductListed(products.CANON_EOS_5D.name);
     });
 
     test('searching by product name shows at least one result', async ({ header, productListingPage }) => {
         await header.searchForProduct(products.IPHONE.name);
 
         await productListingPage.verifyAtLeastOneProduct();
-        await productListingPage.CheckProductListed(products.IPHONE.name);
+        await productListingPage.checkProductListed(products.IPHONE.name);
     });
 });

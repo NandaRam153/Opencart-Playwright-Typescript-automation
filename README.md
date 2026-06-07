@@ -1,152 +1,182 @@
 
 # Opencart Playwright Typescript Automation
 
-Automated functional and end-to-end (E2E) testing for Opencart using Playwright and TypeScript.
+Automated functional, integration, and end-to-end (E2E) testing for the OpenCart demo store using Playwright and TypeScript.
 
 ## Features
-- Page Object Model (POM) for maintainable, reusable code
-- Playwright fixtures for easy test setup
-- HTML test reports
-- Docker and Docker Compose support for containerized execution
+
+- Page Object Model (POM) with shared components (Header, Footer, Ribbon)
+- Custom Playwright fixtures for page/component injection
+- `@opencart-auto/pw-core` workspace package (base classes, `SoftAssertions`, `HardAssertions`, `Wait`)
+- Layered tests: functional, integration, and E2E
+- Environment-based configuration (`BASE_URL`, credentials via `.env`)
+- TypeScript strict mode, ESLint, and Prettier
+- HTML test reports, traces on failure, Docker support
+- GitHub Actions CI (typecheck, lint, Playwright)
 
 ## Project Structure
+
 ```
 ├── src/
-│   ├── components/               # Shared page components (Header, Footer, Ribbon)
+│   ├── components/               # Shared UI components (Header, Footer, Ribbon)
 │   ├── data/                     # Test data (products, billing details)
 │   ├── fixtures/
 │   │   └── POMFixture.ts         # Playwright fixtures
-│   ├── models/                   # TypeScript interfaces
-│   └── pages/
-│       ├── mainPages/            # Home, Login, Checkout, WishList, etc.
-│       └── products/             # Product listing pages
+│   ├── pages/
+│   │   ├── mainPages/            # Home, Login, Checkout, WishList, etc.
+│   │   └── products/             # Product listing pages
 │   └── tests/
-│       ├── seed.spec.ts          # Seed / scaffolding test
-│       ├── e2e/                  # End-to-end tests
-│       ├── functional/           # Functional tests
-│       └── integration/          # Integration tests
+│       ├── seed.spec.ts          # Generator scaffold (excluded from test runs)
+│       ├── functional/           # UI smoke / audit tests
+│       ├── integration/          # Cross-component flow tests
+│       └── e2e/                  # Full user journeys
 ├── packages/
-│   └── pw-core/                  # Shared core library (interfaces, utilities)
-├── specs/                        # Test plans
-├── playwright.config.ts          # Playwright config
-├── package.json                  # Project dependencies/scripts
-├── Dockerfile                    # Docker build definition
-├── docker-compose.yml            # Docker Compose config
-├── playwright-report/            # HTML reports
-└── test-results/                 # Test results
+│   └── pw-core/                  # Shared library: BasePage, assertions, Wait
+├── specs/
+│   └── test.plan.md              # Test plan and scenario documentation
+├── playwright.config.ts
+├── tsconfig.json
+├── eslint.config.mjs
+├── .prettierrc
+├── .env.example
+├── Dockerfile
+└── docker-compose.yml
 ```
 
 ## Prerequisites
+
 - [Node.js](https://nodejs.org/) (v18+ recommended)
 - [npm](https://www.npmjs.com/)
-- [Docker](https://www.docker.com/) (for running in containers)
+- [Docker](https://www.docker.com/) (optional, for containerized runs)
 
 ## Setup
+
 1. Clone the repository:
+
     ```sh
     git clone https://github.com/NandaRam153/Opencart-Playwright-Typescript-automation.git
     cd Opencart-Playwright-Typescript-automation
     ```
+
 2. Install dependencies:
+
     ```sh
     npm install
     ```
-3. Configure test credentials (required for the wishlist E2E test):
+
+3. Configure environment variables:
+
     ```sh
     cp .env.example .env
     ```
-    Edit `.env` and set `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` for a registered OpenCart demo store account.
+
+    On Windows (PowerShell):
+
+    ```powershell
+    Copy-Item .env.example .env
+    ```
+
+    Edit `.env` and set:
+
+    - `BASE_URL` — optional; defaults to `https://awesomeqa.com/ui/`
+    - `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` — required for the wishlist E2E test (use a real registered OpenCart demo account, not the placeholder values)
 
 ## Running Tests
 
-### Locally (on your machine)
-- Run all tests (headless; builds `pw-core` automatically via `pretest`):
-   ```sh
-   npm test
-   ```
-- Run tests with UI:
-   ```sh
-   npm run test:headed
-   ```
-- Debug tests:
-   ```sh
-   npm run test:debug
-   ```
-- View HTML report:
-   ```sh
-   npm run report
-   ```
+### Locally
 
-#### Run a Specific Test File
-- Run a specific test file:
-   ```sh
-   npx playwright test src/tests/functional/YourTestFile.spec.ts
-   ```
-- Run a specific test by its title:
-   ```sh
-   npx playwright test -g "your test name"
-   ```
+| Command | Description |
+|---------|-------------|
+| `npm test` | Run all tests headless (builds `pw-core` via `pretest`) |
+| `npm run test:headed` | Run with visible browser |
+| `npm run test:debug` | Run in Playwright debug mode |
+| `npm run report` | Open the HTML report |
 
-#### Debug a Specific Test
-- Debug a specific test file:
-   ```sh
-   npx playwright test src/tests/functional/YourTestFile.spec.ts --debug
-   ```
-- Debug a specific test by its title:
-   ```sh
-   npx playwright test -g "your test name" --debug
-   ```
+The suite runs **15 tests** (`seed.spec.ts` is excluded via `testIgnore`).
 
-### Using Docker
+#### Run a specific test file
 
-- **Build and run tests in Docker:**
-   ```sh
-   npm run test:docker
-   ```
-- **Debug in Docker (get a shell):**
-   ```sh
-   npm run test:docker:debug
-   ```
+```sh
+npx playwright test src/tests/functional/HomePageFunctionalityCheck.spec.ts
+```
 
-### Using Docker Compose
+#### Run a test by title
 
-- **Run all tests with Docker Compose (recommended for CI and team environments):**
-   ```sh
-   docker-compose up --build
-   ```
-  This will build the Docker image (if needed) and execute all Playwright tests inside a container. Test results and HTML reports will be available in the `playwright-report/` and `test-results/` folders on your host machine.
+```sh
+npx playwright test -g "Order creation test"
+```
 
-- **Alternative (if defined in package.json):**
-   ```sh
-   npm run test:docker:compose
-   ```
-  This command will run Docker Compose using the configuration in your project.
+#### Debug a specific test
 
-**Note:**
-- You can customize the `docker-compose.yml` to change test commands, mount volumes, or adjust environment variables as needed.
-- Make sure Docker is running before executing these commands.
+```sh
+npx playwright test src/tests/e2e/WishListFlow.spec.ts --debug
+```
 
-Test results and HTML reports will be available in the `playwright-report/` and `test-results/` folders.
+### Docker
+
+```sh
+npm run test:docker          # Build image and run tests
+npm run test:docker:debug    # Shell into the test container
+npm run test:docker:compose  # Run via Docker Compose
+```
+
+Or directly:
+
+```sh
+docker-compose up --build
+```
+
+Test results and HTML reports are written to `playwright-report/` and `test-results/`.
 
 ## Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `TEST_USER_EMAIL` | For wishlist E2E | Registered user email on the OpenCart demo store |
-| `TEST_USER_PASSWORD` | For wishlist E2E | Password for the registered user |
+| `BASE_URL` | No | OpenCart store root URL (default: `https://awesomeqa.com/ui/`) |
+| `TEST_USER_EMAIL` | Wishlist E2E | Registered user email on the OpenCart demo store |
+| `TEST_USER_PASSWORD` | Wishlist E2E | Password for the registered user |
 
-Copy `.env.example` to `.env` for local runs. In CI, add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions).
+- **Local:** copy `.env.example` to `.env` and fill in real values.
+- **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions).
+
+The wishlist E2E test **skips** when credentials are missing or still set to the `.env.example` placeholders.
+
+## Code Quality
+
+| Command | Description |
+|---------|-------------|
+| `npm run build` | Build the `pw-core` workspace package |
+| `npm run typecheck` | TypeScript strict check (`tsc --noEmit`) |
+| `npm run lint` | ESLint (TypeScript + Playwright rules) |
+| `npm run lint:fix` | ESLint with auto-fix |
+| `npm run format` | Prettier format all files |
+| `npm run format:check` | Prettier check without writing |
+
+CI runs `typecheck`, `lint`, and the full Playwright suite on push/PR to `main` or `master`.
+
+## Assertion Conventions
+
+| Type | When to use | API |
+|------|-------------|-----|
+| Soft | Audit / smoke checks that should report multiple failures | `SoftAssertions`, `*Check()` methods |
+| Hard | Flow steps and post-action verification | `HardAssertions`, navigation/login/checkout helpers |
+
+Use `Wait` from `@opencart-auto/pw-core` for safe clicks and load-state synchronization.
 
 ## Writing Tests
-- Add new functional tests under `src/tests/functional/`
-- Add new integration tests under `src/tests/integration/`
-- Add new E2E tests under `src/tests/e2e/`
-- Use POM classes from `src/pages/`
-- Use fixtures from `src/fixtures/POMFixture.ts`
-- Add test data in `src/data/`
 
-## Example
+- Functional tests → `src/tests/functional/`
+- Integration tests → `src/tests/integration/`
+- E2E tests → `src/tests/e2e/`
+- Page objects → `src/pages/` and `src/components/`
+- Fixtures → `src/fixtures/POMFixture.ts`
+- Test data → `src/data/`
+- Scenario reference → [specs/test.plan.md](specs/test.plan.md)
+
+### Example
+
 See [src/tests/functional/HomePageFunctionalityCheck.spec.ts](src/tests/functional/HomePageFunctionalityCheck.spec.ts) for a sample functional test using the POM and fixtures.
 
 ## License
+
 ISC

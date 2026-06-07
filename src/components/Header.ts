@@ -1,79 +1,76 @@
-import {expect, type Page} from '@playwright/test';
-import {BaseComponent} from '@opencart-auto/pw-core';
+import { BaseComponent, HardAssertions, SoftAssertions, Wait } from '@opencart-auto/pw-core';
 
 
 export class Header extends BaseComponent
 {
     async headerCheck()
     {
-        // Open Currency ddl and check
-        const currency = this.page.getByRole('button', {name: 'Currency'});
+        const currency = this.page.getByRole('button', { name: 'Currency' });
         if (await currency.isVisible())
         {
             await currency.click();
-            await expect.soft(this.page.locator('.btn-group.open'),
-                        'Currency ddl did not open >> ').toHaveCount(1); 
-
-            await expect.soft(this.page.locator('button.currency-select'),
-                    'Curreny types are not correct >> ')
-                .toContainText(['€ Euro', '£ Pound Sterling', '$ US Dollar']);
+            await SoftAssertions.count(this.page.locator('.btn-group.open'), 1, 'Currency ddl did not open');
+            await SoftAssertions.containsText(
+                this.page.locator('button.currency-select'),
+                ['€ Euro', '£ Pound Sterling', '$ US Dollar'],
+                'Currency types are not correct'
+            );
         }
 
-        await expect.soft(this.page.locator('i.fa.fa-phone')).toBeVisible();
+        await SoftAssertions.visible(this.page.locator('i.fa.fa-phone'));
 
-        // Open My Account ddl and check
         const acct = this.page.getByTitle('My Account');
         if (await acct.isVisible())
         {
             await acct.click();
-            await expect.soft(this.page.locator('li.dropdown.open'), 
-                        'My Account ddl did not open >> ').toHaveCount(1);
-            await expect.soft(this.page.getByRole('link', {name: 'Register'}), 
-                        'Register should be visible in My Account ddl >> ').toBeVisible();
-            await expect.soft(this.page.getByRole('link', {name: 'Login'}),
-                        'Login should be visible in My Account ddl >> ').toBeVisible();
+            await SoftAssertions.count(this.page.locator('li.dropdown.open'), 1, 'My Account ddl did not open');
+            await SoftAssertions.visible(
+                this.page.getByRole('link', { name: 'Register' }),
+                'Register should be visible in My Account ddl'
+            );
+            await SoftAssertions.visible(
+                this.page.getByRole('link', { name: 'Login' }),
+                'Login should be visible in My Account ddl'
+            );
         }
 
-        // Check Wish List
-        await expect.soft(this.page.locator('#wishlist-total')).toBeVisible();   
-        // Check Shopping Cart
-        await expect.soft(this.page.locator('a[href*="route=checkout/cart"]')).toBeVisible();
-        // Check Checkout
-        await expect.soft(this.page.locator('a[href*="route=checkout/checkout"]')).toBeVisible();
+        await SoftAssertions.visible(this.page.locator('#wishlist-total'));
+        await SoftAssertions.visible(this.page.locator('a[href*="route=checkout/cart"]'));
+        await SoftAssertions.visible(this.page.locator('a[href*="route=checkout/checkout"]'));
     }
 
     async gotoCheckout()
     {
-        await this.page.getByTitle('Checkout').click();
-        await expect(this.page.getByRole('heading', {name: 'Checkout', level:1})).toBeVisible();
+        await Wait.click(this.page.getByTitle('Checkout'));
+        await HardAssertions.visible(this.page.getByRole('heading', { name: 'Checkout', level: 1 }));
     }
 
     async searchForProduct(product: string)
     {
-        await this.page.getByPlaceholder('search').fill(product);
-        await this.page.locator('.btn.btn-default.btn-lg').click();
+        await this.page.getByPlaceholder('Search').fill(product);
+        await Wait.click(this.page.locator('.btn.btn-default.btn-lg'));
     }
 
     async gotoWishlist()
     {
-        await this.page.locator('#wishlist-total').click();
-        await expect(this.page.getByRole('heading', {name: "Returning Customer", level: 2})).toBeVisible();
+        await Wait.click(this.page.locator('#wishlist-total'));
+        await HardAssertions.visible(this.page.getByRole('heading', { name: 'Returning Customer', level: 2 }));
     }
 
     async verifyCartCount(expectedCount: number)
     {
-        await expect(this.page.locator('#cart-total')).toContainText(`${expectedCount} item(s)`);
+        await HardAssertions.containsText(this.page.locator('#cart-total'), `${expectedCount} item(s)`);
     }
 
     async logout()
     {
         const accountBtn = this.page.getByTitle('My Account');
-        await accountBtn.click();
+        await Wait.click(accountBtn);
 
         const accountMenu = this.page.locator('[role="menu"], .account-menu, .dropdown-menu').filter({
             has: this.page.getByRole('link', { name: 'Logout' })
         });
 
-        await accountMenu.getByRole('link', { name: 'Logout' }).click();
+        await Wait.click(accountMenu.getByRole('link', { name: 'Logout' }));
     }
 }

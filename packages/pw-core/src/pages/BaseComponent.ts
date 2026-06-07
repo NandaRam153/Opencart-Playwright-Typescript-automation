@@ -1,4 +1,5 @@
 import { Page, Locator } from '@playwright/test';
+import { Wait } from '../utils/wait';
 
 
 export abstract class BaseComponent 
@@ -12,6 +13,6 @@ export abstract class BaseComponent
 
     async click(locator: Locator) 
     {
-        await locator.click();
+        await Wait.click(locator);
     }
 }

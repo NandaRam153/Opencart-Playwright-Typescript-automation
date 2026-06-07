@@ -19,8 +19,11 @@ if (existsSync(envPath)) {
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
+const baseURL = process.env.BASE_URL ?? 'https://awesomeqa.com/ui/';
+
 export default defineConfig({
   testDir: './src/tests',
+  testIgnore: ['**/seed.spec.ts'],
   // 30 sec is default acrosss tests
     timeout: 30 * 1000,
   expect: {
@@ -38,8 +41,7 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
+    baseURL,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
