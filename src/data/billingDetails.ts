@@ -1,7 +1,6 @@
 import { IBillingDetails } from '@opencart-auto/pw-core';
 
-export const billingData: IBillingDetails = 
-{
+export const billingData: IBillingDetails = {
     firstName: 'Nanda',
     lastName: 'Ram',
     email: 'test123@email.com',
@@ -11,5 +10,5 @@ export const billingData: IBillingDetails =
     postalCode: 'A1B 3C4',
     country: 'Canada',
     province: 'Ontario',
-    comment: 'Paying in US$ only'
+    comment: 'Paying in US$ only',
 };

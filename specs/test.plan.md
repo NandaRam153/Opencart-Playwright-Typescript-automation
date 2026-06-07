@@ -27,6 +27,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 **Scenario:** Home page functionality checks
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Validate the header is displayed and correct.
 3. Validate the ribbon/banner is displayed and correct.
@@ -43,6 +44,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 **Scenario:** Order creation test
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Open the Cameras product page from the ribbon.
 3. Add the product "Nikon D300" to the cart.
@@ -61,6 +63,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 **Scenario:** Wishlist flow: search, add to wishlist, login, verify, delete, logout
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Search for "MacBook Pro" using the header search.
 3. Verify that "MacBook Pro" is listed in the search results.
@@ -84,6 +87,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 5.1 Adding a product from category page shows success message
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Open the Cameras product page from the ribbon.
 3. Add "Nikon D300" to the cart.
@@ -92,6 +96,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 5.2 Adding a product from search results shows success message
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Search for "Nikon D300" using the header search.
 3. Add "Nikon D300" to the cart.
@@ -100,6 +105,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 5.3 Adding a product updates the header cart count to 1
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Open the Cameras product page from the ribbon.
 3. Add "Nikon D300" to the cart.
@@ -108,6 +114,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 5.4 Checkout page is reachable from header after adding a product
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Open the Cameras product page from the ribbon.
 3. Add "Nikon D300" to the cart.
@@ -125,6 +132,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 6.1 Clicking Cameras in ribbon loads the Cameras category page
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Click "Cameras" in the ribbon.
 3. Verify the Cameras category page is loaded.
@@ -132,6 +140,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 6.2 Cameras category page shows at least one product
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Click "Cameras" in the ribbon.
 3. Verify at least one product is listed.
@@ -139,6 +148,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 6.3 Cameras category page lists Nikon D300
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Click "Cameras" in the ribbon.
 3. Verify "Nikon D300" is listed.
@@ -146,6 +156,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 6.4 Cameras category page lists Canon EOS 5D
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Click "Cameras" in the ribbon.
 3. Verify "Canon EOS 5D" is listed.
@@ -162,6 +173,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 7.1 Searching by exact product name lists that product
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Search for "Nikon" using the header search.
 3. Verify "Nikon D300" appears in the results.
@@ -169,6 +181,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 7.2 Searching by brand name returns at least one result
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Search for "Canon" using the header search.
 3. Verify at least one product is returned.
@@ -176,6 +189,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 7.3 Searching by brand name lists a known product from that brand
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Search for "Canon" using the header search.
 3. Verify "Canon EOS 5D" appears in the results.
@@ -183,6 +197,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 #### 7.4 Searching by product name shows at least one result
 
 **Steps:**
+
 1. Navigate to the home page.
 2. Search for "iPhone" using the header search.
 3. Verify at least one product is returned.
@@ -191,6 +206,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 ---
 
 ## Notes
+
 - All tests use the Playwright test runner with the Page Object Model (POM) for maintainability.
 - Fixtures are defined in `src/fixtures/POMFixture.ts`.
 - Product test data is in `src/data/products.ts`; billing details in `src/data/billingDetails.ts`.

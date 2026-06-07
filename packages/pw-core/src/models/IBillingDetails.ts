@@ -1,5 +1,4 @@
-export interface IBillingDetails 
-{
+export interface IBillingDetails {
     firstName: string;
     lastName: string;
     email: string;

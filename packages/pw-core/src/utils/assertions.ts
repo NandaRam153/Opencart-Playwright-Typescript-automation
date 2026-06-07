@@ -12,7 +12,11 @@ export const SoftAssertions = {
         await expect.soft(locator, message).toBeHidden();
     },
 
-    async containsText(locator: Locator, text: string | RegExp | (string | RegExp)[], message?: string) {
+    async containsText(
+        locator: Locator,
+        text: string | RegExp | (string | RegExp)[],
+        message?: string
+    ) {
         await expect.soft(locator, message).toContainText(text);
     },
 
@@ -42,7 +46,11 @@ export const HardAssertions = {
         await expect(locator, message).toBeHidden();
     },
 
-    async containsText(locator: Locator, text: string | RegExp | (string | RegExp)[], message?: string) {
+    async containsText(
+        locator: Locator,
+        text: string | RegExp | (string | RegExp)[],
+        message?: string
+    ) {
         await expect(locator, message).toContainText(text);
     },
 

@@ -1,10 +1,9 @@
 services:
-  playwright:
-    build: .
-    image: playwright-tests
-    working_dir: /app
-    command: ["npx", "playwright", "test"]
-    volumes:
-      - ./playwright-report:/app/playwright-report
-      - ./test-results:/app/test-results
-
+    playwright:
+        build: .
+        image: playwright-tests
+        working_dir: /app
+        command: ['npx', 'playwright', 'test']
+        volumes:
+            - ./playwright-report:/app/playwright-report
+            - ./test-results:/app/test-results

@@ -1,19 +1,21 @@
 {
-  "name": "@opencart-auto/pw-core",
-  "version": "1.0.0",
-  "description": "Reusable Playwright framework: base classes, utilities, and generic interfaces",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": ["dist"],
-  "scripts": {
-    "build": "tsc",
-    "clean": "rimraf dist"
-  },
-  "peerDependencies": {
-    "@playwright/test": ">=1.40.0"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.58.1",
-    "typescript": "^5.0.0"
-  }
+    "name": "@opencart-auto/pw-core",
+    "version": "1.0.0",
+    "description": "Reusable Playwright framework: base classes, utilities, and generic interfaces",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "clean": "rimraf dist"
+    },
+    "peerDependencies": {
+        "@playwright/test": ">=1.40.0"
+    },
+    "devDependencies": {
+        "@playwright/test": "^1.58.1",
+        "typescript": "^5.0.0"
+    }
 }

@@ -10,7 +10,6 @@ import { LoginPage } from '../pages/mainPages/LoginPage';
 import { WishListPage } from '../pages/mainPages/WishListPage';
 import { LogoutPage } from '../pages/mainPages/LogoutPage';
 
-
 export const test = base.extend<{
     homePage: HomePage;
     header: Header;
@@ -22,55 +21,44 @@ export const test = base.extend<{
     loginPage: LoginPage;
     wishListPage: WishListPage;
     logoutPage: LogoutPage;
-}>(
-  {
-    homePage: async ({ page }, use) => 
-    {
-      await use(new HomePage(page));
-    },
- 
-    header: async ({ page }, use) => 
-    {
-      await use(new Header(page));
+}>({
+    homePage: async ({ page }, use) => {
+        await use(new HomePage(page));
     },
 
-    footer: async ({ page }, use) => 
-    {
-      await use(new Footer(page));
+    header: async ({ page }, use) => {
+        await use(new Header(page));
     },
 
-    ribbon: async ({ page }, use) => 
-    {
-      await use(new Ribbon(page));
+    footer: async ({ page }, use) => {
+        await use(new Footer(page));
     },
 
-    productListingPage: async ({ page }, use) => 
-    {
-      await use(new ProductListingPage(page));
+    ribbon: async ({ page }, use) => {
+        await use(new Ribbon(page));
     },
 
-    checkoutPage: async ({ page }, use) => 
-    {
-      await use(new CheckoutPage(page));
+    productListingPage: async ({ page }, use) => {
+        await use(new ProductListingPage(page));
     },
 
-    orderPlacementResultPage: async ({ page }, use) => 
-    {
-      await use(new OrderPlacementResultPage(page));
+    checkoutPage: async ({ page }, use) => {
+        await use(new CheckoutPage(page));
     },
 
-    loginPage: async ({ page }, use) => 
-    {
-      await use(new LoginPage(page));
+    orderPlacementResultPage: async ({ page }, use) => {
+        await use(new OrderPlacementResultPage(page));
     },
 
-    wishListPage: async ({ page }, use) => 
-    {
-      await use(new WishListPage(page));
+    loginPage: async ({ page }, use) => {
+        await use(new LoginPage(page));
     },
 
-    logoutPage: async ({ page }, use) => 
-    {
-      await use(new LogoutPage(page));
-    }
+    wishListPage: async ({ page }, use) => {
+        await use(new WishListPage(page));
+    },
+
+    logoutPage: async ({ page }, use) => {
+        await use(new LogoutPage(page));
+    },
 });

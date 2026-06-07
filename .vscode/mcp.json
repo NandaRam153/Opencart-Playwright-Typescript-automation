@@ -1,22 +1,19 @@
 {
-  "servers": {
-    "playwright-test": {
-      "type": "stdio",
-      "command": "npx",
-      "args": [
-        "playwright",
-        "run-test-mcp-server"
-      ]
+    "servers": {
+        "playwright-test": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["playwright", "run-test-mcp-server"]
+        },
+        "chrome-devtools": {
+            "command": "npx",
+            "args": ["-y", "chrome-devtools-mcp@latest"]
+        },
+        "github": {
+            "type": "http",
+            "url": "https://api.githubcopilot.com/mcp/insiders"
+        }
     },
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
-    },
-    "github": {
-    "type": "http",
-    "url": "https://api.githubcopilot.com/mcp/insiders"
-    }
-  },
-    
-  "inputs": []
+
+    "inputs": []
 }
