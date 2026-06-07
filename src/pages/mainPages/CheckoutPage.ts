@@ -1,4 +1,4 @@
-import {test, expect} from '@playwright/test';
+import { expect } from '@playwright/test';
 import { BasePage, IBillingDetails } from '@opencart-auto/pw-core';
 
 
@@ -36,7 +36,7 @@ export class CheckoutPage extends BasePage
     async fillPaymentDetails(deliveryComment: string) 
     {
         const paymentComment = this.page.locator('#collapse-payment-method').locator('textarea[name="comment"]');
-        await paymentComment.fill('Please deliver between 9am–5pm');
+        await paymentComment.fill(deliveryComment);
 
         await this.page.locator('input[name="agree"]').check();
         await this.page.locator('#button-payment-method').click();

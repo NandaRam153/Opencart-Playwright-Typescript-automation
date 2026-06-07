@@ -51,11 +51,16 @@ Automated functional and end-to-end (E2E) testing for Opencart using Playwright 
     ```sh
     npm install
     ```
+3. Configure test credentials (required for the wishlist E2E test):
+    ```sh
+    cp .env.example .env
+    ```
+    Edit `.env` and set `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` for a registered OpenCart demo store account.
 
 ## Running Tests
 
 ### Locally (on your machine)
-- Run all tests (headless):
+- Run all tests (headless; builds `pw-core` automatically via `pretest`):
    ```sh
    npm test
    ```
@@ -122,6 +127,15 @@ Automated functional and end-to-end (E2E) testing for Opencart using Playwright 
 - Make sure Docker is running before executing these commands.
 
 Test results and HTML reports will be available in the `playwright-report/` and `test-results/` folders.
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `TEST_USER_EMAIL` | For wishlist E2E | Registered user email on the OpenCart demo store |
+| `TEST_USER_PASSWORD` | For wishlist E2E | Password for the registered user |
+
+Copy `.env.example` to `.env` for local runs. In CI, add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions).
 
 ## Writing Tests
 - Add new functional tests under `src/tests/functional/`

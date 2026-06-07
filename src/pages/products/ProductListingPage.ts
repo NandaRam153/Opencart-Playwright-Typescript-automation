@@ -13,7 +13,7 @@ export class ProductListingPage extends BasePage
         await this.goto(path);
     }
 
-    async getProductByName(product: string) 
+    getProductByName(product: string) 
     {
         return this.page.locator('.product-thumb', {
             has: this.page.getByRole('link', { name: product })});
@@ -21,18 +21,18 @@ export class ProductListingPage extends BasePage
 
     async CheckProductListed(product: string)
     {
-        expect(await this.getProductByName(product)).toBeVisible();
+        await expect(this.getProductByName(product)).toBeVisible();
     }
 
     async addToCartProductByName(name: string)
     {
-        const card = await this.getProductByName(name);
+        const card = this.getProductByName(name);
         await card.getByRole('button', {name: 'Add to Cart'}).click();
     }
 
     async addToWishListProductByName(product: string)
     {
-        const productCard = await this.getProductByName(product);
+        const productCard = this.getProductByName(product);
         await productCard.locator('button[onclick^="wishlist.add"]').click();
         await this.page.waitForLoadState('domcontentloaded');
     }
