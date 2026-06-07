@@ -14,11 +14,7 @@ export default tseslint.config(
         },
     },
     {
-        files: [
-            'packages/pw-core/src/**/*.ts',
-            'src/pages/**/*.ts',
-            'src/components/**/*.ts',
-        ],
+        files: ['packages/pw-core/src/**/*.ts', 'src/pages/**/*.ts', 'src/components/**/*.ts'],
         rules: {
             'playwright/no-standalone-expect': 'off',
             'playwright/no-networkidle': 'off',

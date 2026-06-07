@@ -1,10 +1,7 @@
 import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
 
-
-export class LoginPage extends BasePage
-{
-    async login(user: string, password: string)
-    {
+export class LoginPage extends BasePage {
+    async login(user: string, password: string) {
         await this.page.getByPlaceholder('E-Mail Address').fill(user);
         await this.page.getByPlaceholder('Password').fill(password);
         await Wait.click(this.page.getByRole('button', { name: 'Login' }));

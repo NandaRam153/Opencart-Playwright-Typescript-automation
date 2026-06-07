@@ -1,4 +1,3 @@
-
 # Opencart Playwright Typescript Automation
 
 Automated functional, integration, and end-to-end (E2E) testing for the OpenCart demo store using Playwright and TypeScript.
@@ -58,7 +57,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
     cd Opencart-Playwright-Typescript-automation
     ```
 
-2. Install dependencies:
+2. Install dependencies (also builds `pw-core` via `postinstall`):
 
     ```sh
     npm install
@@ -77,7 +76,6 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
     ```
 
     Edit `.env` and set:
-
     - `BASE_URL` — optional; defaults to `https://awesomeqa.com/ui/`
     - `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` — required for the wishlist E2E test (use a real registered OpenCart demo account, not the placeholder values)
 
@@ -85,12 +83,12 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 
 ### Locally
 
-| Command | Description |
-|---------|-------------|
-| `npm test` | Run all tests headless (builds `pw-core` via `pretest`) |
-| `npm run test:headed` | Run with visible browser |
-| `npm run test:debug` | Run in Playwright debug mode |
-| `npm run report` | Open the HTML report |
+| Command               | Description                                             |
+| --------------------- | ------------------------------------------------------- |
+| `npm test`            | Run all tests headless (builds `pw-core` via `pretest`) |
+| `npm run test:headed` | Run with visible browser                                |
+| `npm run test:debug`  | Run in Playwright debug mode                            |
+| `npm run report`      | Open the HTML report                                    |
 
 The suite runs **15 tests** (`seed.spec.ts` is excluded via `testIgnore`).
 
@@ -130,11 +128,11 @@ Test results and HTML reports are written to `playwright-report/` and `test-resu
 
 ## Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `BASE_URL` | No | OpenCart store root URL (default: `https://awesomeqa.com/ui/`) |
-| `TEST_USER_EMAIL` | Wishlist E2E | Registered user email on the OpenCart demo store |
-| `TEST_USER_PASSWORD` | Wishlist E2E | Password for the registered user |
+| Variable             | Required     | Description                                                    |
+| -------------------- | ------------ | -------------------------------------------------------------- |
+| `BASE_URL`           | No           | OpenCart store root URL (default: `https://awesomeqa.com/ui/`) |
+| `TEST_USER_EMAIL`    | Wishlist E2E | Registered user email on the OpenCart demo store               |
+| `TEST_USER_PASSWORD` | Wishlist E2E | Password for the registered user                               |
 
 - **Local:** copy `.env.example` to `.env` and fill in real values.
 - **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions).
@@ -143,25 +141,46 @@ The wishlist E2E test **skips** when credentials are missing or still set to the
 
 ## Code Quality
 
-| Command | Description |
-|---------|-------------|
-| `npm run build` | Build the `pw-core` workspace package |
-| `npm run typecheck` | TypeScript strict check (`tsc --noEmit`) |
-| `npm run lint` | ESLint (TypeScript + Playwright rules) |
-| `npm run lint:fix` | ESLint with auto-fix |
-| `npm run format` | Prettier format all files |
-| `npm run format:check` | Prettier check without writing |
+| Command                | Description                              |
+| ---------------------- | ---------------------------------------- |
+| `npm run build`        | Build the `pw-core` workspace package    |
+| `npm run typecheck`    | TypeScript strict check (`tsc --noEmit`) |
+| `npm run lint`         | ESLint (TypeScript + Playwright rules)   |
+| `npm run lint:fix`     | ESLint with auto-fix                     |
+| `npm run format`       | Prettier format all files                |
+| `npm run format:check` | Prettier check without writing           |
 
-CI runs `typecheck`, `lint`, and the full Playwright suite on push/PR to `main` or `master`.
+CI runs with `CI=true` (enables retries and single worker), plus `typecheck`, `lint`, and the full Playwright suite on push/PR to `main` or `master`. Failed runs upload `test-results/` (traces) as artifacts.
+
+> `packages/pw-core/dist/` is gitignored and built locally/CI via `npm run build` — never commit compiled output.
 
 ## Assertion Conventions
 
-| Type | When to use | API |
-|------|-------------|-----|
-| Soft | Audit / smoke checks that should report multiple failures | `SoftAssertions`, `*Check()` methods |
-| Hard | Flow steps and post-action verification | `HardAssertions`, navigation/login/checkout helpers |
+| Type | When to use                                               | API                                                 |
+| ---- | --------------------------------------------------------- | --------------------------------------------------- |
+| Soft | Audit / smoke checks that should report multiple failures | `SoftAssertions`, `*Check()` methods                |
+| Hard | Flow steps and post-action verification                   | `HardAssertions`, navigation/login/checkout helpers |
 
 Use `Wait` from `@opencart-auto/pw-core` for safe clicks and load-state synchronization.
+
+## Locator Conventions
+
+- Prefer role- and label-based locators (`getByRole`, `getByPlaceholder`, `getByTitle`).
+- Scope actions to containers (`#search` form, product card, table row) instead of page-wide CSS.
+- OpenCart icon buttons use `data-original-title` — use scoped selectors like `button[data-original-title="Add to Wish List"]` within the product card.
+
+## Test Data
+
+Product catalog and search terms live in `src/data/products.ts`:
+
+```typescript
+import { getSearchTerm, products } from '../../data/products';
+
+await header.searchForProduct(getSearchTerm(products.NIKON_D300));
+await ribbon.openProductPage(products.NIKON_D300.category!);
+```
+
+Each `IProduct` may define `name`, `category`, and `searchTerm`. Use `getSearchTerm()` when the search query differs from the display name.
 
 ## Writing Tests
 

@@ -1,1 +1,0 @@
-{"version":3,"file":"BaseComponent.d.ts","sourceRoot":"","sources":["../../src/pages/BaseComponent.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,OAAO,EAAE,MAAM,kBAAkB,CAAC;AAIjD,8BAAsB,aAAa;IAE/B,SAAS,CAAC,QAAQ,CAAC,IAAI,EAAE,IAAI,CAAC;gBAElB,IAAI,EAAE,IAAI;IAKhB,KAAK,CAAC,OAAO,EAAE,OAAO;CAI/B"}
