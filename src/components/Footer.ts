@@ -14,9 +14,8 @@ export class Footer extends BaseComponent
         await Promise.all(footColumnHeaders.map(header => expect.soft(this.page.getByRole('heading', { name: header, level: 5 })).toBeVisible()));       
         await Promise.all(footerLinks.map(link => expect.soft(this.page.getByRole('link', {name: link})).toBeVisible()));
 
-        expect.soft(this.page.getByRole('link', { name: 'My Account' })
-                    .filter({ hasNot: this.page.locator('.dropdown-menu') })); // exclude ddl
-        expect.soft(this.page.getByRole('link', { name: 'My Account' })
-                    .filter({ hasNot: this.page.locator('.dropdown-menu') })); // exclude ddl
+        await expect.soft(
+            this.page.locator('footer').getByRole('link', { name: 'My Account' })
+        ).toBeVisible();
     }
 }

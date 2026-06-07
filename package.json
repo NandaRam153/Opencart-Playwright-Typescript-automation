@@ -4,6 +4,8 @@
   "description": "Uses Playwright &amp; Typescript to automate e2e work flow of Opencart website",
   "main": "index.js",
   "scripts": {
+    "build": "npm run build --workspace=packages/pw-core",
+    "pretest": "npm run build",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
@@ -22,6 +24,9 @@
   "license": "ISC",
   "type": "commonjs",
   "workspaces": ["packages/*"],
+  "dependencies": {
+    "@opencart-auto/pw-core": "workspace:*"
+  },
   "bugs": {
     "url": "https://github.com/NandaRam153/Opencart-Playwright-Typescript-automation/issues"
   },
