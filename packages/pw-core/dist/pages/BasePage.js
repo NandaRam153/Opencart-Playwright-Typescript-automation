@@ -1,7 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasePage = void 0;
-const test_1 = require("@playwright/test");
+const assertions_1 = require("../utils/assertions");
+const wait_1 = require("../utils/wait");
 class BasePage {
     constructor(page) {
         this.page = page;
@@ -10,13 +11,15 @@ class BasePage {
         await this.page.goto(path, { waitUntil: 'load' });
     }
     async click(locator) {
-        await locator.click();
+        await wait_1.Wait.click(locator);
     }
+    /** Hard assertion — use in flows. */
     async waitForVisible(locator) {
-        await (0, test_1.expect)(locator).toBeVisible();
+        await assertions_1.HardAssertions.visible(locator);
     }
+    /** Soft assertion — use in audit/*Check methods. */
     async waitForSoftVisible(locator) {
-        await test_1.expect.soft(locator).toBeVisible();
+        await assertions_1.SoftAssertions.visible(locator);
     }
 }
 exports.BasePage = BasePage;

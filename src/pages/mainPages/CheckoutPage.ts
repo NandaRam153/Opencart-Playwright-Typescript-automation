@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { BasePage, IBillingDetails } from '@opencart-auto/pw-core';
+import { BasePage, HardAssertions, IBillingDetails, Wait } from '@opencart-auto/pw-core';
 
 
 export class CheckoutPage extends BasePage
@@ -7,9 +6,9 @@ export class CheckoutPage extends BasePage
     async selectGuestCheckout() 
     {
         const guestRadio = this.page.getByRole('radio', { name: /guest/i });
-        await expect(guestRadio).toBeVisible();
+        await HardAssertions.visible(guestRadio);
         await guestRadio.check();
-        await this.page.locator('#button-account').click();
+        await Wait.click(this.page.locator('#button-account'));
     }
 
     async fillBillingDetails(data: IBillingDetails) 
@@ -25,12 +24,12 @@ export class CheckoutPage extends BasePage
         await this.page.locator('#input-payment-country').selectOption({ label: data.country });
         await this.page.locator('#input-payment-zone').selectOption({ label: data.province });
 
-        await this.page.locator('#button-guest').click();
+        await Wait.click(this.page.locator('#button-guest'));
     }
 
     async confirmDeliveryMethod() 
     {
-        await this.page.locator('#button-shipping-method').click();
+        await Wait.click(this.page.locator('#button-shipping-method'));
     }
 
     async fillPaymentDetails(deliveryComment: string) 
@@ -39,12 +38,12 @@ export class CheckoutPage extends BasePage
         await paymentComment.fill(deliveryComment);
 
         await this.page.locator('input[name="agree"]').check();
-        await this.page.locator('#button-payment-method').click();
+        await Wait.click(this.page.locator('#button-payment-method'));
     }
 
     async confirmOrder() 
     {
-        await this.page.locator('#button-confirm').click();
+        await Wait.click(this.page.locator('#button-confirm'));
     }
 
     async completeGuestCheckout(data: IBillingDetails) 

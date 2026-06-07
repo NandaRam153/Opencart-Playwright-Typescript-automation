@@ -22,12 +22,12 @@ test.describe('Ribbon Category Navigation → Product Listing', () => {
     test('Cameras category page lists Nikon D300', async ({ ribbon, productListingPage }) => {
         await ribbon.openProductPage();
 
-        await productListingPage.CheckProductListed(products.NIKON_D300.name);
+        await productListingPage.checkProductListed(products.NIKON_D300.name);
     });
 
     test('Cameras category page lists Canon EOS 5D', async ({ ribbon, productListingPage }) => {
         await ribbon.openProductPage();
 
-        await productListingPage.CheckProductListed(products.CANON_EOS_5D.name);
+        await productListingPage.checkProductListed(products.CANON_EOS_5D.name);
     });
 });

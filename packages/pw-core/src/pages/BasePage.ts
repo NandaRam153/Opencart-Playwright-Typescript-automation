@@ -1,4 +1,6 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
+import { HardAssertions, SoftAssertions } from '../utils/assertions';
+import { Wait } from '../utils/wait';
 
 
 export abstract class BasePage 
@@ -17,16 +19,18 @@ export abstract class BasePage
 
     async click(locator: Locator) 
     {
-        await locator.click();
+        await Wait.click(locator);
     }
 
+    /** Hard assertion — use in flows. */
     async waitForVisible(locator: Locator) 
     {
-        await expect(locator).toBeVisible();
+        await HardAssertions.visible(locator);
     }
 
+    /** Soft assertion — use in audit/*Check methods. */
     async waitForSoftVisible(locator: Locator) 
     {
-        await expect.soft(locator).toBeVisible();
+        await SoftAssertions.visible(locator);
     }
 }

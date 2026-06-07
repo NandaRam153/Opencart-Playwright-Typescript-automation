@@ -25,7 +25,7 @@ test('Wishlist flow: search, add to wishlist, login, verify, delete, logout', as
     await homePage.navigateToURL();
     await header.searchForProduct(products.MACBOOK_PRO.name);
 
-    await productListingPage.CheckProductListed(products.MACBOOK_PRO.name);
+    await productListingPage.checkProductListed(products.MACBOOK_PRO.name);
     await productListingPage.addToWishListProductByName(products.MACBOOK_PRO.name);
 
     await header.gotoWishlist();
