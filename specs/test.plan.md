@@ -205,9 +205,78 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 
 ---
 
+### 8. Store Search Routes (API)
+
+**File:** `src/tests/api/StoreRoutes.spec.ts`
+
+**Describe:** Store search routes
+
+#### 8.1 Search route returns a known catalog product
+
+**Steps:**
+
+1. `GET` search URL for Nikon search term.
+2. Assert HTTP 200 and response body contains "Nikon D300".
+
+#### 8.2 Search route reports no results for unknown term
+
+**Steps:**
+
+1. `GET` search URL with nonsense term.
+2. Assert HTTP 200 and body contains "There is no product that matches the search criteria."
+
+---
+
+### 9. Cart Add (API)
+
+**File:** `src/tests/api/CartAdd.spec.ts`
+
+**Scenario:** Cart add rejects invalid product id
+
+**Steps:**
+
+1. `POST` cart add with `product_id=0`.
+2. Assert HTTP 200 and JSON response has no `success` field.
+
+---
+
+### 10. Cart API → UI (Hybrid)
+
+**File:** `src/tests/hybrid/CartApiToUi.spec.ts`
+
+**Scenario:** API add to cart populates the cart page UI
+
+**Steps:**
+
+1. Navigate to home page (establish session).
+2. Open cart page and verify it is empty.
+3. `POST` cart add for Nikon D300 via `page.request`.
+4. Assert JSON `success` is returned.
+5. Open cart page again and verify line item and checkout action.
+6. Verify header cart count is 1.
+
+---
+
+### 11. Login Negative (Hybrid)
+
+**File:** `src/tests/hybrid/LoginNegative.spec.ts`
+
+**Scenario:** Invalid login POST fails and UI shows error
+
+**Steps:**
+
+1. Navigate directly to the login route.
+2. Submit invalid credentials with a unique email and wait for login POST response.
+3. Assert response status 200 and login did not reach account dashboard.
+4. Assert Returning Customer form is still visible.
+5. Assert UI shows login failure (credential mismatch or demo rate-limit warning) and user remains on login page.
+
+---
+
 ## Notes
 
 - All tests use the Playwright test runner with the Page Object Model (POM) for maintainability.
 - Fixtures are defined in `src/fixtures/POMFixture.ts`.
 - Product test data is in `src/data/products.ts`; billing details in `src/data/billingDetails.ts`.
-- Add new functional tests under `src/tests/functional/`, integration tests under `src/tests/integration/`, and E2E tests under `src/tests/e2e/`.
+- OpenCart HTTP helpers are in `src/api/` (`openCartRoutes.ts`, `OpenCartApiClient.ts`).
+- Add new functional tests under `src/tests/functional/`, integration tests under `src/tests/integration/`, E2E tests under `src/tests/e2e/`, API tests under `src/tests/api/`, and hybrid tests under `src/tests/hybrid/`.

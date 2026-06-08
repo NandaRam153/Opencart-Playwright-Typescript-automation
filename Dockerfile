@@ -1,19 +1,17 @@
-FROM mcr.microsoft.com/playwright:v1.58.0-jammy
+FROM mcr.microsoft.com/playwright:v1.58.1-jammy
 
 WORKDIR /app
 
 # Copy root and workspace package.json files (better caching)
 COPY package*.json ./
 COPY packages/pw-core/package.json ./packages/pw-core/
-RUN npm ci
+RUN npm ci --ignore-scripts
 
-# Copy everything else
+# Copy source and build pw-core (postinstall skipped above — no src at npm ci time)
 COPY . .
-
-# Build the workspace package
 RUN npm run build --workspace=packages/pw-core
 
-# Run tests by default
+ENV CI=true
+
+# Full suite: UI, API, and hybrid tests (seed excluded via playwright.config.ts)
 CMD ["npx", "playwright", "test"]
-# To run tests in debug mode, you can override the CMD in your docker run command
-# CMD ["npx", "playwright", "test", "--debug"]

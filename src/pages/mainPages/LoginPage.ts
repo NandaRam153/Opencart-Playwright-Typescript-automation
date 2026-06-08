@@ -1,10 +1,14 @@
 import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
 
 export class LoginPage extends BasePage {
-    async login(user: string, password: string) {
+    async submitCredentials(user: string, password: string) {
         await this.page.getByPlaceholder('E-Mail Address').fill(user);
         await this.page.getByPlaceholder('Password').fill(password);
         await Wait.click(this.page.getByRole('button', { name: 'Login' }));
+    }
+
+    async login(user: string, password: string) {
+        await this.submitCredentials(user, password);
 
         const loginError = this.page.getByText('No match for E-Mail Address and/or Password.');
         const loginFailed = await loginError

@@ -55,6 +55,13 @@ export class Header extends BaseComponent {
         );
     }
 
+    async gotoCart() {
+        await Wait.click(this.page.locator('#cart-total'));
+        await HardAssertions.visible(
+            this.page.getByRole('heading', { name: 'Shopping Cart', level: 1 })
+        );
+    }
+
     async searchForProduct(product: string) {
         await this.searchForm.getByPlaceholder(SEARCH_PLACEHOLDER).fill(product);
         await Wait.click(this.searchForm.getByRole('button'));
