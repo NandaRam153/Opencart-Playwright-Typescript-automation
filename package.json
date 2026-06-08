@@ -16,7 +16,9 @@
         "test:headed": "playwright test --headed",
         "test:debug": "playwright test --debug",
         "report": "playwright show-report",
-        "test:docker": "docker build -t playwright-tests . && docker run --rm playwright-tests",
+        "test:docker": "docker build -t playwright-tests . && docker run --rm -e CI=true playwright-tests",
+        "test:docker:api": "docker build -t playwright-tests . && docker run --rm -e CI=true playwright-tests npx playwright test src/tests/api/",
+        "test:docker:hybrid": "docker build -t playwright-tests . && docker run --rm -e CI=true playwright-tests npx playwright test src/tests/hybrid/",
         "test:docker:debug": "docker run -it --rm --entrypoint sh playwright-tests",
         "test:docker:compose": "docker-compose up --build",
         "report:docker": "docker run --rm -v $(pwd)/playwright-report:/app/playwright-report playwright-tests npx playwright show-report"

@@ -7,7 +7,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 - Page Object Model (POM) with shared components (Header, Footer, Ribbon)
 - Custom Playwright fixtures for page/component injection
 - `@opencart-auto/pw-core` workspace package (base classes, `SoftAssertions`, `HardAssertions`, `Wait`)
-- Layered tests: functional, integration, and E2E
+- Layered tests: functional, integration, E2E, API, and API/UI hybrid
 - Environment-based configuration (`BASE_URL`, credentials via `.env`)
 - TypeScript strict mode, ESLint, and Prettier
 - HTML test reports, traces on failure, Docker support
@@ -17,18 +17,21 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 
 ```
 ├── src/
+│   ├── api/                      # OpenCart route constants and HTTP client
 │   ├── components/               # Shared UI components (Header, Footer, Ribbon)
 │   ├── data/                     # Test data (products, billing details)
 │   ├── fixtures/
 │   │   └── POMFixture.ts         # Playwright fixtures
 │   ├── pages/
-│   │   ├── mainPages/            # Home, Login, Checkout, WishList, etc.
+│   │   ├── mainPages/            # Home, Login, Cart, Checkout, WishList, etc.
 │   │   └── products/             # Product listing pages
 │   └── tests/
 │       ├── seed.spec.ts          # Generator scaffold (excluded from test runs)
 │       ├── functional/           # UI smoke / audit tests
 │       ├── integration/          # Cross-component flow tests
-│       └── e2e/                  # Full user journeys
+│       ├── e2e/                  # Full user journeys
+│       ├── api/                  # Pure HTTP route tests (Playwright request)
+│       └── hybrid/               # API setup + UI verification
 ├── packages/
 │   └── pw-core/                  # Shared library: BasePage, assertions, Wait
 ├── specs/
@@ -90,7 +93,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 | `npm run test:debug`  | Run in Playwright debug mode                            |
 | `npm run report`      | Open the HTML report                                    |
 
-The suite runs **15 tests** (`seed.spec.ts` is excluded via `testIgnore`).
+The suite runs **20 tests** (`seed.spec.ts` is excluded via `testIgnore`; wishlist E2E skips without valid credentials).
 
 #### Run a specific test file
 
@@ -112,10 +115,14 @@ npx playwright test src/tests/e2e/WishListFlow.spec.ts --debug
 
 ### Docker
 
+Runs the **full suite** (functional, integration, E2E, API, and hybrid tests) inside the Playwright container. Requires outbound network access to the OpenCart demo store (`BASE_URL`).
+
 ```sh
-npm run test:docker          # Build image and run tests
+npm run test:docker          # Build image and run all tests
+npm run test:docker:api      # API tests only (no browser UI)
+npm run test:docker:hybrid   # API/UI hybrid tests only
 npm run test:docker:debug    # Shell into the test container
-npm run test:docker:compose  # Run via Docker Compose
+npm run test:docker:compose  # Run via Docker Compose (mounts reports locally)
 ```
 
 Or directly:
@@ -124,7 +131,19 @@ Or directly:
 docker-compose up --build
 ```
 
-Test results and HTML reports are written to `playwright-report/` and `test-results/`.
+**Environment in Docker**
+
+- `CI=true` is set in the image and Compose file (enables retries and single worker, same as GitHub Actions).
+- `BASE_URL` defaults to `https://awesomeqa.com/ui/` when unset.
+- For the wishlist E2E in Docker, pass credentials at runtime:
+
+```sh
+docker run --rm -e CI=true --env-file .env playwright-tests
+```
+
+Compose loads `.env` from the project root when present (`env_file` with `required: false`).
+
+Test results and HTML reports are written to `playwright-report/` and `test-results/` (Compose mounts these to the host).
 
 ## Environment Variables
 
@@ -180,13 +199,29 @@ await header.searchForProduct(getSearchTerm(products.NIKON_D300));
 await ribbon.openProductPage(products.NIKON_D300.category!);
 ```
 
-Each `IProduct` may define `name`, `category`, and `searchTerm`. Use `getSearchTerm()` when the search query differs from the display name.
+Each `IProduct` may define `name`, `category`, `searchTerm`, and `productId` (OpenCart catalog id for cart API tests). Use `getSearchTerm()` when the search query differs from the display name.
+
+## API and Hybrid Tests
+
+OpenCart route helpers live in `src/api/`:
+
+- `openCartRoutes.ts` — route path constants (`search`, `cart`, `cartAdd`, `login`)
+- `OpenCartApiClient.ts` — thin wrapper around Playwright `APIRequestContext`
+
+| Type | Folder | Fixture | When to use |
+| ---- | ------ | ------- | ----------- |
+| API | `src/tests/api/` | `@playwright/test` `{ request }` | Fast HTTP smoke and negative route checks |
+| Hybrid | `src/tests/hybrid/` | `POMFixture` + `page.request` | Shared session: API mutation, UI verification |
+
+Use `page.request` (not standalone `request`) in hybrid tests so cart/session cookies stay in sync with the browser.
 
 ## Writing Tests
 
 - Functional tests → `src/tests/functional/`
 - Integration tests → `src/tests/integration/`
 - E2E tests → `src/tests/e2e/`
+- API tests → `src/tests/api/`
+- Hybrid tests → `src/tests/hybrid/`
 - Page objects → `src/pages/` and `src/components/`
 - Fixtures → `src/fixtures/POMFixture.ts`
 - Test data → `src/data/`

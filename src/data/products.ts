@@ -5,6 +5,7 @@ export const products: Record<string, IProduct> = {
         name: 'Nikon D300',
         category: 'Cameras',
         searchTerm: 'Nikon',
+        productId: 31,
     },
     CANON_EOS_5D: {
         name: 'Canon EOS 5D',

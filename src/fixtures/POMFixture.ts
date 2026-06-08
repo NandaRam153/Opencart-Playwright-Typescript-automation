@@ -9,6 +9,7 @@ import { OrderPlacementResultPage } from '../pages/mainPages/OrderPlacementResul
 import { LoginPage } from '../pages/mainPages/LoginPage';
 import { WishListPage } from '../pages/mainPages/WishListPage';
 import { LogoutPage } from '../pages/mainPages/LogoutPage';
+import { CartPage } from '../pages/mainPages/CartPage';
 
 export const test = base.extend<{
     homePage: HomePage;
@@ -21,6 +22,7 @@ export const test = base.extend<{
     loginPage: LoginPage;
     wishListPage: WishListPage;
     logoutPage: LogoutPage;
+    cartPage: CartPage;
 }>({
     homePage: async ({ page }, use) => {
         await use(new HomePage(page));
@@ -60,5 +62,9 @@ export const test = base.extend<{
 
     logoutPage: async ({ page }, use) => {
         await use(new LogoutPage(page));
+    },
+
+    cartPage: async ({ page }, use) => {
+        await use(new CartPage(page));
     },
 });
