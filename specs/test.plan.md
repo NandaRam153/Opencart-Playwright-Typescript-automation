@@ -170,6 +170,27 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 
 ---
 
+### Showcase — Tablets category (Integration)
+
+**File:** `src/tests/integration/TabletsCategory.spec.ts`  
+**Seed:** `src/tests/seed.spec.ts`  
+**Docs:** [docs/test-generation-from-seed.md](../docs/test-generation-from-seed.md)
+
+Example of generating from the seed file with the Playwright test generator, then refactoring to `POMFixture` and feature page objects.
+
+**Describe:** Ribbon Category Navigation → Tablets
+
+#### Showcase.1 Clicking Tablets loads the Tablets category page
+
+**Steps:**
+
+1. Navigate to the home page.
+2. Click "Tablets" in the ribbon.
+3. Verify the Tablets category heading is shown.
+4. Verify at least one product is listed.
+
+---
+
 ### 7. Search → Product Listing (Integration)
 
 **File:** `src/tests/integration/SearchToProductListing.spec.ts`

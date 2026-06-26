@@ -19,6 +19,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 | Document | Description |
 | -------- | ----------- |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, Mermaid diagrams, feature map, import rules |
+| [docs/test-generation-from-seed.md](docs/test-generation-from-seed.md) | Seed file and generator showcase workflow |
 | [docs/adr/README.md](docs/adr/README.md) | ADR index and architectural decisions |
 | [specs/test.plan.md](specs/test.plan.md) | Test scenarios and step definitions |
 
@@ -118,7 +119,7 @@ Features stay independent — tests compose flows through fixtures and feature b
 | `npm run test:debug`  | Run in Playwright debug mode                            |
 | `npm run report`      | Open the HTML report                                    |
 
-The suite runs **20 tests** (`seed.spec.ts` is excluded via `testIgnore`; wishlist E2E skips without valid credentials).
+The suite runs **21 tests** (`seed.spec.ts` is excluded via `testIgnore`; wishlist E2E skips without valid credentials).
 
 #### Run a specific test file
 
