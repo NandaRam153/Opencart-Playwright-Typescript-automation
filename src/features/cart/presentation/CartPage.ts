@@ -1,14 +1,14 @@
 import { expect } from '@playwright/test';
 import { BasePage, HardAssertions } from '@opencart-auto/pw-core';
-import { OpenCartRoutes } from '../../api/openCartRoutes';
+import { CartPaths } from '../state/paths';
 
 export class CartPage extends BasePage {
     private get content() {
         return this.page.locator('#content');
     }
 
-    async navigate() {
-        await this.goto(OpenCartRoutes.cart);
+    async navigateToCart() {
+        await this.goto(CartPaths.list);
         await HardAssertions.visible(this.page.getByRole('heading', { name: 'Shopping Cart', level: 1 }));
     }
 

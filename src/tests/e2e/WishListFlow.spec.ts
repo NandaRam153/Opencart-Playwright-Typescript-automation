@@ -1,5 +1,6 @@
 import { test } from '../../fixtures/POMFixture';
-import { getSearchTerm, products } from '../../data/products';
+import { getSearchTerm, products } from '../../features/catalog';
+import { resolveWishlistCredentialsForTest } from '../../features/auth';
 
 test('Wishlist flow: search, add to wishlist, login, verify, delete, logout', async ({
     homePage,
@@ -9,14 +10,7 @@ test('Wishlist flow: search, add to wishlist, login, verify, delete, logout', as
     wishListPage,
     logoutPage,
 }) => {
-    const email = process.env.TEST_USER_EMAIL;
-    const password = process.env.TEST_USER_PASSWORD;
-    const hasPlaceholderCredentials =
-        !email || !password || email === 'your-email@example.com' || password === 'your-password';
-    test.skip(
-        hasPlaceholderCredentials,
-        'Set valid TEST_USER_EMAIL and TEST_USER_PASSWORD in .env (see .env.example)'
-    );
+    const { email, password } = resolveWishlistCredentialsForTest();
 
     await homePage.navigateToURL();
     await header.searchForProduct(getSearchTerm(products.MACBOOK_PRO));
@@ -25,7 +19,8 @@ test('Wishlist flow: search, add to wishlist, login, verify, delete, logout', as
     await productListingPage.addToWishListProductByName(products.MACBOOK_PRO.name);
 
     await header.gotoWishlist();
-    await loginPage.login(email!, password!);
+    await loginPage.login(email, password);
+    await wishListPage.assertLoaded();
 
     await wishListPage.checkForProductByName(products.MACBOOK_PRO.name);
     await wishListPage.removeProductByName(products.MACBOOK_PRO.name);

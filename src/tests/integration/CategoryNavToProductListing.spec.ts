@@ -1,5 +1,5 @@
 import { test } from '../../fixtures/POMFixture';
-import { products } from '../../data/products';
+import { products } from '../../features/catalog';
 
 test.describe('Ribbon Category Navigation → Product Listing', () => {
     test.beforeEach(async ({ homePage }) => {

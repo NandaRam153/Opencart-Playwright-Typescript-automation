@@ -1,0 +1,67 @@
+---
+description: Code review protocol for the OpenCart Playwright test automation repository.
+alwaysApply: false
+---
+
+# Code review protocol
+
+Apply when reviewing PRs, refactors, or significant feature work. Adapt AI-Investor full-stack checks to **test automation** context below.
+
+## 1. Architecture
+
+- Feature module boundaries respected (`src/features/<name>/`)
+- Presentation does not import services or other features' state
+- HTTP logic in feature `services/`, not page objects
+- Routes/types in `src/shared/` only
+- No revival of deleted flat `src/pages/`, `src/api/`, `src/data/`
+
+## 2. Code quality
+
+- Clear naming (`*Check` soft audit, `assert*` hard, action verbs for flows)
+- Role/label-based locators preferred
+- No unjustified duplication across features
+- No over-abstraction (match existing POM style)
+
+## 3. Tests
+
+- New logic has matching Playwright coverage
+- API tests use `CatalogService` / `CartService`, not monolithic clients
+- Negative paths assert meaningful payloads (not only `success === undefined`)
+- Credential-dependent tests: local skip vs CI fail-fast documented
+
+## 4. Design
+
+- Abstractions justified (feature services, fixtures, pw-core)
+- Tests orchestrate; page objects do not encode multi-flow business rules
+- `LoginPage.login()` stays generic; flow-specific landing checks on destination pages
+
+## 5. Type safety
+
+- Strict TypeScript
+- `requireProductId()` for API cart calls
+- Shared types in `shared/services/http/types.ts` or pw-core models
+
+## 6. Performance
+
+- Avoid `waitForTimeout`; use `Wait` or Playwright auto-waiting
+- Avoid unnecessary `networkidle` unless justified
+
+## 7. Security
+
+- No committed credentials
+- `.env` gitignored; placeholders in `.env.example` only
+
+## 8. AI-generated code
+
+- Validated by typecheck, lint, and tests
+- No hallucinated Playwright APIs
+
+## 9. Technical debt
+
+Classify findings: **HIGH** | **MEDIUM** | **LOW**
+
+## 10. Verdict
+
+One of: **APPROVE** | **APPROVE_WITH_NOTES** | **REQUEST_CHANGES** | **REJECT**
+
+Do not approve broken layer boundaries or missing tests for new behavior.

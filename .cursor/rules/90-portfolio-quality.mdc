@@ -1,0 +1,46 @@
+---
+description: Portfolio and interview signal for this QA automation reference project.
+alwaysApply: false
+---
+
+# Portfolio quality
+
+This repo is a **Staff-level SDET portfolio artifact**. Technical correctness and interview narrative both matter.
+
+## Strong signals in this codebase
+
+- Feature-module test architecture with ADRs
+- Layered test strategy (functional → integration → E2E → API → hybrid)
+- Shared `pw-core` library and custom fixtures
+- CI with typecheck, lint, credential gate, Playwright
+- Docker support and documented test plan
+
+## When adding work, ask
+
+> Does this strengthen the story: "I design scalable test automation systems"?
+
+Prefer:
+
+- Clean boundaries and documented decisions
+- Realistic OpenCart flows over trivial assertions
+- Hybrid API/UI patterns where they demonstrate skill
+
+Avoid:
+
+- Flat spaghetti POM without feature ownership
+- Tests that only duplicate existing coverage
+- Complexity that cannot be explained in 60 seconds
+
+## Interview mapping (examples)
+
+| Artifact | Narrative |
+| -------- | --------- |
+| `src/features/` layers | Separation of concerns in test frameworks |
+| `CatalogService` / `CartService` | API testability without UI coupling |
+| `POMFixture` | Dependency injection for page objects |
+| ADR-002 credentials | CI signal vs local ergonomics |
+| `.github/agents/` | AI-assisted test engineering with guardrails |
+
+## Documentation tie-in
+
+Meaningful changes should update README, architecture docs, or ADRs so the portfolio stays self-explanatory.

@@ -1,0 +1,49 @@
+---
+description: Project identity, scope, and documentation hierarchy for the OpenCart Playwright automation suite.
+alwaysApply: true
+---
+
+# OpenCart Playwright TypeScript Automation
+
+This repository is a **Playwright/TypeScript test automation framework** for the [OpenCart demo store](https://awesomeqa.com/ui/). It is **not** a full-stack application under test — it is the automation system itself.
+
+## Purpose
+
+Demonstrate Staff-level QA engineering through:
+
+- Feature-module architecture (presentation / state / services)
+- Layered Playwright tests (functional, integration, E2E, API, hybrid)
+- Reusable `@opencart-auto/pw-core` workspace package
+- CI/CD, Docker, and AI-assisted test workflows (`.github/agents/`)
+
+## Documentation hierarchy (source of truth)
+
+1. [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) — structure, diagrams, import rules
+2. [docs/adr/](../docs/adr/) — architectural decisions
+3. [README.md](../README.md) — setup and commands
+4. [specs/test.plan.md](../specs/test.plan.md) — test scenarios
+
+## Repository layout (summary)
+
+```
+src/features/<name>/   presentation · state · services (per domain)
+src/shared/            routes and HTTP types only
+src/fixtures/          Playwright fixture wiring
+src/tests/             functional | integration | e2e | api | hybrid
+packages/pw-core/      BasePage, assertions, Wait, shared interfaces
+```
+
+**Do not reintroduce** flat `src/pages/`, `src/components/`, `src/data/`, or `src/api/`.
+
+## Core principles
+
+- **Correctness over speed** — changes need tests and verification where behavior changes
+- **Architecture over convenience** — respect feature boundaries and layer rules
+- **Clarity over complexity** — prefer simple POM and services over clever abstractions
+- **Observability over assumption** — verify against the running store when UI/API behavior changes (see `ironbee-devtools-use.mdc`)
+
+## Out of scope
+
+- Building or modifying the OpenCart application itself
+- Production trading, financial, or compliance systems
+- Sprint/roadmap processes from other templates (this repo uses ADRs + test plan, not product sprints)

@@ -27,6 +27,14 @@ jobs:
               run: npm run lint
             - name: Install Playwright Browsers
               run: npx playwright install --with-deps
+            - name: Verify wishlist E2E credentials
+              run: |
+                  if [ -z "$TEST_USER_EMAIL" ] || [ -z "$TEST_USER_PASSWORD" ] || \
+                     [ "$TEST_USER_EMAIL" = "your-email@example.com" ] || \
+                     [ "$TEST_USER_PASSWORD" = "your-password" ]; then
+                    echo "::error::Wishlist E2E requires TEST_USER_EMAIL and TEST_USER_PASSWORD repository secrets."
+                    exit 1
+                  fi
             - name: Run Playwright tests
               run: npx playwright test
             - uses: actions/upload-artifact@v4

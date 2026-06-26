@@ -1,4 +1,6 @@
-import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
+import { BasePage, Wait } from '@opencart-auto/pw-core';
+
+const LOGIN_ERROR_TEXT = 'No match for E-Mail Address and/or Password.';
 
 export class LoginPage extends BasePage {
     async submitCredentials(user: string, password: string) {
@@ -7,20 +9,22 @@ export class LoginPage extends BasePage {
         await Wait.click(this.page.getByRole('button', { name: 'Login' }));
     }
 
+    /** Submit credentials and fail fast when the store rejects them. */
     async login(user: string, password: string) {
         await this.submitCredentials(user, password);
 
-        const loginError = this.page.getByText('No match for E-Mail Address and/or Password.');
-        const loginFailed = await loginError
-            .waitFor({ state: 'visible', timeout: 3000 })
-            .then(() => true)
-            .catch(() => false);
-        if (loginFailed) {
+        if (await this.wasLoginRejected()) {
             throw new Error(
                 'Login failed: invalid credentials. Update TEST_USER_EMAIL and TEST_USER_PASSWORD in .env'
             );
         }
+    }
 
-        await HardAssertions.visible(this.page.getByRole('heading', { name: 'My Wish List' }));
+    private async wasLoginRejected(): Promise<boolean> {
+        const loginError = this.page.getByText(LOGIN_ERROR_TEXT);
+        return loginError
+            .waitFor({ state: 'visible', timeout: 3000 })
+            .then(() => true)
+            .catch(() => false);
     }
 }

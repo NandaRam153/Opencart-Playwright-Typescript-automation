@@ -1,0 +1,56 @@
+---
+description: Feature-module architecture and layer boundaries for the test automation codebase.
+alwaysApply: true
+---
+
+# Architecture governance
+
+> Full diagrams and feature map: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)
+
+## Style
+
+**Feature modules** under `src/features/<name>/`, each with up to three layers:
+
+| Layer | Responsibility | May import |
+| ----- | -------------- | ---------- |
+| **presentation** | Page objects, locators, UI actions | Same-feature `state`, `@opencart-auto/pw-core` |
+| **state** | Test data, path constants, env config | `src/shared` routes/types |
+| **services** | HTTP calls, API assertion helpers | `src/shared`, same-feature `state` |
+
+Public API per feature: `src/features/<name>/index.ts` only.
+
+## Features
+
+| Module | Domains |
+| ------ | ------- |
+| `home` | HomePage, Header, Footer |
+| `catalog` | products, search API, ProductListingPage, Ribbon |
+| `cart` | cart API, CartPage |
+| `auth` | credentials, LoginPage, LogoutPage |
+| `checkout` | billing data, checkout flow pages |
+| `wishlist` | WishListPage |
+
+## Shared and core
+
+- **`src/shared/`** — `openCartRoutes`, HTTP types (no UI, no test data)
+- **`packages/pw-core/`** — BasePage, BaseComponent, Wait, Soft/Hard assertions, `IProduct`, `IBillingDetails`
+
+## Forbidden patterns
+
+- Presentation importing `services` or another feature's internals
+- Presentation importing test data from another feature's `state`
+- HTTP/route logic inside page objects (use feature `services` or `state` paths)
+- Static Playwright `expect` helpers inside service transport code (use `*Assertions.ts` in services layer)
+- Cross-feature imports except via feature `index.ts` from tests/fixtures
+
+## Tests
+
+| Layer | Location | Fixture |
+| ----- | -------- | ------- |
+| functional / integration / e2e / hybrid | `src/tests/...` | `POMFixture` |
+| api | `src/tests/api/` | `@playwright/test` `{ request }` |
+| hybrid (session) | `src/tests/hybrid/` | `POMFixture` + `page.request` |
+
+## Architectural decisions
+
+Non-trivial decisions require an ADR in [docs/adr/](../docs/adr/).

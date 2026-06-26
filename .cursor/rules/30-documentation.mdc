@@ -1,0 +1,45 @@
+---
+description: When and how to update project documentation for this test automation repository.
+alwaysApply: false
+---
+
+# Documentation governance
+
+> If it is not documented, it does not exist.
+
+## Impact classification
+
+| Impact | When | Required updates |
+| ------ | ---- | ---------------- |
+| **NONE** | Comment-only, internal refactor with no behavior change | None |
+| **LOW** | New test, locator tweak, minor helper | `specs/test.plan.md` if scenario changes |
+| **MEDIUM** | New feature module, new test layer, CI change | README + architecture or test plan |
+| **HIGH** | Layer rule change, credential policy, major restructure | ADR + `docs/ARCHITECTURE.md` + README |
+
+When unclear, default to **MEDIUM**.
+
+## Document map (this project only)
+
+| Document | Update when |
+| -------- | ----------- |
+| [README.md](../README.md) | Commands, env vars, user-facing behavior, structure |
+| [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) | Features, layers, diagrams, import rules |
+| [docs/adr/*.md](../docs/adr/) | Non-trivial design decisions |
+| [specs/test.plan.md](../specs/test.plan.md) | New/changed test scenarios |
+| [specs/README.md](../specs/README.md) | Specs folder purpose changes |
+| [.env.example](../.env.example) | New or changed environment variables |
+
+**Do not reference** AI-Investor paths (`docs/architecture/AI-INVESTOR-*`, `docs/roadmap/`, etc.) — they do not exist in this repo.
+
+## ADR required when
+
+- New feature module or layer boundary change
+- CI/credential policy change
+- HTTP client or test strategy pattern change
+- Breaking change to `pw-core` public API
+
+## Quality bar
+
+- Terminology matches [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)
+- README reflects actual commands and paths
+- Mermaid diagrams updated when structure changes

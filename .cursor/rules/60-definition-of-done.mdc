@@ -1,0 +1,40 @@
+---
+description: Completion criteria for changes in the OpenCart Playwright automation repository.
+alwaysApply: false
+---
+
+# Definition of Done
+
+A change is complete when all **applicable** items below are satisfied.
+
+## Code and architecture
+
+- [ ] Respects feature-module layers (`10-architecture.mdc`)
+- [ ] Imports use feature `index.ts` barrels from tests (not internal layer paths)
+- [ ] TypeScript strict mode — no unjustified `any`
+- [ ] `npm run typecheck` passes
+- [ ] `npm run lint` passes
+- [ ] `npm run build` passes (`pw-core` compiles)
+
+## Tests
+
+- [ ] New behavior covered by appropriate layer (api / integration / e2e / hybrid / functional)
+- [ ] `specs/test.plan.md` updated if scenarios changed
+- [ ] Existing tests updated when locators or flows change
+- [ ] Hybrid tests use `page.request` when session cookies matter
+
+## Documentation
+
+- [ ] README updated if user-facing behavior changed
+- [ ] ADR added for architectural decisions (see `30-documentation.mdc`)
+- [ ] `docs/ARCHITECTURE.md` updated if structure or diagrams changed
+
+## Verification
+
+- [ ] UI/API behavior verified against the demo store when observable (IronBee or Playwright)
+- [ ] No secrets committed; credentials only via `.env` / CI secrets
+
+## CI alignment
+
+- [ ] Changes compatible with `.github/workflows/playwright.yml`
+- [ ] Wishlist E2E: CI requires valid `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` (see ADR-002)

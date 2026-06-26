@@ -62,6 +62,12 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 
 **Scenario:** Wishlist flow: search, add to wishlist, login, verify, delete, logout
 
+**Preconditions:**
+
+- Valid `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` in `.env` (local) or GitHub Actions secrets (CI).
+- Locally: test **skips** if credentials are missing or still `.env.example` placeholders.
+- CI: workflow **fails** before Playwright if credentials are missing (see `docs/adr/002-ci-wishlist-credentials.md`).
+
 **Steps:**
 
 1. Navigate to the home page.
@@ -69,11 +75,12 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 3. Verify that "MacBook Pro" is listed in the search results.
 4. Add "MacBook Pro" to the wish list from the product listing page.
 5. Navigate to the wish list page via the header.
-6. Login using registered user credentials.
-7. Verify that "MacBook Pro" is present in the wish list.
-8. Remove "MacBook Pro" from the wish list.
-9. Logout via the header.
-10. Verify logout is complete.
+6. Login using registered user credentials (`LoginPage.login` — credential rejection only).
+7. Assert wishlist page loaded (`WishListPage.assertLoaded`).
+8. Verify that "MacBook Pro" is present in the wish list.
+9. Remove "MacBook Pro" from the wish list.
+10. Logout via the header.
+11. Verify logout is complete.
 
 ---
 
@@ -275,8 +282,9 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 
 ## Notes
 
-- All tests use the Playwright test runner with the Page Object Model (POM) for maintainability.
+- Architecture overview: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md). ADRs: [docs/adr/](../docs/adr/).
+- All tests use the Playwright test runner with feature-module Page Objects for maintainability.
 - Fixtures are defined in `src/fixtures/POMFixture.ts`.
-- Product test data is in `src/data/products.ts`; billing details in `src/data/billingDetails.ts`.
-- OpenCart HTTP helpers are in `src/api/` (`openCartRoutes.ts`, `OpenCartApiClient.ts`).
+- Product test data is in `src/features/catalog/state/products.ts`; billing details in `src/features/checkout/state/billingDetails.ts`.
+- HTTP route constants are in `src/shared/services/routes/`; feature services in `src/features/*/services/`.
 - Add new functional tests under `src/tests/functional/`, integration tests under `src/tests/integration/`, E2E tests under `src/tests/e2e/`, API tests under `src/tests/api/`, and hybrid tests under `src/tests/hybrid/`.

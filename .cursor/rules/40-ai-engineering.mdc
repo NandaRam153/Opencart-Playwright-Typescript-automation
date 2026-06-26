@@ -1,0 +1,41 @@
+---
+description: How AI assistants may be used in this test automation repository.
+alwaysApply: false
+---
+
+# AI engineering (test automation)
+
+> AI accelerates work; tests and architecture rules enforce correctness.
+
+## Allowed
+
+- Page object and test spec generation
+- Refactoring within feature module boundaries
+- Documentation and ADR drafts
+- `.github/agents/` workflows (planner, generator, healer)
+- Debugging flaky tests and locator improvements
+
+## Required validation
+
+All AI-generated code is **UNVERIFIED** until:
+
+- `npm run typecheck` and `npm run lint` pass
+- Relevant Playwright tests pass
+- Architecture rules in `10-architecture.mdc` are satisfied
+- Code review protocol applied for significant changes (`80-code-review.mdc`)
+
+## Forbidden
+
+- Bypassing CI quality gates or weakening assertions to make tests pass
+- Introducing `src/pages/`, `src/api/`, or flat layouts superseded by `src/features/`
+- Committing secrets or real credentials
+- Unreviewed changes to credential/CI policy without ADR
+
+## Agents in this repo
+
+- `.github/agents/playwright-test-planner.agent.md`
+- `.github/agents/playwright-test-generator.agent.md`
+- `.github/agents/playwright-test-healer.agent.md`
+- `src/tests/seed.spec.ts` — generator scaffold (`testIgnore` in config)
+
+Generated tests belong under `src/tests/<layer>/` and must use `POMFixture` or feature services per existing patterns.

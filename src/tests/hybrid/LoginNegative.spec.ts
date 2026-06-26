@@ -1,12 +1,12 @@
 import { expect } from '@playwright/test';
 import { test } from '../../fixtures/POMFixture';
-import { OpenCartRoutes } from '../../api/openCartRoutes';
+import { AuthPaths } from '../../features/auth';
 
 const LOGIN_ERROR =
     /No match for E-Mail Address and\/or Password\.|exceeded allowed number of login attempts/;
 
 test('invalid login POST fails and UI shows error', async ({ page, loginPage }) => {
-    await page.goto(OpenCartRoutes.login);
+    await page.goto(AuthPaths.login);
 
     const loginResponsePromise = page.waitForResponse(
         (response) =>

@@ -1,5 +1,5 @@
 import { test } from '../../fixtures/POMFixture';
-import { getSearchTerm, products } from '../../data/products';
+import { getSearchTerm, products } from '../../features/catalog';
 
 test.describe('Add to Cart → Header Cart State', () => {
     test.beforeEach(async ({ homePage }) => {
