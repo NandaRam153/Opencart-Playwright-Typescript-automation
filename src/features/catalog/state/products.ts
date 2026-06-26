@@ -36,7 +36,9 @@ export function getSearchTerm(product: IProduct): string {
 export function requireProductId(product: IProduct, catalogKey?: string): number {
     if (product.productId === undefined) {
         const label = catalogKey ?? product.name;
-        throw new Error(`Product "${label}" is missing productId in src/data/products.ts`);
+        throw new Error(
+            `Product "${label}" is missing productId in src/features/catalog/state/products.ts`
+        );
     }
     return product.productId;
 }

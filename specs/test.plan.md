@@ -277,6 +277,6 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 
 - All tests use the Playwright test runner with the Page Object Model (POM) for maintainability.
 - Fixtures are defined in `src/fixtures/POMFixture.ts`.
-- Product test data is in `src/data/products.ts`; billing details in `src/data/billingDetails.ts`.
-- OpenCart HTTP helpers are in `src/api/` (`openCartRoutes.ts`, `OpenCartApiClient.ts`).
+- Product test data is in `src/features/catalog/state/products.ts`; billing details in `src/features/checkout/state/billingDetails.ts`.
+- HTTP route constants are in `src/shared/services/routes/`; feature services in `src/features/*/services/`.
 - Add new functional tests under `src/tests/functional/`, integration tests under `src/tests/integration/`, E2E tests under `src/tests/e2e/`, API tests under `src/tests/api/`, and hybrid tests under `src/tests/hybrid/`.

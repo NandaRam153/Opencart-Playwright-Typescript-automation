@@ -1,15 +1,10 @@
 import { test as base } from '@playwright/test';
-import { HomePage } from '../pages/mainPages/HomePage';
-import { Header } from '../components/Header';
-import { Footer } from '../components/Footer';
-import { Ribbon } from '../components/Ribbon';
-import { ProductListingPage } from '../pages/products/ProductListingPage';
-import { CheckoutPage } from '../pages/mainPages/CheckoutPage';
-import { OrderPlacementResultPage } from '../pages/mainPages/OrderPlacementResultPage';
-import { LoginPage } from '../pages/mainPages/LoginPage';
-import { WishListPage } from '../pages/mainPages/WishListPage';
-import { LogoutPage } from '../pages/mainPages/LogoutPage';
-import { CartPage } from '../pages/mainPages/CartPage';
+import { HomePage, Header, Footer } from '../features/home';
+import { Ribbon, ProductListingPage } from '../features/catalog';
+import { CheckoutPage, OrderPlacementResultPage } from '../features/checkout';
+import { LoginPage, LogoutPage } from '../features/auth';
+import { WishListPage } from '../features/wishlist';
+import { CartPage } from '../features/cart';
 
 export const test = base.extend<{
     homePage: HomePage;

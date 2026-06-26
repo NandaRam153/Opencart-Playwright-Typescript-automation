@@ -1,5 +1,4 @@
 import { HardAssertions, SoftAssertions, BaseComponent } from '@opencart-auto/pw-core';
-import { products } from '../data/products';
 
 export class Ribbon extends BaseComponent {
     async ribbonCheck() {
@@ -26,7 +25,7 @@ export class Ribbon extends BaseComponent {
         );
     }
 
-    async openProductPage(category = products.NIKON_D300.category!) {
+    async openProductPage(category: string) {
         await this.click(this.page.getByRole('link', { name: category }));
         await HardAssertions.visible(this.page.getByRole('heading', { name: category, level: 2 }));
     }

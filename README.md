@@ -17,14 +17,16 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 
 ```
 ├── src/
-│   ├── api/                      # OpenCart route constants and HTTP client
-│   ├── components/               # Shared UI components (Header, Footer, Ribbon)
-│   ├── data/                     # Test data (products, billing details)
+│   ├── features/                 # Independent feature modules
+│   │   ├── catalog/              # state · services · presentation
+│   │   ├── cart/
+│   │   ├── auth/
+│   │   ├── checkout/
+│   │   ├── home/
+│   │   └── wishlist/
+│   ├── shared/                   # Cross-cutting routes and HTTP types
 │   ├── fixtures/
 │   │   └── POMFixture.ts         # Playwright fixtures
-│   ├── pages/
-│   │   ├── mainPages/            # Home, Login, Cart, Checkout, WishList, etc.
-│   │   └── products/             # Product listing pages
 │   └── tests/
 │       ├── seed.spec.ts          # Generator scaffold (excluded from test runs)
 │       ├── functional/           # UI smoke / audit tests
@@ -44,6 +46,17 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 ├── Dockerfile
 └── docker-compose.yml
 ```
+
+### Layer rules (per feature module)
+
+| Layer | Responsibility | May import from |
+| ----- | -------------- | --------------- |
+| **presentation** | Page objects, locators, UI actions | Same feature `state` only |
+| **state** | Test data, path constants, env credentials | `shared` routes/types |
+| **services** | HTTP calls, API assertions | `shared`, same feature `state` |
+| **tests** | Orchestration | Feature public APIs via `index.ts` |
+
+Features stay independent — tests compose flows through fixtures and feature barrel exports, not cross-feature internal imports.
 
 ## Prerequisites
 
@@ -190,10 +203,10 @@ Use `Wait` from `@opencart-auto/pw-core` for safe clicks and load-state synchron
 
 ## Test Data
 
-Product catalog and search terms live in `src/data/products.ts`:
+Product catalog and search terms live in `src/features/catalog/state/products.ts`:
 
 ```typescript
-import { getSearchTerm, products } from '../../data/products';
+import { getSearchTerm, products } from '../../features/catalog';
 
 await header.searchForProduct(getSearchTerm(products.NIKON_D300));
 await ribbon.openProductPage(products.NIKON_D300.category!);
@@ -203,10 +216,12 @@ Each `IProduct` may define `name`, `category`, `searchTerm`, and `productId` (Op
 
 ## API and Hybrid Tests
 
-OpenCart route helpers live in `src/api/`:
+Route constants live in `src/shared/services/routes/`. Feature services wrap HTTP calls:
 
-- `openCartRoutes.ts` — route path constants (`search`, `cart`, `cartAdd`, `login`)
-- `OpenCartApiClient.ts` — thin wrapper around Playwright `APIRequestContext`
+| Feature | Service | Assertions |
+| ------- | ------- | ---------- |
+| Catalog | `CatalogService` (`searchHtml`) | `assertProductInHtml`, `assertNoSearchResults` |
+| Cart | `CartService` (`addProduct`) | `assertCartAddRejected` |
 
 | Type | Folder | Fixture | When to use |
 | ---- | ------ | ------- | ----------- |
@@ -222,9 +237,9 @@ Use `page.request` (not standalone `request`) in hybrid tests so cart/session co
 - E2E tests → `src/tests/e2e/`
 - API tests → `src/tests/api/`
 - Hybrid tests → `src/tests/hybrid/`
-- Page objects → `src/pages/` and `src/components/`
+- Page objects → `src/features/<feature>/presentation/`
 - Fixtures → `src/fixtures/POMFixture.ts`
-- Test data → `src/data/`
+- Test data → `src/features/<feature>/state/`
 - Scenario reference → [specs/test.plan.md](specs/test.plan.md)
 
 ### Example

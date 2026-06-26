@@ -1,6 +1,6 @@
 import { test } from '../../fixtures/POMFixture';
-import { getSearchTerm, products } from '../../data/products';
-import { resolveWishlistCredentialsForTest } from '../../testHelpers/wishlistCredentials';
+import { getSearchTerm, products } from '../../features/catalog';
+import { resolveWishlistCredentialsForTest } from '../../features/auth';
 
 test('Wishlist flow: search, add to wishlist, login, verify, delete, logout', async ({
     homePage,

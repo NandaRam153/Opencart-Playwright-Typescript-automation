@@ -1,6 +1,6 @@
-import { billingData } from '../../data/billingDetails';
+import { billingData } from '../../features/checkout';
 import { test } from '../../fixtures/POMFixture';
-import { products } from '../../data/products';
+import { products } from '../../features/catalog';
 
 test('Order creation test', async ({
     homePage,

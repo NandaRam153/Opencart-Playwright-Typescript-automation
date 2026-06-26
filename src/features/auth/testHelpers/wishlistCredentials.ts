@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 import {
     assertWishlistCredentialsInCi,
     getWishlistCredentials,
-} from '../data/testCredentials';
+} from '../state/credentials';
 
 /** Skip locally when credentials are missing; CI failure is handled before tests run. */
 export function resolveWishlistCredentialsForTest(): { email: string; password: string } {

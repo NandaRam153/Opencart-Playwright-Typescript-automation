@@ -14,14 +14,14 @@ export default tseslint.config(
         },
     },
     {
-        files: ['packages/pw-core/src/**/*.ts', 'src/pages/**/*.ts', 'src/components/**/*.ts'],
+        files: ['packages/pw-core/src/**/*.ts', 'src/features/**/presentation/**/*.ts'],
         rules: {
             'playwright/no-standalone-expect': 'off',
             'playwright/no-networkidle': 'off',
         },
     },
     {
-        files: ['src/tests/**/*.ts', 'src/testHelpers/**/*.ts'],
+        files: ['src/tests/**/*.ts', 'src/features/**/testHelpers/**/*.ts'],
         rules: {
             'playwright/expect-expect': 'off',
             'playwright/no-skipped-test': 'off',

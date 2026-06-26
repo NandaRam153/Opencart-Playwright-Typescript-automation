@@ -1,6 +1,6 @@
 import { test } from '../../fixtures/POMFixture';
 import { expect } from '@playwright/test';
-import { getSearchTerm, products } from '../../data/products';
+import { getSearchTerm, products } from '../../features/catalog';
 
 test.describe('Search → Product Listing', () => {
     test.beforeEach(async ({ homePage }) => {
