@@ -1,0 +1,386 @@
+---
+# Sprint Closeout Protocol — AI-Investor
+
+description: This rule defines the mandatory process to execute when a sprint is marked as COMPLETE.
+A sprint is NOT considered fully closed until this protocol has been executed and validated.
+
+alwaysApply: false
+---
+
+# Trigger Condition
+
+This protocol must be applied when the user states:
+
+- "Sprint X is complete"
+- "Close Sprint X"
+- "Finish Sprint X"
+- "Sprint X done"
+
+---
+
+# Blocking conditions (do NOT closeout)
+
+**Stop and report gaps** if any of the following are true:
+
+- Sprint-specific Definition of Done is not fully satisfied (`.cursor/rules/60-definition-of-done.mdc`)
+- Current sprint exit criteria in `docs/roadmap/AI-INVESTOR-ROADMAP.md` have open checkboxes
+- `docs/quality/SPRINT-X-CLOSEOUT.md` still shows epics or stories in progress
+- Only design documentation landed without required implementation and tests (Epic 3/4 rule for Sprint 1)
+- Tests or build are failing
+
+**Sprint 1 reopen precedent:** Closeout was run prematurely on 2026-06-24 after Epic 2 only. Do not repeat — verify Epics 3–5 before closing a sprint.
+
+**Sprint 1 status:** ✅ Complete (2026-06-24). Full record: [`docs/quality/SPRINT-1-CLOSEOUT.md`](docs/quality/SPRINT-1-CLOSEOUT.md). Apply this protocol to **Sprint 2+** closeouts.
+
+---
+
+# Step 1 — Sprint Review (What was built)
+
+Summarize:
+
+- What features were implemented
+- What architecture changes were introduced
+- What refactoring occurred
+- What tests were added or improved
+- What remains deferred to a future sprint (with roadmap IDs)
+
+Output must be structured as:
+
+```markdown
+## Sprint X Review
+
+### Delivered
+- ...
+
+### Architecture changes
+- ...
+
+### Tests added/improved
+- ...
+
+### Deferred
+- ...
+```
+
+---
+
+# Step 2 — Architecture Consistency Check
+
+Evaluate:
+
+- Does implementation match `docs/architecture/ARCHITECTURE.md`?
+- Are service / provider / repository boundaries respected?
+- Is UI separated from business logic (no direct `fetch` in components)?
+- Are there any architectural violations?
+
+If violations exist:
+
+- List them explicitly
+- Suggest remediation steps
+
+Output:
+
+```markdown
+## Architecture consistency
+
+| Check | Status | Notes |
+|---|---|---|
+| Layer boundaries | Pass / Fail | ... |
+| Repository separation | Pass / Fail | ... |
+| ... | ... | ... |
+```
+
+---
+
+# Step 3 — Documentation Audit
+
+Check and update per `.cursor/rules/30-documentation.mdc`:
+
+## Required updates
+
+| Document | Action |
+|---|---|
+| `docs/roadmap/AI-INVESTOR-ROADMAP.md` | Mark sprint complete; append sprint history |
+| `docs/quality/SPRINT-X-CLOSEOUT.md` | Mark ✅ Complete; final epic table |
+| `docs/architecture/ARCHITECTURE.md` | Update if structure or flows changed |
+| `docs/architecture/AI-INVESTOR-CONTEXT.md` | Update if scope or epic status changed |
+| `README.md` | Update if user-facing behavior or doc index changed |
+| `CLAUDE.md` | Update active sprint line |
+
+## Conditional updates (when applicable)
+
+| Document | When |
+|---|---|
+| `docs/adr/*.md` | Architectural decisions made (auth, API, persistence, CI, etc.) |
+| `docs/architecture/repository-pattern.md` | Persistence layer changed |
+| `docs/security/authentication.md`, `docs/security/rbac.md` | Epic 3 implemented |
+| `docs/api/validation.md`, `docs/api/error-model.md` | Epic 4 implemented |
+| `docs/quality/TESTING-STANDARDS.md` | Test strategy or commands changed |
+| `docs/devops/CI-CD.md` | Pipeline or quality gates changed |
+| `docs/ai/*` | AI workflows or agents changed |
+| `docs/quality/CODEREVIEW.md` | Sprint review changes quality assessment or technical debt |
+| `docs/database/prisma.md` | Seed data or schema changed (e.g. admin watchlist) |
+
+## Post-closeout remediations
+
+If a code review (`CODEREVIEW.md`) lands **after** initial closeout:
+
+1. Fix blocking/high findings before merge
+2. Update `SPRINT-X-CLOSEOUT.md` with a post-closeout section
+3. Sync `60-definition-of-done.mdc` epic criteria if new acceptance rules emerge
+4. Re-run lint, test, build; update CODEREVIEW verdict
+
+Sprint 1 example: CODEREVIEW remediations (2026-06-24) — login credential hygiene, admin watchlist seed, session-aware `WatchlistContext`.
+
+Output:
+
+```markdown
+## Documentation audit
+
+| Document | Updated | Notes |
+|---|---|---|
+| ... | Yes / No / N/A | ... |
+```
+
+---
+
+# Step 4 — ADR Generation Check
+
+Identify if any of the following occurred:
+
+- New service layer or repository boundary
+- New database schema or model
+- Authentication or RBAC changes
+- API validation or error-model changes
+- Testing strategy changes
+- AI agent design changes
+- CI/CD pipeline changes
+
+If YES:
+
+- Propose ADR titles
+- Provide short summaries for each ADR
+- Create or update ADRs as part of closeout — do not defer if the decision already shipped
+
+**Sprint 1 expected ADRs:** auth strategy (P2-04) → **ADR-010** ✅; API error/validation (P3-01) → **ADR-011** ✅
+
+Output:
+
+```markdown
+## ADR check
+
+| Decision | ADR | Action |
+|---|---|---|
+| ... | ADR-NNN | Create / Update / N/A |
+```
+
+---
+
+# Step 5 — Test Coverage Review
+
+Evaluate:
+
+- Are new features covered by tests?
+- Are API endpoints tested (happy path + key failures)?
+- Are auth/RBAC paths tested (401 / 403) if Epic 3 shipped?
+- Are validation `details` and error `code` asserted if Epic 4 shipped?
+- Are critical flows covered in Playwright?
+- Are there missing edge cases?
+
+Output:
+
+```markdown
+## Test coverage
+
+| Area | Status | Gaps |
+|---|---|---|
+| Unit | ... | ... |
+| API routes | ... | ... |
+| Integration | ... | ... |
+| E2E | ... | ... |
+```
+
+---
+
+# Step 6 — Quality Assessment (Staff-Level Evaluation)
+
+Evaluate the sprint against Staff/Principal SDET expectations:
+
+- Is architecture scalable?
+- Is code maintainable?
+- Are abstractions justified?
+- Is complexity controlled?
+- Are responsibilities well-separated?
+
+Output:
+
+```markdown
+## Quality assessment
+
+**Strengths:** ...
+**Risks:** ...
+**Interview narrative (60s):** ...
+```
+
+---
+
+# Step 7 — Technical Debt Identification
+
+List:
+
+- Duplicated logic
+- Over-engineered abstractions
+- Missing error handling
+- Tight coupling issues
+- Temporary shortcuts taken during sprint
+
+Cross-reference `docs/quality/CODEREVIEW.md` if a review exists for the sprint.
+
+Output:
+
+```markdown
+## Technical debt
+
+| ID | Severity | Item | Target |
+|---|---|---|---|
+| ... | ... | ... | ... |
+```
+
+---
+
+# Step 8 — AI Usage Review
+
+Evaluate AI-assisted development:
+
+- Where AI was used effectively
+- Where AI introduced risk or inefficiency
+- Where prompts should be improved
+- Where automation could be added
+
+Output:
+
+```markdown
+## AI usage review
+
+- Effective: ...
+- Risks: ...
+- Prompt/doc improvements: ...
+```
+
+---
+
+# Step 9 — Next Sprint Preparation
+
+Generate:
+
+## Recommended next sprint focus
+
+Based on `docs/roadmap/AI-INVESTOR-ROADMAP.md` + current state.
+
+## Suggested backlog items
+
+- Features
+- Refactoring
+- Tests
+- Documentation
+- Infrastructure improvements
+
+Output:
+
+```markdown
+## Next sprint prep
+
+**Recommended focus:** Sprint N — ...
+**Top backlog items:** ...
+```
+
+---
+
+# Step 10 — Sprint Closure Validation
+
+Before marking sprint as complete, verify:
+
+- [ ] Code is merged or committed to the integration branch
+- [ ] `npm run lint` passes
+- [ ] `npm run build` passes
+- [ ] `npm test` passes (and integration/E2E if applicable to sprint scope)
+- [ ] Sprint-specific Definition of Done satisfied (`.cursor/rules/60-definition-of-done.mdc`)
+- [ ] All exit criteria in `docs/roadmap/AI-INVESTOR-ROADMAP.md` for this sprint are checked
+- [ ] `docs/quality/SPRINT-X-CLOSEOUT.md` updated to ✅ Complete
+- [ ] Required docs updated (Step 3)
+- [ ] ADRs created or explicitly N/A (Step 4)
+- [ ] Behavior changes verified against running app where applicable
+- [ ] No critical TODOs left unresolved in shipped epics
+- [ ] Architecture consistency check passed (Step 2)
+- [ ] Sprint review completed (Step 1)
+- [ ] Code review completed if sprint shipped auth/security/API surface (`docs/quality/CODEREVIEW.md`)
+
+**Sprint 1 additional checks (reference — all satisfied 2026-06-24):**
+
+- [x] Epic 3 — Auth.js + RBAC implemented (not design-only)
+- [x] Epic 4 — Zod validation + central error handler on all routes
+- [x] Epic 5 — Auth/API test coverage + doc sync complete
+- [x] CODEREVIEW remediations — login UI credential hygiene, admin watchlist seed, session-aware client
+- [x] `npm run lint`, `npm test` (99), `npm run build` at closeout
+
+**Sprint 1 — open follow-ups (not blocking closeout):**
+
+- [ ] Merge `feature/API-Foundation` → `main`
+- [ ] Re-run `db:seed` locally after admin watchlist migration (if DB predates fix)
+- [ ] TD-02 user-visible watchlist errors → Sprint 2
+
+If any checkbox is missing:
+
+- Sprint is **NOT** complete
+- List blocking items explicitly
+- Do **NOT** mark sprint history as complete in `docs/roadmap/AI-INVESTOR-ROADMAP.md`
+
+---
+
+# Sprint 1 Closeout Record (completed)
+
+> **Date:** 2026-06-24 · **Verdict:** COMPLETE · **Detail:** [`docs/quality/SPRINT-1-CLOSEOUT.md`](docs/quality/SPRINT-1-CLOSEOUT.md)
+
+Use Steps 1–10 above for **Sprint 2+**. Sprint 1 outputs are archived in the closeout doc; deferrals (TD-02, P3-03, P3-04) carry to Sprint 2.
+
+---
+
+# Final Output
+
+Always conclude with:
+
+```markdown
+## Sprint X Closeout Verdict
+
+**Status:** COMPLETE | BLOCKED
+
+**Blocking items (if any):**
+- ...
+
+**Sprint history entry (if COMPLETE):**
+- Sprint X (dates): one-line outcome for roadmap history table
+```
+
+---
+
+# Core Principle
+
+This protocol ensures:
+
+- No sprint ends without reflection
+- No architecture drift
+- No undocumented decisions
+- Continuous improvement of engineering quality
+- Staff-level discipline in execution
+
+---
+
+# Important Instruction for AI Assistants
+
+When executing this rule:
+
+- Be strict and objective
+- Do not assume completion if evidence is missing
+- Prefer identifying gaps over false completeness
+- Treat this as a real engineering sprint review in a production team
+- If the user asks to close a sprint but DoD is incomplete, refuse closeout and list blockers — cite `60-definition-of-done.mdc` and `docs/quality/SPRINT-X-CLOSEOUT.md`

@@ -1,0 +1,250 @@
+---
+# AI-Investor — Portfolio Quality & Interview Readiness Protocol
+
+Description: This rule ensures that every change in the repository improves its value as a **Senior / Staff / Principal SDET portfolio artifact**.
+Technical correctness alone is NOT sufficient. The codebase must also be:
+- Interview-relevant
+- Story-rich
+- Architecturally impressive
+- Demonstrative of senior engineering thinking
+
+alwaysApply: false
+---
+
+# TRIGGER CONDITIONS
+
+Apply this rule when:
+
+- A feature is completed
+- A sprint is completed
+- A PR is created
+- A refactor is performed
+- Architecture or design decisions are made
+- Documentation is updated
+
+---
+
+# CORE PRINCIPLE
+
+Every change must answer:
+
+> “Does this meaningfully increase my ability to get hired as a Senior/Staff/Principal SDET or AI Engineering-focused QA Lead?”
+
+If NO → the change must be questioned or refactored.
+
+---
+
+# 1. PORTFOLIO VALUE ASSESSMENT
+
+Evaluate every change for portfolio impact:
+
+Check:
+
+- Does this demonstrate senior-level engineering thinking?
+- Does this show real-world system design capability?
+- Does this reflect production-grade QA/automation practices?
+- Does this go beyond basic CRUD/demo-level work?
+
+Classify:
+
+- HIGH VALUE → strong interview signal
+- MEDIUM VALUE → supportive but not differentiating
+- LOW VALUE → cosmetic or non-impactful
+
+---
+
+# 2. INTERVIEW STORY ALIGNMENT
+
+Every feature must map to a narrative:
+
+Examples:
+
+- "Service layer abstraction → demonstrates scalable architecture design"
+- "Playwright framework → demonstrates QA automation leadership"
+- "AI agent integration → demonstrates modern AI engineering capability"
+- "CI/CD pipeline → demonstrates production readiness"
+
+If a feature cannot be explained in an interview:
+→ It is incomplete from a portfolio perspective
+
+---
+
+# 3. SIGNAL-TO-NOISE RATIO REVIEW
+
+Evaluate whether changes increase clarity or clutter.
+
+Flag:
+
+- Over-engineering without interview value
+- Features that do not strengthen core narrative
+- Complexity that cannot be explained simply
+- Experimental code without clear purpose
+
+Rule:
+
+> Complexity must increase SIGNAL, not NOISE.
+
+---
+
+# 4. SENIOR/STAFF/PRINCIPAL ALIGNMENT CHECK
+
+Evaluate alignment with target roles:
+
+## Senior SDET signals:
+- Strong test automation framework
+- Clean architecture
+- Reliable API + UI testing
+
+## Staff SDET signals:
+- Cross-system architecture design
+- CI/CD integration
+- Observability awareness
+- Test strategy ownership
+
+## Principal SDET signals:
+- System-wide thinking
+- AI-assisted engineering workflows
+- Governance models
+- Engineering standards enforcement
+
+Each change must clearly support at least one level progression.
+
+---
+
+# 5. TECHNICAL DEPTH VALIDATION
+
+Check whether implementation demonstrates depth:
+
+Good signals:
+- Service-layer abstraction
+- Proper separation of concerns
+- Scalable test architecture
+- Thoughtful API design
+- AI integration with guardrails
+
+Bad signals:
+- Flat structure with no abstraction
+- Hardcoded logic in UI
+- Lack of extensibility
+- Ad-hoc testing approach
+
+---
+
+# 6. MODERN ENGINEERING SIGNALS
+
+Ensure the project demonstrates 2025+ engineering practices:
+
+Must include evidence of:
+
+- AI-assisted development workflows
+- Automated testing pipelines
+- Modular architecture
+- Type-safe design (TypeScript discipline)
+- API-first thinking
+- Observability awareness (logs, health checks, etc.)
+
+Flag missing modern practices.
+
+---
+
+# 7. INTERVIEW EXPLANABILITY TEST
+
+Every system must pass:
+
+> “Can I explain this in 60–90 seconds in a Staff+ interview?”
+
+If not:
+
+- Reduce complexity OR
+- Improve documentation OR
+- Refactor abstraction
+
+---
+
+# 8. FEATURE JUSTIFICATION CHECK
+
+Before accepting any new feature:
+
+Require explicit justification:
+
+- Why does this exist?
+- What engineering problem does it solve?
+- What system capability does it demonstrate?
+- How will this be discussed in an interview?
+
+Reject features that:
+- Exist only for UI polish
+- Do not support narrative goals
+- Do not strengthen engineering signal
+
+---
+
+# 9. DOCUMENTATION IMPACT CHECK
+
+Every meaningful change must evaluate:
+
+- Does README improve?
+- Does architecture doc improve?
+- Does roadmap improve?
+- Does ADR need to be created?
+- Does this improve interview storytelling?
+
+If documentation is not updated:
+→ portfolio quality is considered INCOMPLETE
+
+---
+
+# 10. AI ENGINEERING SIGNAL CHECK
+
+Evaluate AI-related work:
+
+Good signals:
+- AI used for automation (test generation, analysis, etc.)
+- Controlled and validated AI outputs
+- Clear AI governance
+- Prompt strategy documented
+
+Bad signals:
+- Unverified AI-generated logic
+- “Black box” AI usage
+- No validation or control layer
+
+---
+
+# FINAL PORTFOLIO VERDICT
+
+Every reviewed change must be classified as:
+
+- STRONG PORTFOLIO SIGNAL
+- NEUTRAL IMPACT
+- WEAK SIGNAL (needs refactor)
+- DETRIMENTAL (should be removed or redesigned)
+
+---
+
+# GLOBAL RULE
+
+> If a change does not increase hiring probability for Senior/Staff/Principal SDET roles, it is not justified in this repository.
+
+---
+
+# OUTPUT BEHAVIOR (FOR AI ASSISTANTS)
+
+When applying this rule, AI must:
+
+- Evaluate portfolio impact explicitly
+- Tie every feature to interview narrative
+- Highlight weak signals clearly
+- Suggest refactors that improve storytelling
+- Prefer simplicity with strong signal over complexity with weak signal
+
+---
+
+# END GOAL
+
+This repository must function as:
+
+- A production-grade engineering system
+- A QA automation reference architecture
+- A modern AI-assisted development showcase
+- A high-signal interview artifact for Staff+ roles

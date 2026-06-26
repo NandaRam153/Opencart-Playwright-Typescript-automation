@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../../fixtures/POMFixture';
-import { OpenCartApiClient } from '../../api/OpenCartApiClient';
-import { products } from '../../data/products';
+import { CartAddResponse, OpenCartApiClient } from '../../api/OpenCartApiClient';
+import { products, requireProductId } from '../../data/products';
 
 test('API add to cart populates the cart page UI', async ({
     page,
@@ -16,8 +16,8 @@ test('API add to cart populates the cart page UI', async ({
     await cartPage.navigate();
     await cartPage.assertEmpty();
 
-    const { json } = await api.addToCart(product.productId!, 1);
-    expect(json.success).toBeTruthy();
+    const { json } = await api.addToCart(requireProductId(product, 'NIKON_D300'), 1);
+    expect((json as CartAddResponse).success).toBeTruthy();
 
     await cartPage.navigate();
     await cartPage.assertLineItem(product.name);

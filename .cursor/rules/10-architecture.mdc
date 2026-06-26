@@ -1,0 +1,138 @@
+---
+# AI-Investor — Architecture Governance Protocol (STAFF+)
+
+description: This document defines the canonical architecture of the AI-Investor system.
+All code, tests, AI workflows, and documentation MUST align with this architecture.
+Any deviation must be explicitly justified via ADR.
+
+alwaysApply: true
+---
+
+# CORE PRINCIPLE
+
+> Architecture is the source of truth for system design.
+
+No feature, refactor, or AI-generated change may violate architectural boundaries.
+
+---
+
+# 1. SYSTEM OVERVIEW
+
+AI-Investor is a:
+
+> AI-native financial dashboard + QA engineering reference platform
+
+It demonstrates:
+- modern frontend architecture (Next.js + React)
+- service-oriented backend abstraction
+- AI-assisted engineering workflows
+- production-grade QA automation practices
+
+---
+
+# 2. ARCHITECTURAL STYLE
+
+The system follows a:
+
+> Layered Modular Architecture with Service + Provider separation
+
+NOT a monolith of UI logic.
+
+---
+
+# 3. LAYERED ARCHITECTURE MODEL
+
+## 3.1 UI LAYER (React / Next.js)
+
+Responsibilities:
+- rendering UI components
+- handling user interactions
+- managing local UI state only
+- invoking service layer
+
+FORBIDDEN:
+- direct API calls (fetch/axios)
+- business logic
+- data transformation logic (beyond UI formatting)
+
+---
+
+## 3.2 SERVICE LAYER (Business Logic)
+
+Location:
+- `/services/*`
+
+Responsibilities:
+- business logic
+- orchestration of data
+- transformation logic
+- validation rules (non-security critical)
+
+RULE:
+All domain logic MUST live here.
+
+---
+
+## 3.3 PROVIDER LAYER (External Integration)
+
+Location:
+- `/providers/*`
+
+Responsibilities:
+- external API calls (Yahoo Finance, etc.)
+- third-party integration logic
+- request/response normalization
+
+RULE:
+Providers must NOT contain business logic.
+
+---
+
+## 3.4 API LAYER (Next.js Routes)
+
+Location:
+- `/app/api/*`
+
+Responsibilities:
+- request handling
+- authentication checks (if applicable)
+- calling service layer
+- returning standardized responses
+
+RULE:
+API routes must be thin controllers ONLY.
+
+---
+
+## 3.5 DATA LAYER (Persistence)
+
+Responsibilities:
+- database access (if applicable)
+- schema definitions
+- data integrity
+
+RULE:
+No business logic allowed in data layer.
+
+---
+
+## 3.6 AI LAYER
+
+Location:
+- `/docs/ai/`
+- `/agents/` (if introduced)
+
+Responsibilities:
+- AI-assisted workflows
+- prompt definitions
+- structured AI outputs
+- automation tools (test generation, analysis)
+
+RULE:
+AI must never directly modify system state without validation.
+
+---
+
+# 4. DATA FLOW ARCHITECTURE
+
+Standard request flow:

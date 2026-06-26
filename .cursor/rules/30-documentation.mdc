@@ -1,0 +1,284 @@
+---
+# AI-Investor — Documentation Governance Protocol (STAFF+)
+
+documentation: This rule defines mandatory documentation behavior for all changes in the repository.
+Documentation is treated as a **first-class engineering artifact**, equal in importance to code and tests.
+
+alwaysApply: false
+---
+
+# CORE PRINCIPLE
+
+> If it is not documented, it does not exist.
+
+Every meaningful engineering decision, architectural change, or feature must be reflected in documentation.
+
+---
+
+# TRIGGER CONDITIONS
+
+This rule must be applied when:
+
+- Code is added or modified
+- Architecture changes occur
+- A sprint is executed or completed
+- Tests are added or modified
+- AI workflows are introduced
+- APIs are changed or extended
+- Dependencies or infrastructure are updated
+
+---
+
+# 1. DOCUMENTATION IMPACT CLASSIFICATION
+
+Every change must be classified as:
+
+- **NO IMPACT** → no documentation update required
+- **LOW IMPACT** → minor doc update required
+- **MEDIUM IMPACT** → one or more docs must be updated
+- **HIGH IMPACT** → architecture/ADR/README updates required
+
+If classification is unclear → default to MEDIUM IMPACT.
+
+---
+
+# 2. REQUIRED DOCUMENTATION SOURCES
+
+The AI MUST evaluate updates across the following documents:
+
+## Core Documentation
+- `README.md`
+- `docs/AI-INVESTOR-CONTEXT.md`
+- `docs/AI-INVESTOR-ROADMAP.md`
+
+## Architecture Layer
+- `docs/architecture/ARCHITECTURE.md`
+- `docs/architecture/*`
+
+## Decision Records (ADRs)
+- `docs/adr/*`
+
+## Quality Engineering
+- `docs/quality/QUALITY-STRATEGY.md`
+- `docs/quality/TESTING-STANDARDS.md`
+- `docs/quality/TEST-DATA-STRATEGY.md`
+
+## AI Engineering
+- `docs/ai/AI-ENGINEERING-PLAYBOOK.md`
+- `docs/ai/AI-GOVERNANCE.md`
+
+## DevOps
+- `docs/devops/CI-CD.md`
+- `docs/devops/DEPLOYMENT.md`
+
+---
+
+# 3. DOCUMENTATION UPDATE RULES
+
+## 3.1 README.md
+
+Update when:
+
+- New major feature is added
+- Architecture changes
+- Tech stack changes
+- Project scope evolves
+
+Must remain:
+- concise
+- high-signal
+- recruiter-friendly
+
+---
+
+## 3.2 ARCHITECTURE.md
+
+Update when:
+
+- New layer is introduced
+- Service layer changes
+- Provider abstraction changes
+- Data flow changes
+- System boundaries change
+
+Must include:
+- updated diagrams (logical or mermaid)
+- updated flow descriptions
+- updated layer responsibilities
+
+---
+
+## 3.3 ROADMAP.md
+
+Update when:
+
+- Sprint progresses or completes
+- Features are added/removed
+- Priorities change
+
+Must reflect:
+- current sprint status
+- next sprint goals
+- backlog alignment
+
+---
+
+## 3.4 ADRs (Architecture Decision Records)
+
+Create ADR when:
+
+- Any non-trivial architectural decision is made
+- A design tradeoff is chosen
+- A framework or pattern is introduced
+- Data model changes occur
+- Testing strategy changes occur
+- AI system design changes occur
+
+ADR must include:
+- context
+- decision
+- alternatives considered
+- consequences
+
+No ADR = undocumented architectural decision (not allowed for HIGH impact changes)
+
+---
+
+## 3.5 QUALITY DOCUMENTATION
+
+Update when:
+
+- Test strategy changes
+- New test layer introduced
+- Coverage approach changes
+- Flaky test strategy evolves
+
+Must maintain:
+- clarity
+- reproducibility
+- interview explainability
+
+---
+
+## 3.6 AI DOCUMENTATION
+
+Update when:
+
+- New AI workflow introduced
+- AI agents added or modified
+- Prompt strategy changes
+- AI guardrails introduced
+
+Must include:
+- prompt patterns
+- validation strategy
+- failure modes
+- safety constraints
+
+---
+
+## 3.7 DEVOPS DOCUMENTATION
+
+Update when:
+
+- CI/CD pipeline changes
+- Deployment strategy changes
+- Environment configuration changes
+- Build/test automation changes
+
+Must include:
+- pipeline stages
+- quality gates
+- rollback strategy (if applicable)
+
+---
+
+# 4. DOCUMENTATION QUALITY STANDARDS
+
+All documentation must satisfy:
+
+## Clarity
+- no ambiguity
+- no vague statements
+- explicit system behavior description
+
+## Traceability
+- every major feature maps to code + decision + tests
+
+## Consistency
+- terminology consistent across all docs
+- architecture terminology aligned everywhere
+
+## Interview Readiness
+Documentation must support:
+
+> “Explain this system in 60–90 seconds at Staff+ level”
+
+If not explainable → documentation is incomplete
+
+---
+
+# 5. DOCUMENTATION COMPLETENESS CHECK
+
+A change is NOT complete unless:
+
+- Relevant documentation updated
+- No orphan architectural decisions exist
+- README reflects current system reality
+- ROADMAP is synchronized
+- ADRs created when required
+
+---
+
+# 6. ANTI-PATTERNS (STRICTLY FORBIDDEN)
+
+- Outdated documentation left uncorrected
+- Architecture changes without ADR
+- Hidden system behavior not documented
+- README drift from actual implementation
+- Inconsistent terminology across docs
+- Overly verbose documentation with no signal
+
+---
+
+# 7. AI ASSISTANT BEHAVIOR REQUIREMENTS
+
+When applying this rule, AI must:
+
+- Identify all impacted documents
+- Explicitly list required updates
+- Never assume documentation is “optional”
+- Prefer over-documentation over under-documentation for HIGH impact changes
+- Ensure alignment between code, tests, and documentation
+
+---
+
+# 8. DOCUMENTATION PRIORITY ORDER
+
+When multiple docs must be updated:
+
+1. ADRs (if architectural decision exists)
+2. ARCHITECTURE.md
+3. QUALITY / AI / DEVOPS docs (if applicable)
+4. ROADMAP.md
+5. README.md
+
+---
+
+# FINAL PRINCIPLE
+
+> Code defines behavior. Documentation defines understanding. Both must always match.
+
+A mismatch between code and documentation is treated as a system defect.
+
+---
+
+# END GOAL
+
+This documentation system ensures:
+
+- Production-grade clarity
+- Staff-level architectural traceability
+- Interview-ready storytelling
+- AI-assisted consistency enforcement
+- No undocumented system behavior

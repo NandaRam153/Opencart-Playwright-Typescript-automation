@@ -21,7 +21,7 @@ export default tseslint.config(
         },
     },
     {
-        files: ['src/tests/**/*.ts'],
+        files: ['src/tests/**/*.ts', 'src/testHelpers/**/*.ts'],
         rules: {
             'playwright/expect-expect': 'off',
             'playwright/no-skipped-test': 'off',

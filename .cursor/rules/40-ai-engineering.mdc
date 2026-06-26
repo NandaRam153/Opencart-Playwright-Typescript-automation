@@ -1,0 +1,251 @@
+---
+# AI-Investor — AI Engineering Governance Protocol (STAFF+)
+
+description: This rule defines how AI systems (Cursor, Claude, coding agents, and future automation) must be used within this repository.
+AI is treated as a **non-deterministic engineering assistant** that must be strictly governed.
+
+alwaysApply: true
+---
+
+# CORE PRINCIPLE
+
+> AI accelerates engineering, but humans (and rules) enforce correctness.
+
+AI output is NEVER trusted without validation.
+
+---
+
+# 1. AI USAGE BOUNDARIES
+
+AI may be used for:
+
+- Code generation
+- Test generation
+- Refactoring suggestions
+- Documentation drafting
+- Architecture brainstorming
+- Debugging assistance
+
+AI MUST NOT be used for:
+
+- Final production decisions without review
+- Unvalidated architectural changes
+- Security-sensitive logic without review
+- Test bypassing or weakening quality gates
+- Silent modification of system behavior
+
+---
+
+# 2. AI TRUST MODEL
+
+All AI output is classified as:
+
+- **UNVERIFIED (default)**
+- **VALIDATED (after review)**
+- **REJECTED (incorrect or unsafe)**
+
+No AI-generated output is considered VALIDATED without:
+
+- Code review (80-code-review.mdc)
+- Test confirmation
+- Architectural alignment check
+
+---
+
+# 3. AI-ASSISTED DEVELOPMENT FLOW
+
+All AI-generated code MUST follow this pipeline:
+
+1. AI generates suggestion/code
+2. Developer reviews intent and logic
+3. Code is validated against architecture rules
+4. Tests are added or updated
+5. Code review protocol is applied (80-code-review.mdc)
+6. Documentation updates applied (30-documentation.mdc)
+7. Sprint validation applied (70-sprint-closeout.mdc if applicable)
+
+---
+
+# 4. AI AGENT DESIGN RULES
+
+If AI agents are introduced (e.g. test generator, bug analyzer):
+
+They MUST:
+
+- Have a single responsibility
+- Produce deterministic structured outputs where possible
+- Be observable (logs or traceable outputs)
+- Be reversible (no irreversible system actions)
+- Be isolated from production-critical logic
+
+Agents MUST NOT:
+
+- Modify production state directly
+- Execute unreviewed writes to database
+- Override architecture rules
+- Act without explicit invocation context
+
+---
+
+# 5. PROMPT ENGINEERING STANDARDS
+
+All prompts used in the system must:
+
+## Be:
+- explicit in intent
+- scoped to a single task
+- deterministic where possible
+- structured in output expectations
+
+## Avoid:
+- vague instructions (“improve this code”)
+- multi-purpose prompts
+- implicit assumptions
+
+---
+
+# 6. PROMPT STORAGE REQUIREMENT
+
+Any prompt that produces:
+
+- reusable output patterns
+- test generation logic
+- architecture decisions
+- AI workflows
+
+MUST be stored in:
+docs/ai/
+
+Examples:
+- AI-ENGINEERING-PLAYBOOK.md
+- PROMPT-TEMPLATES.md
+- AGENT-DESIGNS.md
+
+---
+
+# 7. AI FAILURE MODES (MUST BE HANDLED)
+
+AI outputs are considered unreliable if:
+
+- hallucinated APIs or libraries appear
+- logic is incomplete or inconsistent
+- architectural rules are violated
+- missing type safety is introduced
+- security assumptions are made without validation
+
+When failure occurs:
+
+- mark output as REJECTED
+- document issue in review process
+- refine prompt or constraints
+
+---
+
+# 8. HUMAN OVERSIGHT REQUIREMENT
+
+No AI-generated output may bypass:
+
+- code review (80-code-review.mdc)
+- documentation validation (30-documentation.mdc)
+- architecture validation (ARCHITECTURE.md rules)
+
+Human (you) remains final authority.
+
+---
+
+# 9. AI TRANSPARENCY REQUIREMENT
+
+All AI-assisted changes must be traceable:
+
+- commit messages should indicate AI assistance where relevant
+- complex AI-generated logic must be explainable
+- key decisions must be documented in ADRs if architectural
+
+---
+
+# 10. AI-ASSISTED TESTING RULES
+
+AI may generate tests, but:
+
+- tests must validate real system behavior
+- no trivial or meaningless assertions allowed
+- edge cases must be included where applicable
+- flaky test patterns must be avoided
+
+AI-generated tests MUST be reviewed for realism and coverage.
+
+---
+
+# 11. AI IN ARCHITECTURE DECISIONS
+
+AI may suggest architecture, but:
+
+- cannot finalize architectural decisions
+- cannot introduce new system boundaries without validation
+- cannot override existing architecture rules
+
+All architectural suggestions must be validated via:
+
+- ADR process
+- architecture review rules
+
+---
+
+# 12. AI SAFETY BOUNDARIES
+
+AI must never:
+
+- introduce insecure authentication patterns
+- bypass authorization checks
+- expose sensitive data
+- create unsafe eval/dynamic execution patterns
+- weaken validation or testing requirements
+
+Security violations = automatic REJECTION
+
+---
+
+# 13. OBSERVABILITY OF AI USAGE
+
+AI contributions should be:
+
+- identifiable in commit history where relevant
+- traceable in reasoning (via comments or docs if needed)
+- explainable in interviews
+
+Goal:
+
+> You should be able to explain what AI did and why in a Staff+ interview.
+
+---
+
+# 14. AI VALUE PRINCIPLE
+
+AI is successful only if it:
+
+- improves engineering velocity WITHOUT reducing quality
+- increases test coverage or system reliability
+- improves architecture clarity
+- reduces cognitive load for developers
+
+If AI increases complexity without value → reject usage pattern
+
+---
+
+# FINAL PRINCIPLE
+
+> AI is a force multiplier, not a decision maker.
+
+All system integrity is enforced by engineering rules, not AI assumptions.
+
+---
+
+# END GOAL
+
+This rule ensures:
+
+- Controlled AI-assisted engineering
+- Safe and reviewable AI usage
+- Staff+ level discipline in AI workflows
+- Production-grade reliability of AI-generated output
+- Interview-ready demonstration of AI engineering maturity

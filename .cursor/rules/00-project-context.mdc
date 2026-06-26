@@ -1,0 +1,175 @@
+---
+# AI-Investor — Project Context & System Intent (STAFF+)
+
+documentation: This document defines the purpose, scope, and strategic intent of the AI-Investor system.
+All architectural, coding, testing, AI, and documentation decisions MUST align with this context.
+If any rule conflicts with this document, this document takes priority.
+
+Constitution (source of truth): docs/architecture/AI-INVESTOR-CONTEXT.md
+
+alwaysApply: true
+---
+
+# 1. SYSTEM IDENTITY
+
+AI-Investor is a:
+
+> AI-native financial dashboard AND Staff-level QA Engineering reference system
+
+It is NOT a production trading system.
+
+It is a **portfolio-grade engineering demonstration platform** designed to showcase:
+
+- Staff+ SDET engineering capability
+- AI-assisted software engineering discipline
+- modern full-stack architecture design
+- scalable test automation systems
+- AI governance and agent design
+
+---
+
+# 2. PRIMARY OBJECTIVE
+
+The goal of this project is to demonstrate:
+
+> “How a Staff/Principal SDET builds, governs, and scales a modern AI-assisted engineering system.”
+
+This includes:
+
+- architecture design
+- test strategy design
+- API and service abstraction
+- AI integration patterns
+- CI/CD readiness
+- documentation discipline
+
+---
+
+# 3. TARGET AUDIENCE
+
+This project is designed for:
+
+- Staff SDET interviewers
+- Principal QA / QA Architect hiring managers
+- Senior engineering leaders
+- AI engineering recruiters
+- platform engineering teams
+
+NOT end users.
+
+The UI is secondary to engineering signal.
+
+---
+
+# 4. CORE ENGINEERING PRINCIPLES
+
+The system must always prioritize:
+
+## 4.1 Correctness over speed
+No feature is complete without validation and tests.
+
+## 4.2 Architecture over convenience
+Shortcuts that violate structure are not allowed.
+
+## 4.3 Clarity over complexity
+Simple systems with clear boundaries are preferred over clever designs.
+
+## 4.4 Observability over assumption
+All system behavior must be explainable and traceable.
+
+---
+
+# 5. SYSTEM SCOPE
+
+## IN SCOPE
+
+- Stock dashboard UI (Next.js)
+- Service-layer architecture
+- API abstraction layer
+- Yahoo Finance integration (via providers)
+- Playwright test automation framework
+- AI-assisted engineering workflows
+- CI/CD pipelines
+- documentation system
+- AI agents (test generation, analysis, etc.)
+
+---
+
+## OUT OF SCOPE
+
+- Real-money trading systems
+- Financial advice systems
+- High-frequency trading systems
+- Production brokerage integrations
+- End-user financial compliance systems
+
+---
+
+# 6. ARCHITECTURAL PHILOSOPHY
+
+The system follows:
+
+> Layered modular architecture with strict separation of concerns
+
+Core rule:
+
+- UI is NOT business logic
+- Services define system behavior
+- Providers handle external dependencies
+- AI assists but does not decide
+
+---
+
+# 7. QUALITY BAR (STAFF+ STANDARD)
+
+Every feature must demonstrate:
+
+- scalable system thinking
+- production-grade test coverage strategy
+- clean abstraction design
+- AI governance awareness
+- maintainable architecture
+
+---
+
+# 8. AI USAGE PHILOSOPHY
+
+AI is treated as:
+
+> A constrained engineering assistant, not an autonomous actor
+
+AI must:
+
+- follow architectural rules
+- respect service boundaries
+- produce verifiable outputs
+- be validated through testing and review
+
+AI must NOT:
+
+- introduce unchecked logic
+- bypass architecture layers
+- directly modify system state
+
+---
+
+# 9. PORTFOLIO STRATEGY
+
+This project is designed to:
+
+- maximize interview signal density
+- demonstrate Staff+ engineering thinking
+- showcase AI engineering maturity
+- provide structured storytelling in interviews
+
+Every feature must contribute to:
+
+> “Why this candidate is Staff/Principal ready”
+
+---
+
+# 10. DOCUMENT HIERARCHY (IMPORTANT)
+
+This file is the highest-level document.
+
+Hierarchy:

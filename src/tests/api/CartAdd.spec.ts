@@ -6,5 +6,5 @@ test('cart add rejects invalid product id', async ({ request }) => {
     const { status, json } = await api.addToCart(0);
 
     expect(status).toBe(200);
-    expect(json.success).toBeUndefined();
+    OpenCartApiClient.assertCartAddRejected(json);
 });

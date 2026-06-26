@@ -154,9 +154,9 @@ Test results and HTML reports are written to `playwright-report/` and `test-resu
 | `TEST_USER_PASSWORD` | Wishlist E2E | Password for the registered user                               |
 
 - **Local:** copy `.env.example` to `.env` and fill in real values.
-- **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions).
+- **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions). CI **fails fast** if these are missing or still set to the `.env.example` placeholders.
 
-The wishlist E2E test **skips** when credentials are missing or still set to the `.env.example` placeholders.
+The wishlist E2E test **skips locally** when credentials are missing or still set to the `.env.example` placeholders.
 
 ## Code Quality
 

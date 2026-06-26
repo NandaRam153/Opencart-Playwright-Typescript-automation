@@ -29,7 +29,7 @@ export class OpenCartApiClient {
                         quantity: String(quantity),
                     },
                 });
-                const json = (await response.json()) as CartAddResponse;
+                const json: unknown = await response.json();
                 return { status: response.status(), ok: response.ok(), json };
             } catch (error) {
                 lastError = error;
@@ -46,5 +46,24 @@ export class OpenCartApiClient {
 
     static assertNoSearchResults(body: string) {
         expect(body).toContain('There is no product that matches the search criteria.');
+    }
+
+    /** Assert cart add was rejected for an invalid or unknown product id. */
+    static assertCartAddRejected(json: unknown) {
+        if (Array.isArray(json)) {
+            expect(json, 'cart add should return an empty array for invalid product id').toEqual(
+                []
+            );
+            return;
+        }
+
+        const body = json as CartAddResponse;
+        expect(body.success, 'cart add should not succeed for invalid product id').toBeFalsy();
+
+        const hasErrorField = body.error !== undefined && body.error !== null && body.error !== '';
+        expect(
+            hasErrorField,
+            'cart add rejection should include an error payload or return an empty array'
+        ).toBeTruthy();
     }
 }

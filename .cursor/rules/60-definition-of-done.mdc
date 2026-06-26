@@ -1,0 +1,341 @@
+---
+# Definition of Done — AI-Investor
+
+description: This document defines the minimum completion criteria for each sprint.
+A sprint is NOT complete unless ALL applicable items below are satisfied.
+
+alwaysApply: false
+---
+
+# Global Definition of Done (applies to ALL sprints)
+
+A sprint is only complete when:
+
+## Code Quality
+- Feature implementation is complete and works end-to-end
+- Code follows service-layer architecture (no business logic in UI)
+- TypeScript types are defined for new domain objects
+- No direct fetch calls exist in React components (services must be used)
+
+## Testing
+- Unit tests added or updated where applicable
+- API or integration tests added for backend changes
+- E2E tests added for critical user flows (if applicable)
+- Tests pass in CI (or locally if CI not yet enabled)
+
+## Documentation
+- Relevant documentation updated (see `.cursor/rules/30-documentation.mdc` mapping rules)
+- README updated if user-facing behavior changed
+- Roadmap updated to reflect sprint progress (`docs/roadmap/AI-INVESTOR-ROADMAP.md`)
+- Sprint progress tracker updated (`docs/quality/SPRINT-X-CLOSEOUT.md`)
+- ADR created for any architectural decision
+
+## Verification
+- Behavior changes verified against the running application (see `CLAUDE.md` and `.cursor/rules/ironbee-devtools-use.mdc`)
+- Docs-only or design-doc work does not satisfy code epic completion without implementation + tests
+
+## Engineering Discipline
+- No duplicate logic introduced
+- No unnecessary dependencies added
+- Clear separation between UI, service, provider, and data layers
+- Meaningful commit messages are used
+
+## AI Usage Integrity
+- Any AI-generated code has been reviewed and validated
+- AI-generated logic is refactored if necessary for clarity or correctness
+
+---
+
+# Sprint-Specific Definition of Done
+
+---
+
+# Sprint 0 — Foundation & Architecture
+
+Sprint 0 is complete when:
+
+- Repository structure matches target architecture
+- Service layer abstraction exists
+- Provider layer exists (even if minimal)
+- Cursor rules and AI governance files are created
+- AI-Investor CONTEXT document exists and is accurate
+- ROADMAP reflects Sprint 0 completion
+- ARCHITECTURE.md describes layered system design
+- At least 1–3 ADRs are created (initial decisions)
+
+---
+
+# Sprint 1 — Backend Foundation through Quality ✅ (complete)
+
+> **Progress tracker:** [`docs/quality/SPRINT-1-CLOSEOUT.md`](docs/quality/SPRINT-1-CLOSEOUT.md)  
+> **Backlog:** [`docs/roadmap/AI-INVESTOR-ROADMAP.md`](docs/roadmap/AI-INVESTOR-ROADMAP.md)  
+> **Branch:** `feature/API-Foundation` (merge to `main` pending)  
+> **Closed:** 2026-06-24  
+> **Reopen record:** Sprint 1 was closed prematurely 2026-06-24 after Epic 2 only; reopened and fully closed same day after Epics 3–5 + CODEREVIEW remediations.
+
+**Rule:** Design documentation alone does **not** complete Epic 3 or Epic 4. Each story requires working code, tests, and doc sync per `30-documentation.mdc`.
+
+Sprint 1 **is complete** when all epics below are satisfied (all ✅ as of 2026-06-24):
+
+## Epic 1 — Backend Foundation ✅ (complete)
+
+- PostgreSQL is integrated and Prisma is migrated
+- Service layer consolidation complete (`src/services/` removed; `@services/*` only)
+- Repository assessment documented ([`docs/architecture/current-state-analysis.md`](docs/architecture/current-state-analysis.md))
+- Database setup documented ([`docs/database/postgresql-setup.md`](docs/database/postgresql-setup.md), [`docs/database/prisma.md`](docs/database/prisma.md))
+
+## Epic 2 — Domain Layer ✅ (complete)
+
+- Domain models and DTOs defined ([`docs/domain/domain-model.md`](docs/domain/domain-model.md))
+- **Separate persistence:** repository interfaces + Prisma implementations ([`docs/architecture/repository-pattern.md`](docs/architecture/repository-pattern.md))
+- Repository-backed watchlist persistence implemented (`repositories/`, ADR-009)
+- `WatchlistContext` flows: UI → client service → provider → API → service → repository → PostgreSQL
+- At least 1 ADR for repository-backed watchlist persistence (ADR-009)
+
+## Epic 3 — Authentication ✅ (complete)
+
+- Auth.js integrated (`lib/auth/auth.ts`, `credentials-provider.ts`, `middleware-auth.ts`)
+- JWT session with `userId` + `role`; HttpOnly cookies
+- Demo-user scoping removed — services receive `userId` from session
+- RBAC: `permissions.ts`, `rbac.ts`, middleware page gates, admin API
+- Auth/RBAC route tests (401/403/200 matrix)
+- Login UI does **not** expose admin credentials (README/seed docs only)
+- Admin user seeded with own watchlist (`seed-admin-watchlist`)
+- ADR-010 auth strategy (P2-04) — [`docs/adr/ADR-010-authjs-jwt-credentials-rbac.md`](docs/adr/ADR-010-authjs-jwt-credentials-rbac.md)
+
+## Epic 4 — API Foundation ✅ (complete)
+
+- [`docs/api/validation.md`](docs/api/validation.md) — Zod schemas and parse helpers
+- [`docs/api/error-model.md`](docs/api/error-model.md) — error hierarchy and envelope
+- `lib/api/` implemented (schemas, validate, errors/)
+- `lib/logging/logger.ts` — structured `logApiError`
+- Input validation on all API route boundaries
+- Central `handleApiError()` on all routes (replaced `handleWatchlistError`)
+- API route tests assert envelope, `code`, and validation `details`
+- ADR-011 API error/validation design (P3-01) — [`docs/adr/ADR-011-api-validation-error-envelope.md`](docs/adr/ADR-011-api-validation-error-envelope.md)
+
+## Epic 5 — Quality ✅ (complete)
+
+- UI components/pages contain zero direct `fetch()` calls (client services only)
+- Stock, search, watchlist, admin API routes covered by tests (happy path + key failures)
+- Auth-protected routes and Epic 4 validation paths covered (401/403/400 + `code`/`details`)
+- RBAC unit tests (`lib/auth/rbac.test.ts`); component tests (`WatchlistContext`, `LoginForm`)
+- E2E: auth gates, watchlist persistence, guest watchlist (no anonymous API fetch), admin `/watchlist`
+- CI executes lint, unit tests, integration tests, build, and E2E (with `AUTH_SECRET`)
+- Architecture, security, API, roadmap, and ADR docs reflect implemented auth + API state
+- CODEREVIEW remediations applied — [`docs/quality/CODEREVIEW.md`](docs/quality/CODEREVIEW.md) verdict APPROVE
+
+## Sprint closeout ✅ (complete — 2026-06-24)
+
+- All Epic 1–5 criteria above satisfied
+- Sprint closeout protocol executed (`.cursor/rules/70-sprint-closeout.mdc`)
+- Post-closeout CODEREVIEW fixes: session-aware `WatchlistContext`, `StockDetail` auth gate, admin watchlist seed
+- `docs/quality/SPRINT-1-CLOSEOUT.md` marked ✅ Complete
+- Sprint history appended in `docs/roadmap/AI-INVESTOR-ROADMAP.md`
+- `npm run lint`, `npm run build`, `npm test` pass (99 tests at closeout)
+
+### Sprint 1 — known deferrals (not blocking)
+
+| Item | Target | Notes |
+|---|---|---|
+| TD-02 | Sprint 2 | Authenticated watchlist mutation errors still console-only |
+| P3-03 `/health` | Sprint 2 | Health check endpoint |
+| P3-04 provider logging | Sprint 2 | Structured logging at Yahoo provider layer |
+| Branch merge to `main` | Before Sprint 2 start | `feature/API-Foundation` merge pending |
+| Local integration/E2E re-run | Optional | CI enforces; local needs `DATABASE_URL` + `AUTH_SECRET` |
+
+---
+
+# Sprint 2 — API Platform Hardening ✅ (complete)
+
+> **Progress tracker:** [`docs/quality/SPRINT-2-CLOSEOUT.md`](docs/quality/SPRINT-2-CLOSEOUT.md)  
+> **Partial slice record:** [`docs/quality/SPRINT-2-API-PLATFORM-CLOSEOUT.md`](docs/quality/SPRINT-2-API-PLATFORM-CLOSEOUT.md)  
+> **Backlog:** [`docs/roadmap/AI-INVESTOR-ROADMAP.md`](docs/roadmap/AI-INVESTOR-ROADMAP.md)  
+> **Branch:** `feature/API-Platform3` (merge to `main` pending)  
+> **Closed:** 2026-06-25
+
+> Items P3-01/P3-02 (validation + error envelope) are **Sprint 1 Epic 4** — not Sprint 2 exit criteria if delivered in Sprint 1.
+
+Sprint 2 **is complete** when all items below are satisfied (all ✅ as of 2026-06-25):
+
+## Core API platform ✅ (complete)
+
+- REST API structure standardized through `src/api/*`, `src/contracts/*`, and route contract docs
+- OpenAPI/Swagger implemented with generated `openapi.json` and committed contract surface
+- API catalog and contract registry aligned with live routes
+- Contract tests validate Zod ↔ OpenAPI ↔ registry consistency
+
+## Security & observability ✅ (complete)
+
+- API security layer implemented (`lib/api/security/*`) with rate limiting, trace ids, security headers, and audit logging
+- Structured API logging implemented (`lib/logging/logger.ts`)
+- Provider-layer structured logging implemented (`logProvider`, Yahoo server provider migration)
+- API metrics implemented (`lib/observability/metrics.ts`)
+- Health check endpoint exists (`GET /api/health`) — P3-03
+
+## Quality platform ✅ (complete)
+
+- Layered API test architecture exists (`tests/api/*`, `contract-tests/`)
+- API quality gates implemented and documented (`npm run quality:gates`, `npm run quality:api`, `npm run verify:merge-readiness`)
+- Production build is part of the gate path and passes
+- Typecheck covers app, tests, and `contract-tests`
+- Performance baseline exists for API hot paths
+- Client watchlist errors are user-visible, not console-only (TD-02 / Story 2.15)
+
+## Documentation & decisions ✅ (complete)
+
+- API, testing, observability, performance, and quality docs updated
+- Sprint 2 closeout record completed
+- Existing ADR coverage is sufficient for API design and observability decisions in this sprint
+- README, roadmap, architecture, and closeout docs reflect Sprint 2 completion state
+
+## Sprint 2 verification ✅
+
+- `npm run verify:merge-readiness` passes
+- `npm run quality:gates` passes
+- `npm test` passes
+- `npm run build` passes
+
+### Sprint 2 — known follow-ups (not blocking closeout)
+
+| Item | Target | Notes |
+|---|---|---|
+| S2-01 | Post-closeout | Merge `feature/API-Platform3` → `main` |
+| Preview HTTP integration in CI | Future CI maturity | Local opt-in exists today |
+| Catalog ↔ route diff automation | Future API governance hardening | Manual/contract enforcement exists today |
+| Cross-browser E2E matrix | Later QA maturity | Chromium-only CI acceptable for current scope |
+
+---
+
+# Sprint 3 — Frontend Architecture Stabilization
+
+Sprint 3 is complete when:
+
+- Service layer is fully used across UI
+- No direct API calls exist in React components
+- Custom hooks introduced for data fetching
+- UI components are purely presentational
+- Error boundaries are implemented
+- Loading and empty states are standardized
+- Frontend architecture is documented
+- Architecture diagram updated
+
+---
+
+# Sprint 4 — Quality Engineering Platform (Core)
+
+Sprint 4 is complete when:
+
+- Playwright framework is fully functional
+- UI test suite runs successfully
+- API tests implemented for core endpoints
+- Test fixtures and test data strategy exist
+- CI pipeline executes tests automatically
+- Test reporting is available
+- At least 1 ADR for testing strategy exists
+
+---
+
+# Sprint 5 — Advanced Test Automation
+
+Sprint 5 is complete when:
+
+- Contract testing is implemented
+- Accessibility testing is included
+- Visual regression testing is implemented
+- Performance testing baseline exists (e.g., k6)
+- Parallel test execution is enabled
+- Flaky test handling strategy is documented
+- Test coverage strategy is defined
+
+---
+
+# Sprint 6 — DevOps & CI/CD
+
+Sprint 6 is complete when:
+
+- Docker setup exists for full stack
+- GitHub Actions pipeline is implemented
+- CI includes linting, tests, and build
+- Quality gates are enforced in CI
+- Build artifacts or reports are generated
+- Deployment strategy is documented
+- ADR exists for CI/CD design
+
+---
+
+# Sprint 7 — Observability & Reliability
+
+Sprint 7 is complete when:
+
+- Structured logging is implemented
+- Health checks are available
+- Basic metrics endpoint exists
+- System observability strategy is defined
+- Error tracking strategy is documented
+- Optional tracing is implemented (if feasible)
+- Reliability considerations are documented
+
+---
+
+# Sprint 8 — AI Engineering Layer
+
+Sprint 8 is complete when:
+
+- At least 1 AI agent is implemented (test generator or bug analyzer)
+- AI workflow is documented in AI playbook
+- Prompts used are stored in repository
+- AI outputs are reviewable and traceable
+- Guardrails for AI usage are defined
+- AI governance documentation exists
+
+---
+
+# Sprint 9 — Security & Performance
+
+Sprint 9 is complete when:
+
+- Authentication and authorization tests exist
+- Basic security headers are configured
+- Performance testing thresholds are defined
+- Load testing baseline exists
+- Dependency vulnerability checks are introduced
+- Security considerations documented
+
+---
+
+# Sprint 10 — Production Readiness
+
+Sprint 10 is complete when:
+
+- Environment configuration is fully externalized
+- Deployment process is documented and repeatable
+- Backup/recovery considerations are documented
+- Versioning and release strategy exists
+- Release checklist is defined
+- System is deployable end-to-end
+
+---
+
+# Sprint 11 — Portfolio & Interview Readiness
+
+Sprint 11 is complete when:
+
+- README is polished and complete
+- Architecture diagrams are finalized
+- ADRs are clean, consistent, and complete
+- Demo video or walkthrough exists
+- Interview guide document exists
+- Lessons learned documented
+- Resume-ready project summary exists
+
+---
+
+# Final Rule
+
+A sprint is NOT complete until:
+
+- Every applicable criterion in this file is satisfied for that sprint
+- It can be explained, demonstrated, and defended in a Senior/Staff/Principal SDET interview
+
+**Anti-pattern (Sprint 1):** Do not mark a sprint complete or advance the roadmap to the next sprint when epics remain open. Design docs without implementation do not satisfy Epic 3 or Epic 4.

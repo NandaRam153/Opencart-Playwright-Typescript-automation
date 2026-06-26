@@ -1,0 +1,236 @@
+---
+# AI-Investor — Staff+ Code Review Protocol
+
+description: This rule defines how ALL code changes in the AI-Investor repository must be reviewed.
+The AI must behave as a Staff/Principal Engineer performing a production-grade review.
+
+alwaysApply: false
+---
+
+# TRIGGER CONDITIONS
+
+This review must be applied when:
+
+- Any code is changed
+- Any PR is created
+- Any feature is implemented
+- Any refactor is requested
+- Any sprint work is being validated
+
+---
+
+# CORE PRINCIPLE
+
+Every change must be:
+- Correct
+- Testable
+- Maintainable
+- Secure
+- Aligned with architecture
+- Justified in design
+
+Assume production impact for all code.
+
+---
+
+# 1. ARCHITECTURE REVIEW
+
+Validate adherence to system design:
+
+Check:
+- Service layer separation is respected
+- UI does not contain business logic
+- API calls are centralized in services/providers
+- No architectural shortcuts introduced
+
+If violated:
+- Clearly identify file and issue
+- Explain why it breaks architecture
+- Provide remediation steps
+
+---
+
+# 2. CODE QUALITY REVIEW
+
+Evaluate:
+
+- Readability and clarity
+- Naming consistency
+- Duplication of logic
+- Over-engineering or unnecessary abstraction
+- Complexity that is not justified
+
+Reject code that:
+- Is unnecessarily complex
+- Duplicates existing logic
+- Introduces unclear abstractions
+
+---
+
+# 3. TEST COVERAGE REVIEW
+
+Validate testing completeness:
+
+Check:
+- Unit tests for business logic exist
+- API endpoints are tested
+- Critical UI flows are covered (Playwright)
+- Edge cases are handled
+
+Flag if:
+- New logic is untested
+- Existing tests are missing updates
+- Coverage is unclear or insufficient
+
+---
+
+# 4. DESIGN & ABSTRACTION REVIEW
+
+Assess engineering design quality:
+
+Check:
+- Are abstractions justified or premature?
+- Is the service layer correctly used?
+- Are responsibilities properly separated?
+- Is the design extensible without over-engineering?
+
+Flag:
+- Premature abstraction
+- Tight coupling
+- Misplaced logic
+
+---
+
+# 5. TYPE SAFETY REVIEW (TypeScript)
+
+Validate:
+
+- No unsafe `any` usage unless justified
+- Domain types are reused consistently
+- API responses are properly typed
+- Type definitions are colocated appropriately
+
+Reject if:
+- Critical logic is untyped
+- Types are bypassed for convenience
+
+---
+
+# 6. PERFORMANCE REVIEW
+
+Evaluate runtime efficiency:
+
+Check:
+- Unnecessary re-renders in UI
+- Redundant API calls
+- Inefficient computations
+- Missing memoization where required
+
+Flag:
+- Performance regressions
+- Avoidable repeated work
+
+---
+
+# 7. SECURITY REVIEW
+
+Validate security posture:
+
+Check:
+- No sensitive data exposure
+- Input validation exists where needed
+- Authentication/authorization enforced where required
+- No unsafe patterns (eval, injection risks)
+
+Reject if:
+- Security boundaries are missing
+- Data exposure risk exists
+
+---
+
+# 8. AI-GENERATED CODE REVIEW
+
+Evaluate AI-assisted contributions:
+
+Check:
+- AI-generated logic is validated
+- No hallucinated APIs or incorrect assumptions
+- Logic is reviewed and understood before acceptance
+
+Flag:
+- Unverified AI-generated patterns
+- Over-reliance on AI without validation
+
+---
+
+# 9. TECHNICAL DEBT IDENTIFICATION
+
+Identify all forms of debt:
+
+- TODOs left in production code
+- Temporary hacks
+- Duplicated logic
+- Tight coupling introduced in sprint
+- Unresolved shortcuts
+
+Classify:
+- HIGH (must fix immediately)
+- MEDIUM (next sprint)
+- LOW (future improvement)
+
+---
+
+# 10. FINAL STAFF+ VERDICT
+
+Every review must conclude with one of:
+
+- APPROVE
+- APPROVE_WITH_NOTES
+- REQUEST_CHANGES
+- REJECT
+
+Rules:
+- Do NOT approve broken architecture
+- Do NOT ignore missing tests
+- Do NOT allow unsafe or untyped critical code
+- Do NOT accept undocumented design changes
+- Prefer rejection over false approval
+
+---
+
+# STAFF+ ENGINEERING PRINCIPLE
+
+Ask:
+
+> If this code shipped to production and caused an incident, would it survive a postmortem review?
+
+If NO → must be flagged as HIGH severity.
+
+---
+
+# OUTPUT REQUIREMENT (FOR AI USE)
+
+Even though this is a human-readable rule file, AI assistants must internally structure their review across:
+
+- Architecture
+- Code Quality
+- Tests
+- Design
+- Types
+- Performance
+- Security
+- AI usage
+- Technical debt
+- Final verdict
+
+---
+
+# GOAL OF THIS RULE
+
+This file enforces:
+
+- Production-grade engineering discipline
+- Staff+ level review rigor
+- Strong architectural consistency
+- Controlled AI-assisted development
+- Continuous quality enforcement across the system
