@@ -1,175 +1,49 @@
 ---
-# AI-Investor — Project Context & System Intent (STAFF+)
-
-documentation: This document defines the purpose, scope, and strategic intent of the AI-Investor system.
-All architectural, coding, testing, AI, and documentation decisions MUST align with this context.
-If any rule conflicts with this document, this document takes priority.
-
-Constitution (source of truth): docs/architecture/AI-INVESTOR-CONTEXT.md
-
+description: Project identity, scope, and documentation hierarchy for the OpenCart Playwright automation suite.
 alwaysApply: true
 ---
 
-# 1. SYSTEM IDENTITY
+# OpenCart Playwright TypeScript Automation
 
-AI-Investor is a:
+This repository is a **Playwright/TypeScript test automation framework** for the [OpenCart demo store](https://awesomeqa.com/ui/). It is **not** a full-stack application under test — it is the automation system itself.
 
-> AI-native financial dashboard AND Staff-level QA Engineering reference system
+## Purpose
 
-It is NOT a production trading system.
+Demonstrate Staff-level QA engineering through:
 
-It is a **portfolio-grade engineering demonstration platform** designed to showcase:
+- Feature-module architecture (presentation / state / services)
+- Layered Playwright tests (functional, integration, E2E, API, hybrid)
+- Reusable `@opencart-auto/pw-core` workspace package
+- CI/CD, Docker, and AI-assisted test workflows (`.github/agents/`)
 
-- Staff+ SDET engineering capability
-- AI-assisted software engineering discipline
-- modern full-stack architecture design
-- scalable test automation systems
-- AI governance and agent design
+## Documentation hierarchy (source of truth)
 
----
+1. [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) — structure, diagrams, import rules
+2. [docs/adr/](../docs/adr/) — architectural decisions
+3. [README.md](../README.md) — setup and commands
+4. [specs/test.plan.md](../specs/test.plan.md) — test scenarios
 
-# 2. PRIMARY OBJECTIVE
+## Repository layout (summary)
 
-The goal of this project is to demonstrate:
+```
+src/features/<name>/   presentation · state · services (per domain)
+src/shared/            routes and HTTP types only
+src/fixtures/          Playwright fixture wiring
+src/tests/             functional | integration | e2e | api | hybrid
+packages/pw-core/      BasePage, assertions, Wait, shared interfaces
+```
 
-> “How a Staff/Principal SDET builds, governs, and scales a modern AI-assisted engineering system.”
+**Do not reintroduce** flat `src/pages/`, `src/components/`, `src/data/`, or `src/api/`.
 
-This includes:
+## Core principles
 
-- architecture design
-- test strategy design
-- API and service abstraction
-- AI integration patterns
-- CI/CD readiness
-- documentation discipline
+- **Correctness over speed** — changes need tests and verification where behavior changes
+- **Architecture over convenience** — respect feature boundaries and layer rules
+- **Clarity over complexity** — prefer simple POM and services over clever abstractions
+- **Observability over assumption** — verify against the running store when UI/API behavior changes (see `ironbee-devtools-use.mdc`)
 
----
+## Out of scope
 
-# 3. TARGET AUDIENCE
-
-This project is designed for:
-
-- Staff SDET interviewers
-- Principal QA / QA Architect hiring managers
-- Senior engineering leaders
-- AI engineering recruiters
-- platform engineering teams
-
-NOT end users.
-
-The UI is secondary to engineering signal.
-
----
-
-# 4. CORE ENGINEERING PRINCIPLES
-
-The system must always prioritize:
-
-## 4.1 Correctness over speed
-No feature is complete without validation and tests.
-
-## 4.2 Architecture over convenience
-Shortcuts that violate structure are not allowed.
-
-## 4.3 Clarity over complexity
-Simple systems with clear boundaries are preferred over clever designs.
-
-## 4.4 Observability over assumption
-All system behavior must be explainable and traceable.
-
----
-
-# 5. SYSTEM SCOPE
-
-## IN SCOPE
-
-- Stock dashboard UI (Next.js)
-- Service-layer architecture
-- API abstraction layer
-- Yahoo Finance integration (via providers)
-- Playwright test automation framework
-- AI-assisted engineering workflows
-- CI/CD pipelines
-- documentation system
-- AI agents (test generation, analysis, etc.)
-
----
-
-## OUT OF SCOPE
-
-- Real-money trading systems
-- Financial advice systems
-- High-frequency trading systems
-- Production brokerage integrations
-- End-user financial compliance systems
-
----
-
-# 6. ARCHITECTURAL PHILOSOPHY
-
-The system follows:
-
-> Layered modular architecture with strict separation of concerns
-
-Core rule:
-
-- UI is NOT business logic
-- Services define system behavior
-- Providers handle external dependencies
-- AI assists but does not decide
-
----
-
-# 7. QUALITY BAR (STAFF+ STANDARD)
-
-Every feature must demonstrate:
-
-- scalable system thinking
-- production-grade test coverage strategy
-- clean abstraction design
-- AI governance awareness
-- maintainable architecture
-
----
-
-# 8. AI USAGE PHILOSOPHY
-
-AI is treated as:
-
-> A constrained engineering assistant, not an autonomous actor
-
-AI must:
-
-- follow architectural rules
-- respect service boundaries
-- produce verifiable outputs
-- be validated through testing and review
-
-AI must NOT:
-
-- introduce unchecked logic
-- bypass architecture layers
-- directly modify system state
-
----
-
-# 9. PORTFOLIO STRATEGY
-
-This project is designed to:
-
-- maximize interview signal density
-- demonstrate Staff+ engineering thinking
-- showcase AI engineering maturity
-- provide structured storytelling in interviews
-
-Every feature must contribute to:
-
-> “Why this candidate is Staff/Principal ready”
-
----
-
-# 10. DOCUMENT HIERARCHY (IMPORTANT)
-
-This file is the highest-level document.
-
-Hierarchy:
+- Building or modifying the OpenCart application itself
+- Production trading, financial, or compliance systems
+- Sprint/roadmap processes from other templates (this repo uses ADRs + test plan, not product sprints)

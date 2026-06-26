@@ -4,14 +4,23 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 
 ## Features
 
-- Page Object Model (POM) with shared components (Header, Footer, Ribbon)
+- **Feature modules** (`src/features/`) with presentation / state / services separation
+- Page Object Model (POM) per domain: home, catalog, cart, auth, checkout, wishlist
 - Custom Playwright fixtures for page/component injection
 - `@opencart-auto/pw-core` workspace package (base classes, `SoftAssertions`, `HardAssertions`, `Wait`)
 - Layered tests: functional, integration, E2E, API, and API/UI hybrid
 - Environment-based configuration (`BASE_URL`, credentials via `.env`)
 - TypeScript strict mode, ESLint, and Prettier
 - HTML test reports, traces on failure, Docker support
-- GitHub Actions CI (typecheck, lint, Playwright)
+- GitHub Actions CI (typecheck, lint, credential gate, Playwright)
+
+## Documentation
+
+| Document | Description |
+| -------- | ----------- |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, Mermaid diagrams, feature map, import rules |
+| [docs/adr/README.md](docs/adr/README.md) | ADR index and architectural decisions |
+| [specs/test.plan.md](specs/test.plan.md) | Test scenarios and step definitions |
 
 ## Project Structure
 
@@ -34,6 +43,9 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 │       ├── e2e/                  # Full user journeys
 │       ├── api/                  # Pure HTTP route tests (Playwright request)
 │       └── hybrid/               # API setup + UI verification
+├── docs/
+│   ├── ARCHITECTURE.md           # Diagrams, feature map, layer rules
+│   └── adr/                      # ADRs (see adr/README.md)
 ├── packages/
 │   └── pw-core/                  # Shared library: BasePage, assertions, Wait
 ├── specs/
@@ -56,7 +68,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 | **services** | HTTP calls, API assertions | `shared`, same feature `state` |
 | **tests** | Orchestration | Feature public APIs via `index.ts` |
 
-Features stay independent — tests compose flows through fixtures and feature barrel exports, not cross-feature internal imports.
+Features stay independent — tests compose flows through fixtures and feature barrel exports, not cross-feature internal imports. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for diagrams and the full feature map.
 
 ## Prerequisites
 
@@ -93,7 +105,7 @@ Features stay independent — tests compose flows through fixtures and feature b
 
     Edit `.env` and set:
     - `BASE_URL` — optional; defaults to `https://awesomeqa.com/ui/`
-    - `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` — required for the wishlist E2E test (use a real registered OpenCart demo account, not the placeholder values)
+    - `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` — required for wishlist E2E locally; **required in CI** (see [docs/adr/002-ci-wishlist-credentials.md](docs/adr/002-ci-wishlist-credentials.md))
 
 ## Running Tests
 
@@ -148,7 +160,7 @@ docker-compose up --build
 
 - `CI=true` is set in the image and Compose file (enables retries and single worker, same as GitHub Actions).
 - `BASE_URL` defaults to `https://awesomeqa.com/ui/` when unset.
-- For the wishlist E2E in Docker, pass credentials at runtime:
+- With `CI=true`, valid wishlist credentials are **required** (same as GitHub Actions). Pass via `.env` or `--env-file`:
 
 ```sh
 docker run --rm -e CI=true --env-file .env playwright-tests
@@ -163,8 +175,8 @@ Test results and HTML reports are written to `playwright-report/` and `test-resu
 | Variable             | Required     | Description                                                    |
 | -------------------- | ------------ | -------------------------------------------------------------- |
 | `BASE_URL`           | No           | OpenCart store root URL (default: `https://awesomeqa.com/ui/`) |
-| `TEST_USER_EMAIL`    | Wishlist E2E | Registered user email on the OpenCart demo store               |
-| `TEST_USER_PASSWORD` | Wishlist E2E | Password for the registered user                               |
+| `TEST_USER_EMAIL`    | CI + wishlist E2E | Registered user email on the OpenCart demo store          |
+| `TEST_USER_PASSWORD` | CI + wishlist E2E | Password for the registered user                          |
 
 - **Local:** copy `.env.example` to `.env` and fill in real values.
 - **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions). CI **fails fast** if these are missing or still set to the `.env.example` placeholders.
@@ -182,7 +194,9 @@ The wishlist E2E test **skips locally** when credentials are missing or still se
 | `npm run format`       | Prettier format all files                |
 | `npm run format:check` | Prettier check without writing           |
 
-CI runs with `CI=true` (enables retries and single worker), plus `typecheck`, `lint`, and the full Playwright suite on push/PR to `main` or `master`. Failed runs upload `test-results/` (traces) as artifacts.
+There is no separate unit-test runner; `pw-core` is validated via `npm run build` and exercised indirectly through Playwright specs.
+
+CI runs with `CI=true` (enables retries and single worker), plus `typecheck`, `lint`, a wishlist credential validation step, and the full Playwright suite on push/PR to `main` or `master`. Failed runs upload `test-results/` (traces) as artifacts.
 
 > `packages/pw-core/dist/` is gitignored and built locally/CI via `npm run build` — never commit compiled output.
 
@@ -206,13 +220,16 @@ Use `Wait` from `@opencart-auto/pw-core` for safe clicks and load-state synchron
 Product catalog and search terms live in `src/features/catalog/state/products.ts`:
 
 ```typescript
-import { getSearchTerm, products } from '../../features/catalog';
+import { getSearchTerm, products, requireProductId } from '../../features/catalog';
 
 await header.searchForProduct(getSearchTerm(products.NIKON_D300));
 await ribbon.openProductPage(products.NIKON_D300.category!);
+
+// API / hybrid cart calls
+const productId = requireProductId(products.NIKON_D300, 'NIKON_D300');
 ```
 
-Each `IProduct` may define `name`, `category`, `searchTerm`, and `productId` (OpenCart catalog id for cart API tests). Use `getSearchTerm()` when the search query differs from the display name.
+Each `IProduct` defines `name`, `category`, `searchTerm`, and `productId` (OpenCart catalog id for cart API tests). Use `getSearchTerm()` when the search query differs from the display name. Use `requireProductId()` for API calls to fail fast if `productId` is missing from catalog data.
 
 ## API and Hybrid Tests
 
@@ -229,6 +246,12 @@ Route constants live in `src/shared/services/routes/`. Feature services wrap HTT
 | Hybrid | `src/tests/hybrid/` | `POMFixture` + `page.request` | Shared session: API mutation, UI verification |
 
 Use `page.request` (not standalone `request`) in hybrid tests so cart/session cookies stay in sync with the browser.
+
+### Auth and wishlist behavior
+
+- `LoginPage.login()` submits credentials and fails on credential rejection only (no flow-specific landing assertion).
+- `WishListPage.assertLoaded()` verifies the wishlist page after login in wishlist E2E.
+- Credential helpers: `features/auth/state/credentials.ts`, `resolveWishlistCredentialsForTest()` in `features/auth/testHelpers/`.
 
 ## Writing Tests
 

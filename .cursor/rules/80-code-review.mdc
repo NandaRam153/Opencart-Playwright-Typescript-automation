@@ -1,236 +1,67 @@
 ---
-# AI-Investor — Staff+ Code Review Protocol
-
-description: This rule defines how ALL code changes in the AI-Investor repository must be reviewed.
-The AI must behave as a Staff/Principal Engineer performing a production-grade review.
-
+description: Code review protocol for the OpenCart Playwright test automation repository.
 alwaysApply: false
 ---
 
-# TRIGGER CONDITIONS
+# Code review protocol
 
-This review must be applied when:
+Apply when reviewing PRs, refactors, or significant feature work. Adapt AI-Investor full-stack checks to **test automation** context below.
 
-- Any code is changed
-- Any PR is created
-- Any feature is implemented
-- Any refactor is requested
-- Any sprint work is being validated
+## 1. Architecture
 
----
+- Feature module boundaries respected (`src/features/<name>/`)
+- Presentation does not import services or other features' state
+- HTTP logic in feature `services/`, not page objects
+- Routes/types in `src/shared/` only
+- No revival of deleted flat `src/pages/`, `src/api/`, `src/data/`
 
-# CORE PRINCIPLE
+## 2. Code quality
 
-Every change must be:
-- Correct
-- Testable
-- Maintainable
-- Secure
-- Aligned with architecture
-- Justified in design
+- Clear naming (`*Check` soft audit, `assert*` hard, action verbs for flows)
+- Role/label-based locators preferred
+- No unjustified duplication across features
+- No over-abstraction (match existing POM style)
 
-Assume production impact for all code.
+## 3. Tests
 
----
+- New logic has matching Playwright coverage
+- API tests use `CatalogService` / `CartService`, not monolithic clients
+- Negative paths assert meaningful payloads (not only `success === undefined`)
+- Credential-dependent tests: local skip vs CI fail-fast documented
 
-# 1. ARCHITECTURE REVIEW
+## 4. Design
 
-Validate adherence to system design:
+- Abstractions justified (feature services, fixtures, pw-core)
+- Tests orchestrate; page objects do not encode multi-flow business rules
+- `LoginPage.login()` stays generic; flow-specific landing checks on destination pages
 
-Check:
-- Service layer separation is respected
-- UI does not contain business logic
-- API calls are centralized in services/providers
-- No architectural shortcuts introduced
+## 5. Type safety
 
-If violated:
-- Clearly identify file and issue
-- Explain why it breaks architecture
-- Provide remediation steps
+- Strict TypeScript
+- `requireProductId()` for API cart calls
+- Shared types in `shared/services/http/types.ts` or pw-core models
 
----
+## 6. Performance
 
-# 2. CODE QUALITY REVIEW
+- Avoid `waitForTimeout`; use `Wait` or Playwright auto-waiting
+- Avoid unnecessary `networkidle` unless justified
 
-Evaluate:
+## 7. Security
 
-- Readability and clarity
-- Naming consistency
-- Duplication of logic
-- Over-engineering or unnecessary abstraction
-- Complexity that is not justified
+- No committed credentials
+- `.env` gitignored; placeholders in `.env.example` only
 
-Reject code that:
-- Is unnecessarily complex
-- Duplicates existing logic
-- Introduces unclear abstractions
+## 8. AI-generated code
 
----
+- Validated by typecheck, lint, and tests
+- No hallucinated Playwright APIs
 
-# 3. TEST COVERAGE REVIEW
+## 9. Technical debt
 
-Validate testing completeness:
+Classify findings: **HIGH** | **MEDIUM** | **LOW**
 
-Check:
-- Unit tests for business logic exist
-- API endpoints are tested
-- Critical UI flows are covered (Playwright)
-- Edge cases are handled
+## 10. Verdict
 
-Flag if:
-- New logic is untested
-- Existing tests are missing updates
-- Coverage is unclear or insufficient
+One of: **APPROVE** | **APPROVE_WITH_NOTES** | **REQUEST_CHANGES** | **REJECT**
 
----
-
-# 4. DESIGN & ABSTRACTION REVIEW
-
-Assess engineering design quality:
-
-Check:
-- Are abstractions justified or premature?
-- Is the service layer correctly used?
-- Are responsibilities properly separated?
-- Is the design extensible without over-engineering?
-
-Flag:
-- Premature abstraction
-- Tight coupling
-- Misplaced logic
-
----
-
-# 5. TYPE SAFETY REVIEW (TypeScript)
-
-Validate:
-
-- No unsafe `any` usage unless justified
-- Domain types are reused consistently
-- API responses are properly typed
-- Type definitions are colocated appropriately
-
-Reject if:
-- Critical logic is untyped
-- Types are bypassed for convenience
-
----
-
-# 6. PERFORMANCE REVIEW
-
-Evaluate runtime efficiency:
-
-Check:
-- Unnecessary re-renders in UI
-- Redundant API calls
-- Inefficient computations
-- Missing memoization where required
-
-Flag:
-- Performance regressions
-- Avoidable repeated work
-
----
-
-# 7. SECURITY REVIEW
-
-Validate security posture:
-
-Check:
-- No sensitive data exposure
-- Input validation exists where needed
-- Authentication/authorization enforced where required
-- No unsafe patterns (eval, injection risks)
-
-Reject if:
-- Security boundaries are missing
-- Data exposure risk exists
-
----
-
-# 8. AI-GENERATED CODE REVIEW
-
-Evaluate AI-assisted contributions:
-
-Check:
-- AI-generated logic is validated
-- No hallucinated APIs or incorrect assumptions
-- Logic is reviewed and understood before acceptance
-
-Flag:
-- Unverified AI-generated patterns
-- Over-reliance on AI without validation
-
----
-
-# 9. TECHNICAL DEBT IDENTIFICATION
-
-Identify all forms of debt:
-
-- TODOs left in production code
-- Temporary hacks
-- Duplicated logic
-- Tight coupling introduced in sprint
-- Unresolved shortcuts
-
-Classify:
-- HIGH (must fix immediately)
-- MEDIUM (next sprint)
-- LOW (future improvement)
-
----
-
-# 10. FINAL STAFF+ VERDICT
-
-Every review must conclude with one of:
-
-- APPROVE
-- APPROVE_WITH_NOTES
-- REQUEST_CHANGES
-- REJECT
-
-Rules:
-- Do NOT approve broken architecture
-- Do NOT ignore missing tests
-- Do NOT allow unsafe or untyped critical code
-- Do NOT accept undocumented design changes
-- Prefer rejection over false approval
-
----
-
-# STAFF+ ENGINEERING PRINCIPLE
-
-Ask:
-
-> If this code shipped to production and caused an incident, would it survive a postmortem review?
-
-If NO → must be flagged as HIGH severity.
-
----
-
-# OUTPUT REQUIREMENT (FOR AI USE)
-
-Even though this is a human-readable rule file, AI assistants must internally structure their review across:
-
-- Architecture
-- Code Quality
-- Tests
-- Design
-- Types
-- Performance
-- Security
-- AI usage
-- Technical debt
-- Final verdict
-
----
-
-# GOAL OF THIS RULE
-
-This file enforces:
-
-- Production-grade engineering discipline
-- Staff+ level review rigor
-- Strong architectural consistency
-- Controlled AI-assisted development
-- Continuous quality enforcement across the system
+Do not approve broken layer boundaries or missing tests for new behavior.

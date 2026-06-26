@@ -1,138 +1,56 @@
 ---
-# AI-Investor — Architecture Governance Protocol (STAFF+)
-
-description: This document defines the canonical architecture of the AI-Investor system.
-All code, tests, AI workflows, and documentation MUST align with this architecture.
-Any deviation must be explicitly justified via ADR.
-
+description: Feature-module architecture and layer boundaries for the test automation codebase.
 alwaysApply: true
 ---
 
-# CORE PRINCIPLE
+# Architecture governance
 
-> Architecture is the source of truth for system design.
+> Full diagrams and feature map: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)
 
-No feature, refactor, or AI-generated change may violate architectural boundaries.
+## Style
 
----
+**Feature modules** under `src/features/<name>/`, each with up to three layers:
 
-# 1. SYSTEM OVERVIEW
+| Layer | Responsibility | May import |
+| ----- | -------------- | ---------- |
+| **presentation** | Page objects, locators, UI actions | Same-feature `state`, `@opencart-auto/pw-core` |
+| **state** | Test data, path constants, env config | `src/shared` routes/types |
+| **services** | HTTP calls, API assertion helpers | `src/shared`, same-feature `state` |
 
-AI-Investor is a:
+Public API per feature: `src/features/<name>/index.ts` only.
 
-> AI-native financial dashboard + QA engineering reference platform
+## Features
 
-It demonstrates:
-- modern frontend architecture (Next.js + React)
-- service-oriented backend abstraction
-- AI-assisted engineering workflows
-- production-grade QA automation practices
+| Module | Domains |
+| ------ | ------- |
+| `home` | HomePage, Header, Footer |
+| `catalog` | products, search API, ProductListingPage, Ribbon |
+| `cart` | cart API, CartPage |
+| `auth` | credentials, LoginPage, LogoutPage |
+| `checkout` | billing data, checkout flow pages |
+| `wishlist` | WishListPage |
 
----
+## Shared and core
 
-# 2. ARCHITECTURAL STYLE
+- **`src/shared/`** — `openCartRoutes`, HTTP types (no UI, no test data)
+- **`packages/pw-core/`** — BasePage, BaseComponent, Wait, Soft/Hard assertions, `IProduct`, `IBillingDetails`
 
-The system follows a:
+## Forbidden patterns
 
-> Layered Modular Architecture with Service + Provider separation
+- Presentation importing `services` or another feature's internals
+- Presentation importing test data from another feature's `state`
+- HTTP/route logic inside page objects (use feature `services` or `state` paths)
+- Static Playwright `expect` helpers inside service transport code (use `*Assertions.ts` in services layer)
+- Cross-feature imports except via feature `index.ts` from tests/fixtures
 
-NOT a monolith of UI logic.
+## Tests
 
----
+| Layer | Location | Fixture |
+| ----- | -------- | ------- |
+| functional / integration / e2e / hybrid | `src/tests/...` | `POMFixture` |
+| api | `src/tests/api/` | `@playwright/test` `{ request }` |
+| hybrid (session) | `src/tests/hybrid/` | `POMFixture` + `page.request` |
 
-# 3. LAYERED ARCHITECTURE MODEL
+## Architectural decisions
 
-## 3.1 UI LAYER (React / Next.js)
-
-Responsibilities:
-- rendering UI components
-- handling user interactions
-- managing local UI state only
-- invoking service layer
-
-FORBIDDEN:
-- direct API calls (fetch/axios)
-- business logic
-- data transformation logic (beyond UI formatting)
-
----
-
-## 3.2 SERVICE LAYER (Business Logic)
-
-Location:
-- `/services/*`
-
-Responsibilities:
-- business logic
-- orchestration of data
-- transformation logic
-- validation rules (non-security critical)
-
-RULE:
-All domain logic MUST live here.
-
----
-
-## 3.3 PROVIDER LAYER (External Integration)
-
-Location:
-- `/providers/*`
-
-Responsibilities:
-- external API calls (Yahoo Finance, etc.)
-- third-party integration logic
-- request/response normalization
-
-RULE:
-Providers must NOT contain business logic.
-
----
-
-## 3.4 API LAYER (Next.js Routes)
-
-Location:
-- `/app/api/*`
-
-Responsibilities:
-- request handling
-- authentication checks (if applicable)
-- calling service layer
-- returning standardized responses
-
-RULE:
-API routes must be thin controllers ONLY.
-
----
-
-## 3.5 DATA LAYER (Persistence)
-
-Responsibilities:
-- database access (if applicable)
-- schema definitions
-- data integrity
-
-RULE:
-No business logic allowed in data layer.
-
----
-
-## 3.6 AI LAYER
-
-Location:
-- `/docs/ai/`
-- `/agents/` (if introduced)
-
-Responsibilities:
-- AI-assisted workflows
-- prompt definitions
-- structured AI outputs
-- automation tools (test generation, analysis)
-
-RULE:
-AI must never directly modify system state without validation.
-
----
-
-# 4. DATA FLOW ARCHITECTURE
-
-Standard request flow:
+Non-trivial decisions require an ADR in [docs/adr/](../docs/adr/).
