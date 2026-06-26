@@ -27,6 +27,11 @@ export const products: Record<string, IProduct> = {
     },
 };
 
+/** Ribbon category labels used when no single product drives navigation. */
+export const ribbonCategories = {
+    TABLETS: 'Tablets',
+} as const;
+
 /** Resolve the search term for a product (explicit searchTerm or product name). */
 export function getSearchTerm(product: IProduct): string {
     return product.searchTerm ?? product.name;
