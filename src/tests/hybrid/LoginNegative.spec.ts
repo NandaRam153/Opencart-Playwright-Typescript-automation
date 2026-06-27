@@ -1,12 +1,8 @@
-import { expect } from '@playwright/test';
-import { test } from '../../fixtures/POMFixture';
-import { AuthPaths } from '../../features/auth';
-
-const LOGIN_ERROR =
-    /No match for E-Mail Address and\/or Password\.|exceeded allowed number of login attempts/;
+import { LOGIN_REJECTION_PATTERN } from '../../features/auth';
+import { expect, test } from '../../fixtures/POMFixture';
 
 test('invalid login POST fails and UI shows error', async ({ page, loginPage }) => {
-    await page.goto(AuthPaths.login);
+    await loginPage.navigateToLogin();
 
     const loginResponsePromise = page.waitForResponse(
         (response) =>
@@ -24,6 +20,6 @@ test('invalid login POST fails and UI shows error', async ({ page, loginPage }) 
     expect(loginResponse.url()).not.toContain('route=account/account');
 
     await expect(page.getByRole('heading', { name: 'Returning Customer', level: 2 })).toBeVisible();
-    await expect(page.getByText(LOGIN_ERROR)).toBeVisible();
+    await expect(page.getByText(LOGIN_REJECTION_PATTERN)).toBeVisible();
     await expect(page).toHaveURL(/route=account\/login/);
 });

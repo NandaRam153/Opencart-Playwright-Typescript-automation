@@ -42,7 +42,7 @@ Each domain area is an **independent feature module** under `src/features/<name>
 | **home** | `HomePaths` | — | `HomePage`, `Header`, `Footer` |
 | **catalog** | `products`, `getSearchTerm`, `requireProductId` | `CatalogService`, catalog assertions | `ProductListingPage`, `Ribbon` |
 | **cart** | `CartPaths` | `CartService`, cart assertions | `CartPage` |
-| **auth** | `credentials`, `AuthPaths` | — | `LoginPage`, `LogoutPage` |
+| **auth** | `credentials`, `AuthPaths`, `LOGIN_REJECTION_PATTERN` | — | `LoginPage`, `LogoutPage` |
 | **checkout** | `billingData` | — | `CheckoutPage`, `OrderPlacementResultPage` |
 | **wishlist** | — | — | `WishListPage` |
 
@@ -100,6 +100,8 @@ flowchart LR
 | **tests** | Feature `index.ts`, fixtures | Feature `presentation/` or `state/` paths directly |
 
 **Cross-feature composition** happens in tests and fixtures (e.g. order flow uses catalog + cart + checkout page objects injected together).
+
+Layer boundaries are enforced in `eslint.config.mjs` via `no-restricted-imports` on presentation, state, services, and tests (feature barrels and `index.ts` re-exports are exempt).
 
 ## Shared layer
 

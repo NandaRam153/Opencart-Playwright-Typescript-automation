@@ -1,5 +1,5 @@
+import { type CartAddResponse } from '../../features/cart';
 import { products, requireProductId } from '../../features/catalog';
-import { CartAddResponse } from '../../shared';
 import { expect, test } from '../../fixtures/POMFixture';
 
 test('API add to cart populates the cart page UI', async ({
