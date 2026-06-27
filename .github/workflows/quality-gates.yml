@@ -89,8 +89,8 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 20
         env:
-            TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
-            TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+            TEST_USER_EMAIL: ${{ fromJSON(toJSON(secrets)).TEST_USER_EMAIL }}
+            TEST_USER_PASSWORD: ${{ fromJSON(toJSON(secrets)).TEST_USER_PASSWORD }}
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
@@ -109,8 +109,8 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 60
         env:
-            TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
-            TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+            TEST_USER_EMAIL: ${{ fromJSON(toJSON(secrets)).TEST_USER_EMAIL }}
+            TEST_USER_PASSWORD: ${{ fromJSON(toJSON(secrets)).TEST_USER_PASSWORD }}
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
