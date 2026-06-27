@@ -8,8 +8,9 @@ This document describes the test automation system design for the OpenCart demo 
 flowchart TB
     subgraph runners [Test runners]
         PW[Playwright Test]
-        CI[GitHub Actions]
+        CI[GitHub Actions quality-gates.yml]
         Docker[Docker / Compose]
+        Husky[Husky pre-commit / pre-push]
     end
 
     subgraph repo [This repository]
@@ -18,12 +19,14 @@ flowchart TB
         Features[src/features]
         Shared[src/shared]
         PWCore[packages/pw-core]
+        Scripts[scripts/]
     end
 
     SUT[(OpenCart demo store)]
 
     CI --> PW
     Docker --> PW
+    Husky --> PWCore
     PW --> Tests
     Tests --> Fixtures
     Fixtures --> Features
@@ -31,22 +34,39 @@ flowchart TB
     Features --> PWCore
     Features --> SUT
     Shared --> SUT
+    Scripts --> SUT
 ```
 
 ## Feature modules
 
 Each domain area is an **independent feature module** under `src/features/<name>/`. Modules expose a public API through `index.ts` only.
 
-| Feature      | State                                                 | Services                             | Presentation                               |
-| ------------ | ----------------------------------------------------- | ------------------------------------ | ------------------------------------------ |
-| **home**     | `HomePaths`                                           | —                                    | `HomePage`, `Header`, `Footer`             |
-| **catalog**  | `products`, `getSearchTerm`, `requireProductId`       | `CatalogService`, catalog assertions | `ProductListingPage`, `Ribbon`             |
-| **cart**     | `CartPaths`                                           | `CartService`, cart assertions       | `CartPage`                                 |
-| **auth**     | `credentials`, `AuthPaths`, `LOGIN_REJECTION_PATTERN` | —                                    | `LoginPage`, `LogoutPage`                  |
-| **checkout** | `billingData`                                         | —                                    | `CheckoutPage`, `OrderPlacementResultPage` |
-| **wishlist** | —                                                     | —                                    | `WishListPage`                             |
+| Feature      | State                                                                                                | Services                             | Presentation                               |
+| ------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------ |
+| **home**     | `HomePaths`, `HeaderRoutes`, `uiConstants` (`SEARCH_PLACEHOLDER`, `STORE_PAGE_TITLE`)                | —                                    | `HomePage`, `Header`, `Footer`             |
+| **catalog**  | `products`, `ribbonMenu`, `ribbonCategories`, `getSearchTerm`, `requireProductId`, `requireCategory` | `CatalogService`, catalog assertions | `ProductListingPage`, `Ribbon`             |
+| **cart**     | `CartPaths`                                                                                          | `CartService`, cart assertions       | `CartPage`                                 |
+| **auth**     | `credentials`, `AuthPaths`, `AUTH_LOGOUT_URL_PATTERN`, `LOGIN_REJECTION_PATTERN`                     | —                                    | `LoginPage`, `LogoutPage`                  |
+| **checkout** | `billingData`, `CheckoutBillingDetails`                                                              | —                                    | `CheckoutPage`, `OrderPlacementResultPage` |
+| **wishlist** | `WishlistPaths`                                                                                      | —                                    | `WishListPage`                             |
 
 Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwright skip/fail wiring for wishlist E2E is in `src/fixtures/wishlistCredentials.ts`.
+
+### State module reference
+
+| File                               | Feature  | Purpose                                                 |
+| ---------------------------------- | -------- | ------------------------------------------------------- |
+| `home/state/paths.ts`              | home     | `HomePaths.home` from shared routes                     |
+| `home/state/headerRoutes.ts`       | home     | Cart/checkout href fragments for header assertions      |
+| `home/state/uiConstants.ts`        | home     | Search placeholder, store page title                    |
+| `catalog/state/products.ts`        | catalog  | Product catalog, helpers, `ribbonCategories`            |
+| `catalog/state/ribbonMenu.ts`      | catalog  | Ribbon dropdown and link labels (Software empty on SUT) |
+| `cart/state/paths.ts`              | cart     | `CartPaths`                                             |
+| `auth/state/paths.ts`              | auth     | Login/logout paths, logout URL glob                     |
+| `auth/state/credentials.ts`        | auth     | Wishlist credential resolution                          |
+| `auth/state/loginErrors.ts`        | auth     | `LOGIN_REJECTION_PATTERN`                               |
+| `checkout/state/billingDetails.ts` | checkout | Guest billing fixture data and type                     |
+| `wishlist/state/paths.ts`          | wishlist | `WishlistPaths.list`                                    |
 
 ## Layer model (per feature)
 
@@ -95,7 +115,7 @@ flowchart LR
 | Layer            | May import                                     | Must not import                                    |
 | ---------------- | ---------------------------------------------- | -------------------------------------------------- |
 | **presentation** | Same-feature `state`, `@opencart-auto/pw-core` | Other features, `services`, test specs             |
-| **state**        | `shared` routes/types                          | `presentation`, `services`, other features' state  |
+| **state**        | `shared` routes/types, pw-core models          | `presentation`, `services`, other features' state  |
 | **services**     | `shared`, same-feature `state`                 | `presentation`, other features' internals          |
 | **tests**        | Feature `index.ts`, fixtures                   | Feature `presentation/` or `state/` paths directly |
 
@@ -107,10 +127,12 @@ Layer boundaries are enforced in `eslint.config.mjs` via `no-restricted-imports`
 
 `src/shared/` holds cross-cutting infrastructure with **no UI and no test data**:
 
-- `services/routes/openCartRoutes.ts` — OpenCart route path constants
-- `services/http/types.ts` — shared response types (e.g. `CartAddResponse`)
+| Path                                | Contents                                                                       |
+| ----------------------------------- | ------------------------------------------------------------------------------ |
+| `services/routes/openCartRoutes.ts` | `home`, `search`, `cart`, `cartAdd`, `checkout`, `login`, `logout`, `wishlist` |
+| `services/http/types.ts`            | Shared response types (e.g. `CartAddResponse`)                                 |
 
-Feature `state` modules may re-export route slices as domain paths (`CartPaths`, `AuthPaths`, `HomePaths`).
+Feature `state` modules re-export route slices as domain paths (`CartPaths`, `AuthPaths`, `HomePaths`, `WishlistPaths`). Presentation uses feature state — not `shared` directly — except where state modules wrap shared routes (see ADR 006).
 
 ## pw-core workspace package
 
@@ -120,7 +142,7 @@ Feature `state` modules may re-export route slices as domain paths (`CartPaths`,
 - `SoftAssertions`, `HardAssertions`, `Wait`
 - Generic interfaces: `IProduct`, `IBillingDetails`
 
-It is built via `npm run build` (also `postinstall` / `pretest`). Output lives in `packages/pw-core/dist/` (gitignored).
+It is built via `npm run build` (also `postinstall` / `pretest`). Output lives in `packages/pw-core/dist/` (gitignored). There is no separate unit-test runner; compile + Playwright specs validate behavior.
 
 ## Test taxonomy
 
@@ -149,6 +171,15 @@ flowchart TD
 
 `src/tests/seed.spec.ts` is generator scaffolding only (`testIgnore` in `playwright.config.ts`).
 
+### Quality gate tags
+
+| Tag         | Purpose           | Count   |
+| ----------- | ----------------- | ------- |
+| `@smoke`    | PR fast signal    | 8 tests |
+| `@wishlist` | Authenticated E2E | 1 test  |
+
+Details: [QUALITY-GATES.md](QUALITY-GATES.md).
+
 ## Fixtures
 
 Playwright fixtures act as the DI container. Shared helpers live in `src/fixtures/fixtureHelpers.ts` (`pageObject`, `serviceFromRequest`, `serviceFromPageRequest`).
@@ -161,31 +192,47 @@ Playwright fixtures act as the DI container. Shared helpers live in `src/fixture
 
 UI and hybrid tests import `test` from `POMFixture`. API tests import `test` from `ApiFixture`. Avoid constructing services or page objects directly in specs when a fixture exists.
 
-## CI pipeline
+## CI and quality gates
 
 ```mermaid
-flowchart LR
-    A[checkout] --> B[npm ci]
-    B --> C[build pw-core]
-    C --> D[typecheck]
-    D --> E[lint]
-    E --> F[playwright install]
-    F --> G{Wishlist secrets valid?}
-    G -->|no| X[Fail workflow]
-    G -->|yes| H[playwright test]
-    H --> I[Upload report / traces]
+flowchart TB
+    subgraph pr [Pull request]
+        S1[Static analysis] --> S2[SUT health]
+        S2 --> S3[API tests]
+        S2 --> S4[Smoke @smoke]
+        S2 --> S5[Wishlist @wishlist — same-repo only]
+    end
+
+    subgraph main [Push main / nightly]
+        M1[Static analysis] --> M2[SUT health]
+        M2 --> M3[Full Playwright suite]
+    end
 ```
 
-When `CI=true`, the workflow **fails** if `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` are missing or still placeholder values. Locally, the wishlist E2E **skips** instead (see [adr/002-ci-wishlist-credentials.md](adr/002-ci-wishlist-credentials.md)).
+Workflow: [.github/workflows/quality-gates.yml](../.github/workflows/quality-gates.yml).
+
+When `CI=true`, push/nightly runs **fail** if wishlist credentials are missing or placeholder (see [adr/002-ci-wishlist-credentials.md](adr/002-ci-wishlist-credentials.md)). Fork PRs skip the wishlist job without failing.
+
+Local verification: [VERIFICATION.md](VERIFICATION.md). Contributor workflow: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Adding a new feature
 
 1. Create `src/features/<name>/` with `state/`, `presentation/`, and optionally `services/`.
 2. Export public API from `src/features/<name>/index.ts`.
 3. Register presentation classes in `POMFixture.ts` if tests need them.
-4. Add tests under the appropriate `src/tests/<layer>/` folder.
+4. Add tests under the appropriate `src/tests/<layer>/` folder; tag with `@smoke` only when appropriate for PR gates.
 5. Document scenarios in `specs/test.plan.md`.
+6. Add an ADR for non-trivial boundary or CI decisions.
 
 ## Related decisions
 
-See [adr/README.md](adr/README.md) for the ADR index.
+| ADR                                             | Topic                                |
+| ----------------------------------------------- | ------------------------------------ |
+| [001](adr/001-feature-module-layers.md)         | Feature module layers                |
+| [002](adr/002-ci-wishlist-credentials.md)       | Wishlist credentials in CI           |
+| [003](adr/003-feature-scoped-api-services.md)   | Feature-scoped HTTP services         |
+| [004](adr/004-login-presentation-separation.md) | Login vs wishlist landing assertions |
+| [005](adr/005-layered-quality-gates.md)         | Layered CI, tags, Husky              |
+| [006](adr/006-presentation-state-separation.md) | State extraction from presentation   |
+
+Full index: [adr/README.md](adr/README.md).

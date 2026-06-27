@@ -61,7 +61,9 @@ test.describe('Ribbon Category Navigation → Tablets', () => {
 
 ### Project-standard version (after refactor)
 
-The committed spec imports `test` from `POMFixture` and uses `HomePage`, `Ribbon`, and `ProductListingPage` from feature modules — same flow, aligned with [docs/ARCHITECTURE.md](ARCHITECTURE.md).
+The committed spec imports `test` from `POMFixture` and uses `HomePage`, `Ribbon`, and `ProductListingPage` from feature modules — same flow, aligned with [docs/ARCHITECTURE.md](ARCHITECTURE.md). Ribbon labels come from `src/features/catalog/state/ribbonMenu.ts` (not hardcoded in presentation).
+
+The committed spec is tagged `@smoke` and runs in PR CI via `npm run verify:smoke`.
 
 ### Phones & PDAs category integration
 
@@ -104,6 +106,6 @@ flowchart LR
 After generation, always:
 
 1. Replace `@playwright/test` fixture imports with `POMFixture` where UI page objects apply.
-2. Move locators into presentation classes under `src/features/*/presentation/`.
+2. Move locators into presentation classes under `src/features/*/presentation/`; move labels, paths, and test data into the same feature's `state/`.
 3. Add or update the scenario in `specs/test.plan.md`.
-4. Run `npm run typecheck`, `npm run lint`, and the new spec.
+4. Run `npm run verify:static` and the new spec; add `@smoke` only if the test belongs in the PR smoke gate (see [QUALITY-GATES.md](QUALITY-GATES.md)).

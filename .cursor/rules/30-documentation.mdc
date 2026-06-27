@@ -24,9 +24,12 @@ When unclear, default to **MEDIUM**.
 | -------- | ----------- |
 | [README.md](../README.md) | Commands, env vars, user-facing behavior, structure |
 | [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) | Features, layers, diagrams, import rules |
+| [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md) | CI jobs, test tags, Husky hooks |
+| [docs/VERIFICATION.md](../docs/VERIFICATION.md) | Pre-PR verification checklist |
+| [docs/CONTRIBUTING.md](../docs/CONTRIBUTING.md) | Fork/PR workflow, layer rules |
 | [docs/adr/*.md](../docs/adr/) | Non-trivial design decisions |
 | [specs/test.plan.md](../specs/test.plan.md) | New/changed test scenarios |
-| [specs/README.md](../specs/README.md) | Specs folder purpose changes |
+| [specs/README.md](../specs/README.md) | Specs folder purpose and links |
 | [.env.example](../.env.example) | New or changed environment variables |
 
 **Do not reference** AI-Investor paths (`docs/architecture/AI-INVESTOR-*`, `docs/roadmap/`, etc.) — they do not exist in this repo.
