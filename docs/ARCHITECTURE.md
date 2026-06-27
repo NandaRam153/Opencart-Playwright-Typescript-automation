@@ -136,20 +136,27 @@ flowchart TD
     I --> POMFixture
     E --> POMFixture
     H --> POMFixture
-    A --> FeatureServices
+    A --> ApiFixture
 ```
 
 | Layer | Fixture | Typical imports |
 | ----- | ------- | --------------- |
-| functional / integration / e2e / hybrid | `POMFixture` | Feature presentation via fixtures |
-| api | `@playwright/test` `{ request }` | `CatalogService`, `CartService` |
-| hybrid | `POMFixture` + `page.request` | Services + presentation (shared session cookies) |
+| functional / integration / e2e | `POMFixture` | Page objects via fixtures |
+| hybrid | `POMFixture` | Page objects + `sessionCartService` (`page.request`) |
+| api | `ApiFixture` | `cartService`, `catalogService` (isolated `request`) |
 
 `src/tests/seed.spec.ts` is generator scaffolding only (`testIgnore` in `playwright.config.ts`).
 
 ## Fixtures
 
-`src/fixtures/POMFixture.ts` extends Playwright `test` and instantiates presentation classes from feature modules. Tests import `test` from the fixture file, not from `@playwright/test` directly (except pure API specs).
+Playwright fixtures act as the DI container. Shared helpers live in `src/fixtures/fixtureHelpers.ts` (`pageObject`, `serviceFromRequest`, `serviceFromPageRequest`).
+
+| File | Injects |
+| ---- | ------- |
+| `POMFixture.ts` | Feature presentation classes, `sessionCartService`, `wishlistCredentials` |
+| `ApiFixture.ts` | `CartService`, `CatalogService` |
+
+UI and hybrid tests import `test` from `POMFixture`. API tests import `test` from `ApiFixture`. Avoid constructing services or page objects directly in specs when a fixture exists.
 
 ## CI pipeline
 

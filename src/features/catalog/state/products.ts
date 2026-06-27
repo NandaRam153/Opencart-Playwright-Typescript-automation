@@ -30,6 +30,7 @@ export const products: Record<string, IProduct> = {
 /** Ribbon category labels used when no single product drives navigation. */
 export const ribbonCategories = {
     TABLETS: 'Tablets',
+    PHONES_PDAS: 'Phones & PDAs',
 } as const;
 
 /** Resolve the search term for a product (explicit searchTerm or product name). */

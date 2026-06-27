@@ -36,7 +36,9 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 │   │   └── wishlist/
 │   ├── shared/                   # Cross-cutting routes and HTTP types
 │   ├── fixtures/
-│   │   └── POMFixture.ts         # Playwright fixtures
+│   │   ├── fixtureHelpers.ts     # pageObject / service fixture factories
+│   │   ├── POMFixture.ts         # UI page objects + sessionCartService + wishlistCredentials
+│   │   └── ApiFixture.ts         # cartService + catalogService (API)
 │   └── tests/
 │       ├── seed.spec.ts          # Generator scaffold (excluded from test runs)
 │       ├── functional/           # UI smoke / audit tests
@@ -119,7 +121,7 @@ Features stay independent — tests compose flows through fixtures and feature b
 | `npm run test:debug`  | Run in Playwright debug mode                            |
 | `npm run report`      | Open the HTML report                                    |
 
-The suite runs **21 tests** (`seed.spec.ts` is excluded via `testIgnore`; wishlist E2E skips without valid credentials).
+The suite runs **22 tests** (`seed.spec.ts` is excluded via `testIgnore`; wishlist E2E skips without valid credentials).
 
 #### Run a specific test file
 
@@ -243,16 +245,17 @@ Route constants live in `src/shared/services/routes/`. Feature services wrap HTT
 
 | Type | Folder | Fixture | When to use |
 | ---- | ------ | ------- | ----------- |
-| API | `src/tests/api/` | `@playwright/test` `{ request }` | Fast HTTP smoke and negative route checks |
-| Hybrid | `src/tests/hybrid/` | `POMFixture` + `page.request` | Shared session: API mutation, UI verification |
+| API | `src/tests/api/` | `ApiFixture` | Fast HTTP smoke and negative route checks |
+| Hybrid | `src/tests/hybrid/` | `POMFixture` | `sessionCartService` + page objects (shared session cookies) |
 
-Use `page.request` (not standalone `request`) in hybrid tests so cart/session cookies stay in sync with the browser.
+Use `sessionCartService` from `POMFixture` in hybrid tests (not standalone `request`) so cart/session cookies stay in sync with the browser.
 
 ### Auth and wishlist behavior
 
 - `LoginPage.login()` submits credentials and fails on credential rejection only (no flow-specific landing assertion).
 - `WishListPage.assertLoaded()` verifies the wishlist page after login in wishlist E2E.
-- Credential helpers: `features/auth/state/credentials.ts`, `resolveWishlistCredentialsForTest()` in `features/auth/testHelpers/`.
+- Wishlist E2E uses the `wishlistCredentials` fixture from `POMFixture` (wraps `resolveWishlistCredentialsForTest()`).
+- Credential resolution: `features/auth/state/credentials.ts`, `features/auth/testHelpers/wishlistCredentials.ts`.
 
 ## Writing Tests
 
@@ -262,7 +265,7 @@ Use `page.request` (not standalone `request`) in hybrid tests so cart/session co
 - API tests → `src/tests/api/`
 - Hybrid tests → `src/tests/hybrid/`
 - Page objects → `src/features/<feature>/presentation/`
-- Fixtures → `src/fixtures/POMFixture.ts`
+- Fixtures → `src/fixtures/` (`POMFixture.ts`, `ApiFixture.ts`, `fixtureHelpers.ts`)
 - Test data → `src/features/<feature>/state/`
 - Scenario reference → [specs/test.plan.md](specs/test.plan.md)
 

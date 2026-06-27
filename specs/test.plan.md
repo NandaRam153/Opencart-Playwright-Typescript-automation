@@ -191,6 +191,27 @@ Example of generating from the seed file with the Playwright test generator, the
 
 ---
 
+### Showcase — Phones & PDAs category (Integration)
+
+**File:** `src/tests/integration/PhonesPDAsCategory.spec.ts`  
+**Seed:** `src/tests/seed.spec.ts`  
+**Docs:** [docs/test-generation-from-seed.md](../docs/test-generation-from-seed.md)
+
+Second seed showcase: same generator workflow as Tablets, different ribbon category. (Software has zero products on the demo store, so Phones & PDAs is used instead.)
+
+**Describe:** Ribbon Category Navigation → Phones & PDAs
+
+#### Showcase.2 Clicking Phones & PDAs loads the Phones & PDAs category page
+
+**Steps:**
+
+1. Navigate to the home page.
+2. Click "Phones & PDAs" in the ribbon.
+3. Verify the Phones & PDAs category heading is shown.
+4. Verify at least one product is listed.
+
+---
+
 ### 7. Search → Product Listing (Integration)
 
 **File:** `src/tests/integration/SearchToProductListing.spec.ts`
