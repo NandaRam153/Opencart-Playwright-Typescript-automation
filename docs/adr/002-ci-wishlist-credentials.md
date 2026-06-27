@@ -10,9 +10,9 @@ The wishlist E2E test (`src/tests/e2e/WishListFlow.spec.ts`) requires a register
 ## Decision
 
 - **Local runs:** If `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` are unset or equal to `.env.example` placeholders, the wishlist test **skips** with an explanatory message.
-- **CI runs (`CI=true`):** Missing or placeholder credentials cause an **immediate workflow failure** via:
-  1. A GitHub Actions step that validates secrets before Playwright runs.
-  2. `assertWishlistCredentialsInCi()` in `features/auth/state/credentials.ts` as a secondary guard.
+- **CI runs (`CI=true`):** Missing or placeholder credentials cause an **immediate workflow failure** on push/nightly and in Docker via:
+    1. `scripts/verify-wishlist-credentials.sh` in [.github/workflows/quality-gates.yml](../../.github/workflows/quality-gates.yml) (full suite and same-repo wishlist job).
+    2. `assertWishlistCredentialsInCi()` in `features/auth/state/credentials.ts` as a secondary guard.
 
 Credential resolution for tests lives in `src/fixtures/wishlistCredentials.ts` (`resolveWishlistCredentialsForTest()`), invoked by the `wishlistCredentials` fixture in `POMFixture`.
 
@@ -25,7 +25,8 @@ Credential resolution for tests lives in `src/fixtures/wishlistCredentials.ts` (
 
 **Negative**
 
-- Forks and PRs from contributors without configured secrets will fail CI until secrets are added or the workflow is adjusted.
+- Forks and PRs from contributors without configured secrets will fail the **full suite** on push to main until secrets are added.
+- Fork PRs **skip** the Wishlist CI job (see [QUALITY-GATES.md](../QUALITY-GATES.md)); they do not fail for missing secrets.
 - Docker runs with `CI=true` also require valid credentials in `.env` or environment.
 
 ## Configuration

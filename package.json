@@ -6,11 +6,19 @@
     "scripts": {
         "build": "npm run build --workspace=packages/pw-core",
         "postinstall": "npm run build --workspace=packages/pw-core",
+        "prepare": "husky",
         "typecheck": "tsc --noEmit",
         "lint": "eslint .",
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
+        "verify:static": "npm run build && npm run typecheck && npm run lint && npm run format:check",
+        "verify:sut": "node scripts/sut-health-check.mjs",
+        "verify:api": "playwright test src/tests/api/",
+        "verify:smoke": "playwright test --grep @smoke",
+        "verify:wishlist": "playwright test --grep @wishlist",
+        "verify": "npm run verify:static && npm run verify:sut && npm run verify:api && npm run verify:smoke",
+        "verify:full": "npm run verify:static && npm run verify:sut && playwright test",
         "pretest": "npm run build",
         "test": "playwright test",
         "test:headed": "playwright test --headed",
@@ -50,6 +58,17 @@
         "playwright": "^1.58.1",
         "prettier": "^3.5.3",
         "typescript": "^5.8.2",
-        "typescript-eslint": "^8.26.0"
+        "typescript-eslint": "^8.26.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^15.4.3"
+    },
+    "lint-staged": {
+        "*.{ts,mjs,js}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "*.{json,md,yml,yaml}": [
+            "prettier --write"
+        ]
     }
 }

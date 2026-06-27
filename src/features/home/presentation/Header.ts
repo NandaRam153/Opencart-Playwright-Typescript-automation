@@ -1,6 +1,6 @@
 import { BaseComponent, HardAssertions, SoftAssertions, Wait } from '@opencart-auto/pw-core';
-
-const SEARCH_PLACEHOLDER = 'Search';
+import { HeaderRoutes } from '../state/headerRoutes';
+import { SEARCH_PLACEHOLDER } from '../state/uiConstants';
 
 export class Header extends BaseComponent {
     private get searchForm() {
@@ -44,8 +44,8 @@ export class Header extends BaseComponent {
         }
 
         await SoftAssertions.visible(this.page.locator('#wishlist-total'));
-        await SoftAssertions.visible(this.page.locator('a[href*="route=checkout/cart"]'));
-        await SoftAssertions.visible(this.page.locator('a[href*="route=checkout/checkout"]'));
+        await SoftAssertions.visible(this.page.locator(`a[href*="${HeaderRoutes.cart}"]`));
+        await SoftAssertions.visible(this.page.locator(`a[href*="${HeaderRoutes.checkout}"]`));
     }
 
     async gotoCheckout() {

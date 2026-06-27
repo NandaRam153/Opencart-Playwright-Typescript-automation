@@ -11,10 +11,10 @@
 
 Split HTTP integration by feature:
 
-| Feature | Service | Assertions |
-| ------- | ------- | ---------- |
+| Feature | Service                       | Assertions                                     |
+| ------- | ----------------------------- | ---------------------------------------------- |
 | catalog | `CatalogService.searchHtml()` | `assertProductInHtml`, `assertNoSearchResults` |
-| cart | `CartService.addProduct()` | `assertCartAddRejected` |
+| cart    | `CartService.addProduct()`    | `assertCartAddRejected`                        |
 
 Shared pieces:
 

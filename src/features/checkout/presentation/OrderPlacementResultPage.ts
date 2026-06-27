@@ -5,7 +5,9 @@ export class OrderPlacementResultPage extends BasePage {
         await HardAssertions.visible(
             this.page.getByRole('heading', { name: 'Your order has been placed!', level: 1 })
         );
-        const continueLink = this.page.locator('.pull-right').getByRole('link', { name: 'Continue' });
+        const continueLink = this.page
+            .locator('.pull-right')
+            .getByRole('link', { name: 'Continue' });
         await Promise.all([
             this.page.waitForURL(/route=common\/home/, { timeout: 15_000 }),
             continueLink.click(),

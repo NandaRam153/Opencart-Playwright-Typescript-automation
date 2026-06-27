@@ -34,6 +34,8 @@ Each feature exposes a barrel file (`index.ts`). Tests and fixtures import from 
 
 ## Compliance
 
-- `Ribbon.openProductPage(category)` requires an explicit category (no default from catalog state).
+- `Ribbon.openProductPage(category)` requires an explicit category (no default from catalog state); menu labels live in `catalog/state/ribbonMenu.ts`.
 - `CartPage` uses `CartPaths` from cart state, not `shared` routes directly in presentation.
+- `CheckoutPage` uses `CheckoutBillingDetails` from checkout state, not `IBillingDetails` from pw-core directly.
+- `Header` uses `HeaderRoutes` from home state (wrapping shared routes), not cart/checkout feature imports.
 - Legacy `src/api/`, `src/pages/`, `src/components/`, `src/data/` removed.

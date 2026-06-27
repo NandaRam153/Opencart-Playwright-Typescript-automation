@@ -325,8 +325,34 @@ Second seed showcase: same generator workflow as Tablets, different ribbon categ
 ## Notes
 
 - Architecture overview: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md). ADRs: [docs/adr/](../docs/adr/).
+- Quality gates and tags: [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md). Verification: [docs/VERIFICATION.md](../docs/VERIFICATION.md).
 - All tests use the Playwright test runner with feature-module Page Objects for maintainability.
 - Fixtures are defined in `src/fixtures/` (`POMFixture.ts`, `ApiFixture.ts`, `fixtureHelpers.ts`, `wishlistCredentials.ts`).
-- Product test data is in `src/features/catalog/state/products.ts`; billing details in `src/features/checkout/state/billingDetails.ts`.
-- HTTP route constants are in `src/shared/services/routes/`; feature services in `src/features/*/services/`.
+- Product test data: `src/features/catalog/state/products.ts`, `ribbonMenu.ts`; billing: `src/features/checkout/state/billingDetails.ts`; home UI constants: `src/features/home/state/uiConstants.ts`.
+- HTTP route constants: `src/shared/services/routes/openCartRoutes.ts`; feature path slices in each feature's `state/paths.ts`.
 - Add new functional tests under `src/tests/functional/`, integration tests under `src/tests/integration/`, E2E tests under `src/tests/e2e/`, API tests under `src/tests/api/`, and hybrid tests under `src/tests/hybrid/`.
+
+---
+
+## Quality gate tags
+
+PR smoke subset (`npm run verify:smoke` — 8 tests):
+
+| Spec                                            | Tag                 | Gate        |
+| ----------------------------------------------- | ------------------- | ----------- |
+| `functional/HomePageFunctionalityCheck.spec.ts` | `@smoke`            | Smoke       |
+| `api/CartAdd.spec.ts`                           | `@smoke`            | Smoke + API |
+| `api/StoreRoutes.spec.ts`                       | `@smoke` (describe) | Smoke + API |
+| `integration/TabletsCategory.spec.ts`           | `@smoke` (describe) | Smoke       |
+| `hybrid/CartApiToUi.spec.ts`                    | `@smoke`            | Smoke       |
+| `hybrid/LoginNegative.spec.ts`                  | `@smoke`            | Smoke       |
+| `e2e/OrderCreation.spec.ts`                     | `@smoke`            | Smoke       |
+
+Full suite only (not in PR smoke):
+
+| Spec                                     | Notes                             |
+| ---------------------------------------- | --------------------------------- |
+| `e2e/WishListFlow.spec.ts`               | `@wishlist` — needs credentials   |
+| Remaining integration / functional specs | Full regression on push / nightly |
+
+See [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md) for CI job mapping.

@@ -1,4 +1,5 @@
-import { BasePage, HardAssertions, IBillingDetails, Wait } from '@opencart-auto/pw-core';
+import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
+import type { CheckoutBillingDetails } from '../state/billingDetails';
 
 export class CheckoutPage extends BasePage {
     async selectGuestCheckout() {
@@ -8,7 +9,7 @@ export class CheckoutPage extends BasePage {
         await Wait.click(this.page.locator('#button-account'));
     }
 
-    async fillBillingDetails(data: IBillingDetails) {
+    async fillBillingDetails(data: CheckoutBillingDetails) {
         await this.page.getByPlaceholder('First Name').fill(data.firstName);
         await this.page.getByPlaceholder('Last Name').fill(data.lastName);
         await this.page.locator('#input-payment-email').fill(data.email);
@@ -45,7 +46,7 @@ export class CheckoutPage extends BasePage {
         await Wait.click(this.page.locator('#button-confirm'));
     }
 
-    async completeGuestCheckout(data: IBillingDetails) {
+    async completeGuestCheckout(data: CheckoutBillingDetails) {
         await this.selectGuestCheckout();
         await this.fillBillingDetails(data);
         await this.confirmDeliveryMethod();
