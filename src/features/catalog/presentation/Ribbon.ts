@@ -1,26 +1,19 @@
 import { HardAssertions, SoftAssertions, BaseComponent } from '@opencart-auto/pw-core';
+import { ribbonDropdownMenus, ribbonLinks } from '../state/ribbonMenu';
 
 export class Ribbon extends BaseComponent {
     async ribbonCheck() {
-        const ribbonMenuWithDDL: string[][] = [
-            ['Desktops', 'Show All Desktops'],
-            ['Laptops & Notebooks', 'Show All Laptops & Notebooks'],
-            ['Components', 'Show All Components'],
-            ['MP3 Players', 'Show All MP3 Players'],
-        ];
-        const ribbonMenu: string[] = ['Tablets', 'Software', 'Phones & PDAs', 'Cameras'];
-
-        for (const ribbon of ribbonMenuWithDDL) {
-            const locator = this.page.getByRole('link', { name: ribbon[0] });
+        for (const [parent, showAll] of ribbonDropdownMenus) {
+            const locator = this.page.getByRole('link', { name: parent });
             if (await locator.isVisible()) {
                 await locator.click();
-                await SoftAssertions.count(this.page.getByRole('link', { name: ribbon[1] }), 1);
+                await SoftAssertions.count(this.page.getByRole('link', { name: showAll }), 1);
             }
         }
 
         await Promise.all(
-            ribbonMenu.map((ribbon) =>
-                SoftAssertions.visible(this.page.getByRole('link', { name: ribbon }))
+            ribbonLinks.map((label) =>
+                SoftAssertions.visible(this.page.getByRole('link', { name: label }))
             )
         );
     }

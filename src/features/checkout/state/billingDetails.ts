@@ -1,6 +1,8 @@
 import { IBillingDetails } from '@opencart-auto/pw-core';
 
-export const billingData: IBillingDetails = {
+export type CheckoutBillingDetails = IBillingDetails;
+
+export const billingData: CheckoutBillingDetails = {
     firstName: 'Nanda',
     lastName: 'Ram',
     email: 'test123@email.com',

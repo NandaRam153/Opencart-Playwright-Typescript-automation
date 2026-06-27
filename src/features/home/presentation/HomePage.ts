@@ -1,12 +1,11 @@
 import { BasePage, HardAssertions, SoftAssertions } from '@opencart-auto/pw-core';
 import { HomePaths } from '../state/paths';
-
-const SEARCH_PLACEHOLDER = 'Search';
+import { SEARCH_PLACEHOLDER, STORE_PAGE_TITLE } from '../state/uiConstants';
 
 export class HomePage extends BasePage {
     async navigateToURL(): Promise<void> {
         await this.goto(HomePaths.home);
-        await HardAssertions.hasTitle(this.page, 'Your Store');
+        await HardAssertions.hasTitle(this.page, STORE_PAGE_TITLE);
     }
 
     async homePageCheck() {
