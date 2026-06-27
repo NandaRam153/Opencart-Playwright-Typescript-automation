@@ -138,7 +138,8 @@ export default tseslint.config(
                                 '**/features/*/state/**',
                                 '**/features/*/services/**',
                             ],
-                            message: 'Fixtures import feature barrels only, not internal layer paths.',
+                            message:
+                                'Fixtures import feature barrels only, not internal layer paths.',
                         },
                     ],
                 },
@@ -149,6 +150,15 @@ export default tseslint.config(
         files: ['src/features/**/index.ts'],
         rules: {
             'no-restricted-imports': 'off',
+        },
+    },
+    {
+        files: ['scripts/**/*.mjs'],
+        languageOptions: {
+            globals: {
+                process: 'readonly',
+                console: 'readonly',
+            },
         },
     },
     {

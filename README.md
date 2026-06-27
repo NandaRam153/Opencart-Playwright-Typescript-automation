@@ -12,16 +12,17 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 - Environment-based configuration (`BASE_URL`, credentials via `.env`)
 - TypeScript strict mode, ESLint, and Prettier
 - HTML test reports, traces on failure, Docker support
-- GitHub Actions CI (typecheck, lint, credential gate, Playwright)
+- GitHub Actions quality gates ([docs/QUALITY-GATES.md](docs/QUALITY-GATES.md))
 
 ## Documentation
 
-| Document | Description |
-| -------- | ----------- |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, Mermaid diagrams, feature map, import rules |
-| [docs/test-generation-from-seed.md](docs/test-generation-from-seed.md) | Seed file and generator showcase workflow |
-| [docs/adr/README.md](docs/adr/README.md) | ADR index and architectural decisions |
-| [specs/test.plan.md](specs/test.plan.md) | Test scenarios and step definitions |
+| Document                                                               | Description                                                |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [docs/QUALITY-GATES.md](docs/QUALITY-GATES.md)                         | CI jobs, test tags, Husky hooks, branch protection         |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)                           | System design, Mermaid diagrams, feature map, import rules |
+| [docs/test-generation-from-seed.md](docs/test-generation-from-seed.md) | Seed file and generator showcase workflow                  |
+| [docs/adr/README.md](docs/adr/README.md)                               | ADR index and architectural decisions                      |
+| [specs/test.plan.md](specs/test.plan.md)                               | Test scenarios and step definitions                        |
 
 ## Project Structure
 
@@ -65,12 +66,12 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 
 ### Layer rules (per feature module)
 
-| Layer | Responsibility | May import from |
-| ----- | -------------- | --------------- |
-| **presentation** | Page objects, locators, UI actions | Same feature `state` only |
-| **state** | Test data, path constants, env credentials | `shared` routes/types |
-| **services** | HTTP calls, API assertions | `shared`, same feature `state` |
-| **tests** | Orchestration | Feature public APIs via `index.ts` |
+| Layer            | Responsibility                             | May import from                    |
+| ---------------- | ------------------------------------------ | ---------------------------------- |
+| **presentation** | Page objects, locators, UI actions         | Same feature `state` only          |
+| **state**        | Test data, path constants, env credentials | `shared` routes/types              |
+| **services**     | HTTP calls, API assertions                 | `shared`, same feature `state`     |
+| **tests**        | Orchestration                              | Feature public APIs via `index.ts` |
 
 Features stay independent — tests compose flows through fixtures and feature barrel exports, not cross-feature internal imports. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for diagrams and the full feature map.
 
@@ -176,11 +177,11 @@ Test results and HTML reports are written to `playwright-report/` and `test-resu
 
 ## Environment Variables
 
-| Variable             | Required     | Description                                                    |
-| -------------------- | ------------ | -------------------------------------------------------------- |
-| `BASE_URL`           | No           | OpenCart store root URL (default: `https://awesomeqa.com/ui/`) |
-| `TEST_USER_EMAIL`    | CI + wishlist E2E | Registered user email on the OpenCart demo store          |
-| `TEST_USER_PASSWORD` | CI + wishlist E2E | Password for the registered user                          |
+| Variable             | Required          | Description                                                    |
+| -------------------- | ----------------- | -------------------------------------------------------------- |
+| `BASE_URL`           | No                | OpenCart store root URL (default: `https://awesomeqa.com/ui/`) |
+| `TEST_USER_EMAIL`    | CI + wishlist E2E | Registered user email on the OpenCart demo store               |
+| `TEST_USER_PASSWORD` | CI + wishlist E2E | Password for the registered user                               |
 
 - **Local:** copy `.env.example` to `.env` and fill in real values.
 - **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions). CI **fails fast** if these are missing or still set to the `.env.example` placeholders.
@@ -189,18 +190,39 @@ The wishlist E2E test **skips locally** when credentials are missing or still se
 
 ## Code Quality
 
-| Command                | Description                              |
-| ---------------------- | ---------------------------------------- |
-| `npm run build`        | Build the `pw-core` workspace package    |
-| `npm run typecheck`    | TypeScript strict check (`tsc --noEmit`) |
-| `npm run lint`         | ESLint (TypeScript + Playwright rules)   |
-| `npm run lint:fix`     | ESLint with auto-fix                     |
-| `npm run format`       | Prettier format all files                |
-| `npm run format:check` | Prettier check without writing           |
+| Command                   | Description                                             |
+| ------------------------- | ------------------------------------------------------- |
+| `npm run verify:static`   | Build + typecheck + lint + format check (pre-push hook) |
+| `npm run verify:sut`      | HEAD check against `BASE_URL`                           |
+| `npm run verify:api`      | API tests only                                          |
+| `npm run verify:smoke`    | `@smoke` tagged tests (PR gate)                         |
+| `npm run verify:wishlist` | `@wishlist` E2E (needs credentials)                     |
+| `npm run verify`          | PR-equivalent: static + sut + api + smoke               |
+| `npm run verify:full`     | Full suite (push / nightly gate)                        |
+| `npm run build`           | Build the `pw-core` workspace package                   |
+| `npm run typecheck`       | TypeScript strict check (`tsc --noEmit`)                |
+| `npm run lint`            | ESLint (TypeScript + Playwright rules)                  |
+| `npm run lint:fix`        | ESLint with auto-fix                                    |
+| `npm run format`          | Prettier format all files                               |
+| `npm run format:check`    | Prettier check without writing                          |
 
 There is no separate unit-test runner; `pw-core` is validated via `npm run build` and exercised indirectly through Playwright specs.
 
-CI runs with `CI=true` (enables retries and single worker), plus `typecheck`, `lint`, a wishlist credential validation step, and the full Playwright suite on push/PR to `main` or `master`. Failed runs upload `test-results/` (traces) as artifacts.
+### Quality gates (CI)
+
+Layered gates via [.github/workflows/quality-gates.yml](.github/workflows/quality-gates.yml):
+
+| Event                   | Jobs                                                                               |
+| ----------------------- | ---------------------------------------------------------------------------------- |
+| **Pull request**        | Static → SUT health → API + `@smoke` (+ `@wishlist` on same-repo PRs with secrets) |
+| **Push to main**        | Static → SUT health → full Playwright suite                                        |
+| **Nightly (06:00 UTC)** | Same as push to main                                                               |
+
+Details: [docs/QUALITY-GATES.md](docs/QUALITY-GATES.md). Enable **branch protection** requiring the PR job names listed there.
+
+**Local hooks (Husky):** `pre-commit` runs lint-staged; `pre-push` runs `verify:static`. Installed via `npm ci` (`prepare` script).
+
+CI runs with `CI=true` (enables retries and single worker). Failed runs upload traces and HTML reports.
 
 > `packages/pw-core/dist/` is gitignored and built locally/CI via `npm run build` — never commit compiled output.
 
@@ -239,14 +261,14 @@ Each `IProduct` defines `name`, `category`, `searchTerm`, and `productId` (OpenC
 
 Route constants live in `src/shared/services/routes/`. Feature services wrap HTTP calls:
 
-| Feature | Service | Assertions |
-| ------- | ------- | ---------- |
+| Feature | Service                         | Assertions                                     |
+| ------- | ------------------------------- | ---------------------------------------------- |
 | Catalog | `CatalogService` (`searchHtml`) | `assertProductInHtml`, `assertNoSearchResults` |
-| Cart | `CartService` (`addProduct`) | `assertCartAddRejected` |
+| Cart    | `CartService` (`addProduct`)    | `assertCartAddRejected`                        |
 
-| Type | Folder | Fixture | When to use |
-| ---- | ------ | ------- | ----------- |
-| API | `src/tests/api/` | `ApiFixture` | Fast HTTP smoke and negative route checks |
+| Type   | Folder              | Fixture      | When to use                                                  |
+| ------ | ------------------- | ------------ | ------------------------------------------------------------ |
+| API    | `src/tests/api/`    | `ApiFixture` | Fast HTTP smoke and negative route checks                    |
 | Hybrid | `src/tests/hybrid/` | `POMFixture` | `sessionCartService` + page objects (shared session cookies) |
 
 Use `sessionCartService` from `POMFixture` in hybrid tests (not standalone `request`) so cart/session cookies stay in sync with the browser.

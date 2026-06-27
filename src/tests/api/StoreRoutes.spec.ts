@@ -6,7 +6,7 @@ import {
 } from '../../features/catalog';
 import { expect, test } from '../../fixtures/ApiFixture';
 
-test.describe('Store search routes', () => {
+test.describe('Store search routes', { tag: '@smoke' }, () => {
     test('search route returns a known catalog product', async ({ catalogService }) => {
         const { ok, body } = await catalogService.searchHtml(getSearchTerm(products.NIKON_D300));
 

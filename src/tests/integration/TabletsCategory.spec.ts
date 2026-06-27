@@ -4,7 +4,7 @@
 import { test } from '../../fixtures/POMFixture';
 import { ribbonCategories } from '../../features/catalog';
 
-test.describe('Ribbon Category Navigation → Tablets', () => {
+test.describe('Ribbon Category Navigation → Tablets', { tag: '@smoke' }, () => {
     test.beforeEach(async ({ homePage }) => {
         await homePage.navigateToURL();
     });

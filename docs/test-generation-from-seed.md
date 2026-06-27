@@ -4,8 +4,8 @@ This project uses [Playwright Test Generator](https://playwright.dev/docs/test-a
 
 ## Seed file
 
-| File | Role |
-| ---- | ---- |
+| File                     | Role                                                                                                       |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------- |
 | `src/tests/seed.spec.ts` | Empty scaffold for `generator_setup_page`; **excluded** from CI via `testIgnore` in `playwright.config.ts` |
 
 The seed is not the final test — it only bootstraps browser recording.
@@ -14,9 +14,9 @@ The seed is not the final test — it only bootstraps browser recording.
 
 Both specs share the same seed file and refactor pattern; only the ribbon category differs.
 
-| Category | Test plan section | Refactored spec |
-| -------- | ----------------- | --------------- |
-| Tablets | Showcase — Tablets category | [TabletsCategory.spec.ts](../src/tests/integration/TabletsCategory.spec.ts) |
+| Category      | Test plan section                 | Refactored spec                                                                   |
+| ------------- | --------------------------------- | --------------------------------------------------------------------------------- |
+| Tablets       | Showcase — Tablets category       | [TabletsCategory.spec.ts](../src/tests/integration/TabletsCategory.spec.ts)       |
 | Phones & PDAs | Showcase — Phones & PDAs category | [PhonesPDAsCategory.spec.ts](../src/tests/integration/PhonesPDAsCategory.spec.ts) |
 
 **Seed:** `src/tests/seed.spec.ts`  
@@ -49,13 +49,13 @@ Use with the `playwright-test-generator` agent:
 import { test, expect } from '@playwright/test';
 
 test.describe('Ribbon Category Navigation → Tablets', () => {
-  test('clicking Tablets loads the Tablets category page', async ({ page }) => {
-    // seed: src/tests/seed.spec.ts
-    await page.goto('https://awesomeqa.com/ui/');
-    await page.getByRole('link', { name: 'Tablets' }).click();
-    await expect(page.getByRole('heading', { name: 'Tablets', level: 2 })).toBeVisible();
-    await expect(page.locator('.product-thumb').first()).toBeVisible();
-  });
+    test('clicking Tablets loads the Tablets category page', async ({ page }) => {
+        // seed: src/tests/seed.spec.ts
+        await page.goto('https://awesomeqa.com/ui/');
+        await page.getByRole('link', { name: 'Tablets' }).click();
+        await expect(page.getByRole('heading', { name: 'Tablets', level: 2 })).toBeVisible();
+        await expect(page.locator('.product-thumb').first()).toBeVisible();
+    });
 });
 ```
 

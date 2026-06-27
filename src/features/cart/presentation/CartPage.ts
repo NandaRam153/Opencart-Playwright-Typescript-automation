@@ -8,7 +8,9 @@ export class CartPage extends BasePage {
 
     async navigateToCart() {
         await this.goto(CartPaths.list);
-        await HardAssertions.visible(this.page.getByRole('heading', { name: 'Shopping Cart', level: 1 }));
+        await HardAssertions.visible(
+            this.page.getByRole('heading', { name: 'Shopping Cart', level: 1 })
+        );
     }
 
     async assertEmpty() {
@@ -21,7 +23,10 @@ export class CartPage extends BasePage {
         });
         await HardAssertions.visible(row);
         if (quantity !== undefined) {
-            await HardAssertions.toHaveValue(row.locator('input[name*="quantity"]'), String(quantity));
+            await HardAssertions.toHaveValue(
+                row.locator('input[name*="quantity"]'),
+                String(quantity)
+            );
         }
     }
 

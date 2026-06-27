@@ -11,8 +11,8 @@ The wishlist E2E test (`src/tests/e2e/WishListFlow.spec.ts`) requires a register
 
 - **Local runs:** If `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` are unset or equal to `.env.example` placeholders, the wishlist test **skips** with an explanatory message.
 - **CI runs (`CI=true`):** Missing or placeholder credentials cause an **immediate workflow failure** via:
-  1. A GitHub Actions step that validates secrets before Playwright runs.
-  2. `assertWishlistCredentialsInCi()` in `features/auth/state/credentials.ts` as a secondary guard.
+    1. A GitHub Actions step that validates secrets before Playwright runs.
+    2. `assertWishlistCredentialsInCi()` in `features/auth/state/credentials.ts` as a secondary guard.
 
 Credential resolution for tests lives in `src/fixtures/wishlistCredentials.ts` (`resolveWishlistCredentialsForTest()`), invoked by the `wishlistCredentials` fixture in `POMFixture`.
 
