@@ -30,6 +30,7 @@ export const products: Record<string, IProduct> = {
 /** Ribbon category labels used when no single product drives navigation. */
 export const ribbonCategories = {
     TABLETS: 'Tablets',
+    PHONES_PDAS: 'Phones & PDAs',
 } as const;
 
 /** Resolve the search term for a product (explicit searchTerm or product name). */
@@ -46,4 +47,15 @@ export function requireProductId(product: IProduct, catalogKey?: string): number
         );
     }
     return product.productId;
+}
+
+/** Return ribbon category label or throw when catalog data omits category. */
+export function requireCategory(product: IProduct, catalogKey?: string): string {
+    if (!product.category) {
+        const label = catalogKey ?? product.name;
+        throw new Error(
+            `Product "${label}" is missing category in src/features/catalog/state/products.ts`
+        );
+    }
+    return product.category;
 }

@@ -1,4 +1,3 @@
-import { expect } from '@playwright/test';
 import { BasePage, HardAssertions } from '@opencart-auto/pw-core';
 import { CartPaths } from '../state/paths';
 
@@ -22,7 +21,7 @@ export class CartPage extends BasePage {
         });
         await HardAssertions.visible(row);
         if (quantity !== undefined) {
-            await expect(row.locator('input[name*="quantity"]')).toHaveValue(String(quantity));
+            await HardAssertions.toHaveValue(row.locator('input[name*="quantity"]'), String(quantity));
         }
     }
 

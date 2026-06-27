@@ -1,10 +1,14 @@
-import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
+import { BasePage, HardAssertions } from '@opencart-auto/pw-core';
 
 export class OrderPlacementResultPage extends BasePage {
     async orderPlacementResult() {
         await HardAssertions.visible(
             this.page.getByRole('heading', { name: 'Your order has been placed!', level: 1 })
         );
-        await Wait.click(this.page.locator('.pull-right').getByRole('link', { name: 'Continue' }));
+        const continueLink = this.page.locator('.pull-right').getByRole('link', { name: 'Continue' });
+        await Promise.all([
+            this.page.waitForURL(/route=common\/home/, { timeout: 15_000 }),
+            continueLink.click(),
+        ]);
     }
 }

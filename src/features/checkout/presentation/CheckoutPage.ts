@@ -18,7 +18,11 @@ export class CheckoutPage extends BasePage {
         await this.page.getByPlaceholder('Post Code').fill(data.postalCode);
 
         await this.page.locator('#input-payment-country').selectOption({ label: data.country });
-        await this.page.locator('#input-payment-zone').selectOption({ label: data.province });
+        const zoneSelect = this.page.locator('#input-payment-zone');
+        await zoneSelect
+            .locator('option', { hasText: data.province })
+            .waitFor({ state: 'attached', timeout: 10_000 });
+        await zoneSelect.selectOption({ label: data.province });
 
         await Wait.click(this.page.locator('#button-guest'));
     }

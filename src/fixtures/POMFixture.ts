@@ -4,7 +4,9 @@ import { Ribbon, ProductListingPage } from '../features/catalog';
 import { CheckoutPage, OrderPlacementResultPage } from '../features/checkout';
 import { LoginPage, LogoutPage } from '../features/auth';
 import { WishListPage } from '../features/wishlist';
-import { CartPage } from '../features/cart';
+import { CartService, CartPage } from '../features/cart';
+import { pageObject, serviceFromPageRequest } from './fixtureHelpers';
+import { resolveWishlistCredentialsForTest } from './wishlistCredentials';
 
 export const test = base.extend<{
     homePage: HomePage;
@@ -18,48 +20,26 @@ export const test = base.extend<{
     wishListPage: WishListPage;
     logoutPage: LogoutPage;
     cartPage: CartPage;
+    /** Cart HTTP client sharing cookies with the browser (`page.request`). Use in hybrid tests. */
+    sessionCartService: CartService;
+    /** Registered-user credentials; skips locally when `.env` is missing or placeholder. */
+    wishlistCredentials: { email: string; password: string };
 }>({
-    homePage: async ({ page }, use) => {
-        await use(new HomePage(page));
-    },
-
-    header: async ({ page }, use) => {
-        await use(new Header(page));
-    },
-
-    footer: async ({ page }, use) => {
-        await use(new Footer(page));
-    },
-
-    ribbon: async ({ page }, use) => {
-        await use(new Ribbon(page));
-    },
-
-    productListingPage: async ({ page }, use) => {
-        await use(new ProductListingPage(page));
-    },
-
-    checkoutPage: async ({ page }, use) => {
-        await use(new CheckoutPage(page));
-    },
-
-    orderPlacementResultPage: async ({ page }, use) => {
-        await use(new OrderPlacementResultPage(page));
-    },
-
-    loginPage: async ({ page }, use) => {
-        await use(new LoginPage(page));
-    },
-
-    wishListPage: async ({ page }, use) => {
-        await use(new WishListPage(page));
-    },
-
-    logoutPage: async ({ page }, use) => {
-        await use(new LogoutPage(page));
-    },
-
-    cartPage: async ({ page }, use) => {
-        await use(new CartPage(page));
+    homePage: pageObject(HomePage),
+    header: pageObject(Header),
+    footer: pageObject(Footer),
+    ribbon: pageObject(Ribbon),
+    productListingPage: pageObject(ProductListingPage),
+    checkoutPage: pageObject(CheckoutPage),
+    orderPlacementResultPage: pageObject(OrderPlacementResultPage),
+    loginPage: pageObject(LoginPage),
+    wishListPage: pageObject(WishListPage),
+    logoutPage: pageObject(LogoutPage),
+    cartPage: pageObject(CartPage),
+    sessionCartService: serviceFromPageRequest((request) => new CartService(request)),
+    wishlistCredentials: async ({}, use) => {
+        await use(resolveWishlistCredentialsForTest());
     },
 });
+
+export { expect } from '@playwright/test';

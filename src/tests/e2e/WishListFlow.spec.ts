@@ -1,6 +1,7 @@
-import { test } from '../../fixtures/POMFixture';
 import { getSearchTerm, products } from '../../features/catalog';
-import { resolveWishlistCredentialsForTest } from '../../features/auth';
+import { test } from '../../fixtures/POMFixture';
+
+test.describe.configure({ mode: 'serial' });
 
 test('Wishlist flow: search, add to wishlist, login, verify, delete, logout', async ({
     homePage,
@@ -9,8 +10,9 @@ test('Wishlist flow: search, add to wishlist, login, verify, delete, logout', as
     loginPage,
     wishListPage,
     logoutPage,
+    wishlistCredentials,
 }) => {
-    const { email, password } = resolveWishlistCredentialsForTest();
+    const { email, password } = wishlistCredentials;
 
     await homePage.navigateToURL();
     await header.searchForProduct(getSearchTerm(products.MACBOOK_PRO));

@@ -42,11 +42,11 @@ Each domain area is an **independent feature module** under `src/features/<name>
 | **home** | `HomePaths` | — | `HomePage`, `Header`, `Footer` |
 | **catalog** | `products`, `getSearchTerm`, `requireProductId` | `CatalogService`, catalog assertions | `ProductListingPage`, `Ribbon` |
 | **cart** | `CartPaths` | `CartService`, cart assertions | `CartPage` |
-| **auth** | `credentials`, `AuthPaths` | — | `LoginPage`, `LogoutPage` |
+| **auth** | `credentials`, `AuthPaths`, `LOGIN_REJECTION_PATTERN` | — | `LoginPage`, `LogoutPage` |
 | **checkout** | `billingData` | — | `CheckoutPage`, `OrderPlacementResultPage` |
 | **wishlist** | — | — | `WishListPage` |
 
-Auth also includes `testHelpers/wishlistCredentials.ts` for Playwright skip/fail behavior around env credentials.
+Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwright skip/fail wiring for wishlist E2E is in `src/fixtures/wishlistCredentials.ts`.
 
 ## Layer model (per feature)
 
@@ -101,6 +101,8 @@ flowchart LR
 
 **Cross-feature composition** happens in tests and fixtures (e.g. order flow uses catalog + cart + checkout page objects injected together).
 
+Layer boundaries are enforced in `eslint.config.mjs` via `no-restricted-imports` on presentation, state, services, and tests (feature barrels and `index.ts` re-exports are exempt).
+
 ## Shared layer
 
 `src/shared/` holds cross-cutting infrastructure with **no UI and no test data**:
@@ -136,20 +138,28 @@ flowchart TD
     I --> POMFixture
     E --> POMFixture
     H --> POMFixture
-    A --> FeatureServices
+    A --> ApiFixture
 ```
 
 | Layer | Fixture | Typical imports |
 | ----- | ------- | --------------- |
-| functional / integration / e2e / hybrid | `POMFixture` | Feature presentation via fixtures |
-| api | `@playwright/test` `{ request }` | `CatalogService`, `CartService` |
-| hybrid | `POMFixture` + `page.request` | Services + presentation (shared session cookies) |
+| functional / integration / e2e | `POMFixture` | Page objects via fixtures |
+| hybrid | `POMFixture` | Page objects + `sessionCartService` (`page.request`) |
+| api | `ApiFixture` | `cartService`, `catalogService` (isolated `request`) |
 
 `src/tests/seed.spec.ts` is generator scaffolding only (`testIgnore` in `playwright.config.ts`).
 
 ## Fixtures
 
-`src/fixtures/POMFixture.ts` extends Playwright `test` and instantiates presentation classes from feature modules. Tests import `test` from the fixture file, not from `@playwright/test` directly (except pure API specs).
+Playwright fixtures act as the DI container. Shared helpers live in `src/fixtures/fixtureHelpers.ts` (`pageObject`, `serviceFromRequest`, `serviceFromPageRequest`).
+
+| File | Injects |
+| ---- | ------- |
+| `POMFixture.ts` | Feature presentation classes, `sessionCartService`, `wishlistCredentials` |
+| `ApiFixture.ts` | `CartService`, `CatalogService` |
+| `wishlistCredentials.ts` | Wishlist credential resolution and local skip (uses auth state barrel) |
+
+UI and hybrid tests import `test` from `POMFixture`. API tests import `test` from `ApiFixture`. Avoid constructing services or page objects directly in specs when a fixture exists.
 
 ## CI pipeline
 

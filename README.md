@@ -36,7 +36,10 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 │   │   └── wishlist/
 │   ├── shared/                   # Cross-cutting routes and HTTP types
 │   ├── fixtures/
-│   │   └── POMFixture.ts         # Playwright fixtures
+│   │   ├── fixtureHelpers.ts     # pageObject / service fixture factories
+│   │   ├── wishlistCredentials.ts # wishlist E2E credential resolution + local skip
+│   │   ├── POMFixture.ts         # UI page objects + sessionCartService + wishlistCredentials
+│   │   └── ApiFixture.ts         # cartService + catalogService (API)
 │   └── tests/
 │       ├── seed.spec.ts          # Generator scaffold (excluded from test runs)
 │       ├── functional/           # UI smoke / audit tests
@@ -119,7 +122,7 @@ Features stay independent — tests compose flows through fixtures and feature b
 | `npm run test:debug`  | Run in Playwright debug mode                            |
 | `npm run report`      | Open the HTML report                                    |
 
-The suite runs **21 tests** (`seed.spec.ts` is excluded via `testIgnore`; wishlist E2E skips without valid credentials).
+The suite runs **22 tests** (`seed.spec.ts` is excluded via `testIgnore`; wishlist E2E skips without valid credentials).
 
 #### Run a specific test file
 
@@ -221,16 +224,16 @@ Use `Wait` from `@opencart-auto/pw-core` for safe clicks and load-state synchron
 Product catalog and search terms live in `src/features/catalog/state/products.ts`:
 
 ```typescript
-import { getSearchTerm, products, requireProductId } from '../../features/catalog';
+import { getSearchTerm, products, requireCategory, requireProductId } from '../../features/catalog';
 
 await header.searchForProduct(getSearchTerm(products.NIKON_D300));
-await ribbon.openProductPage(products.NIKON_D300.category!);
+await ribbon.openProductPage(requireCategory(products.NIKON_D300, 'NIKON_D300'));
 
 // API / hybrid cart calls
 const productId = requireProductId(products.NIKON_D300, 'NIKON_D300');
 ```
 
-Each `IProduct` defines `name`, `category`, `searchTerm`, and `productId` (OpenCart catalog id for cart API tests). Use `getSearchTerm()` when the search query differs from the display name. Use `requireProductId()` for API calls to fail fast if `productId` is missing from catalog data.
+Each `IProduct` defines `name`, `category`, `searchTerm`, and `productId` (OpenCart catalog id for cart API tests). Use `getSearchTerm()` when the search query differs from the display name. Use `requireProductId()` for API calls and `requireCategory()` for ribbon navigation to fail fast if catalog data is incomplete.
 
 ## API and Hybrid Tests
 
@@ -243,16 +246,28 @@ Route constants live in `src/shared/services/routes/`. Feature services wrap HTT
 
 | Type | Folder | Fixture | When to use |
 | ---- | ------ | ------- | ----------- |
-| API | `src/tests/api/` | `@playwright/test` `{ request }` | Fast HTTP smoke and negative route checks |
-| Hybrid | `src/tests/hybrid/` | `POMFixture` + `page.request` | Shared session: API mutation, UI verification |
+| API | `src/tests/api/` | `ApiFixture` | Fast HTTP smoke and negative route checks |
+| Hybrid | `src/tests/hybrid/` | `POMFixture` | `sessionCartService` + page objects (shared session cookies) |
 
-Use `page.request` (not standalone `request`) in hybrid tests so cart/session cookies stay in sync with the browser.
+Use `sessionCartService` from `POMFixture` in hybrid tests (not standalone `request`) so cart/session cookies stay in sync with the browser.
 
 ### Auth and wishlist behavior
 
 - `LoginPage.login()` submits credentials and fails on credential rejection only (no flow-specific landing assertion).
 - `WishListPage.assertLoaded()` verifies the wishlist page after login in wishlist E2E.
-- Credential helpers: `features/auth/state/credentials.ts`, `resolveWishlistCredentialsForTest()` in `features/auth/testHelpers/`.
+- Wishlist E2E uses the `wishlistCredentials` fixture from `POMFixture` (see `src/fixtures/wishlistCredentials.ts`).
+- Credential resolution: `features/auth/state/credentials.ts`.
+
+## System under test (SUT)
+
+All **22 tests** target the OpenCart demo store at `BASE_URL` (default `https://awesomeqa.com/ui/`). The suite assumes:
+
+- The store is reachable over HTTPS from CI, Docker, and local runners.
+- Catalog content matches seeded product names/ids in `src/features/catalog/state/products.ts` (e.g. Nikon D300, MacBook Pro).
+- Ribbon categories used in integration tests have at least one product (Tablets, Phones & PDAs, Cameras); **Software** has zero products and is not used for product-listing assertions.
+- Guest checkout and cart API routes remain compatible with OpenCart 3.x-style responses.
+
+Operational risk: third-party demo downtime or catalog changes will fail tests until data or selectors are updated. CI uses `retries: 2` and `workers: 1` to reduce flake from network timing.
 
 ## Writing Tests
 
@@ -262,7 +277,7 @@ Use `page.request` (not standalone `request`) in hybrid tests so cart/session co
 - API tests → `src/tests/api/`
 - Hybrid tests → `src/tests/hybrid/`
 - Page objects → `src/features/<feature>/presentation/`
-- Fixtures → `src/fixtures/POMFixture.ts`
+- Fixtures → `src/fixtures/` (`POMFixture.ts`, `ApiFixture.ts`, `fixtureHelpers.ts`, `wishlistCredentials.ts`)
 - Test data → `src/features/<feature>/state/`
 - Scenario reference → [specs/test.plan.md](specs/test.plan.md)
 

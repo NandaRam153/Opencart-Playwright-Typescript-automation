@@ -10,11 +10,21 @@ This project uses [Playwright Test Generator](https://playwright.dev/docs/test-a
 
 The seed is not the final test — it only bootstraps browser recording.
 
-## Showcase: Tablets category integration
+## Showcase examples
 
-**Test plan:** [specs/test.plan.md](../specs/test.plan.md) — section “Showcase — Tablets category”  
+Both specs share the same seed file and refactor pattern; only the ribbon category differs.
+
+| Category | Test plan section | Refactored spec |
+| -------- | ----------------- | --------------- |
+| Tablets | Showcase — Tablets category | [TabletsCategory.spec.ts](../src/tests/integration/TabletsCategory.spec.ts) |
+| Phones & PDAs | Showcase — Phones & PDAs category | [PhonesPDAsCategory.spec.ts](../src/tests/integration/PhonesPDAsCategory.spec.ts) |
+
 **Seed:** `src/tests/seed.spec.ts`  
-**Output (refactored):** [src/tests/integration/TabletsCategory.spec.ts](../src/tests/integration/TabletsCategory.spec.ts)
+**Test plan:** [specs/test.plan.md](../specs/test.plan.md)
+
+> **Note:** The **Software** ribbon category is empty on the demo store (`Software (0)`). Use a category with catalog items (e.g. Phones & PDAs, Cameras) for product-listing assertions.
+
+### Tablets category integration
 
 ### Generator input (XML)
 
@@ -53,10 +63,28 @@ test.describe('Ribbon Category Navigation → Tablets', () => {
 
 The committed spec imports `test` from `POMFixture` and uses `HomePage`, `Ribbon`, and `ProductListingPage` from feature modules — same flow, aligned with [docs/ARCHITECTURE.md](ARCHITECTURE.md).
 
-### Run the showcase test
+### Phones & PDAs category integration
+
+```xml
+<test-suite>Ribbon Category Navigation → Phones & PDAs</test-suite>
+<test-name>clicking Phones & PDAs loads the Phones & PDAs category page</test-name>
+<test-file>src/tests/integration/PhonesPDAsCategory.spec.ts</test-file>
+<seed-file>src/tests/seed.spec.ts</seed-file>
+<body>
+1. Navigate to the OpenCart home page.
+2. Click "Phones & PDAs" in the ribbon navigation.
+3. Verify the category heading is "Phones & PDAs".
+4. Verify at least one product is listed.
+</body>
+```
+
+After refactor, the spec uses `ribbonCategories.PHONES_PDAS` from `src/features/catalog/state/products.ts`.
+
+### Run the showcase tests
 
 ```sh
 npx playwright test src/tests/integration/TabletsCategory.spec.ts
+npx playwright test src/tests/integration/PhonesPDAsCategory.spec.ts
 ```
 
 ## Workflow summary
