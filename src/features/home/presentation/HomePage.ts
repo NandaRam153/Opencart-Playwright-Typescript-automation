@@ -1,5 +1,4 @@
-import { expect } from '@playwright/test';
-import { BasePage, SoftAssertions } from '@opencart-auto/pw-core';
+import { BasePage, HardAssertions, SoftAssertions } from '@opencart-auto/pw-core';
 import { HomePaths } from '../state/paths';
 
 const SEARCH_PLACEHOLDER = 'Search';
@@ -7,7 +6,7 @@ const SEARCH_PLACEHOLDER = 'Search';
 export class HomePage extends BasePage {
     async navigateToURL(): Promise<void> {
         await this.goto(HomePaths.home);
-        await expect(this.page).toHaveTitle('Your Store');
+        await HardAssertions.hasTitle(this.page, 'Your Store');
     }
 
     async homePageCheck() {

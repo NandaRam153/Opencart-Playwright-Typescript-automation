@@ -1,5 +1,7 @@
 import { test } from '../../fixtures/POMFixture';
-import { getSearchTerm, products } from '../../features/catalog';
+import { getSearchTerm, products, requireCategory } from '../../features/catalog';
+
+const camerasCategory = requireCategory(products.NIKON_D300, 'NIKON_D300');
 
 test.describe('Add to Cart → Header Cart State', () => {
     test.beforeEach(async ({ homePage }) => {
@@ -10,7 +12,7 @@ test.describe('Add to Cart → Header Cart State', () => {
         ribbon,
         productListingPage,
     }) => {
-        await ribbon.openProductPage(products.NIKON_D300.category!);
+        await ribbon.openProductPage(camerasCategory);
 
         await productListingPage.addToCartProductByName(products.NIKON_D300.name);
         await productListingPage.productAddedMessage(products.NIKON_D300.name);
@@ -31,7 +33,7 @@ test.describe('Add to Cart → Header Cart State', () => {
         productListingPage,
         header,
     }) => {
-        await ribbon.openProductPage(products.NIKON_D300.category!);
+        await ribbon.openProductPage(camerasCategory);
 
         await productListingPage.addToCartProductByName(products.NIKON_D300.name);
         await header.verifyCartCount(1);
@@ -42,7 +44,7 @@ test.describe('Add to Cart → Header Cart State', () => {
         productListingPage,
         header,
     }) => {
-        await ribbon.openProductPage(products.NIKON_D300.category!);
+        await ribbon.openProductPage(camerasCategory);
 
         await productListingPage.addToCartProductByName(products.NIKON_D300.name);
         await header.gotoCheckout();

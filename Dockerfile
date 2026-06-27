@@ -14,4 +14,4 @@ RUN npm run build --workspace=packages/pw-core
 ENV CI=true
 
 # Full suite: UI, API, and hybrid tests (seed excluded via playwright.config.ts)
-CMD ["npx", "playwright", "test"]
+CMD ["sh", "-c", "sh scripts/verify-wishlist-credentials.sh && npx playwright test"]

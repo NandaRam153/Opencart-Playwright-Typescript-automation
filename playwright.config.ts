@@ -60,7 +60,7 @@ export default defineConfig({
                 screenshot: 'only-on-failure',
                 video: 'off',
                 trace: 'retain-on-first-failure',
-                actionTimeout: 5 * 1000, // for any action wait time is 2 secs.
+                actionTimeout: 5 * 1000,
             },
         },
 

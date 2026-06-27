@@ -21,7 +21,7 @@ export default tseslint.config(
         },
     },
     {
-        files: ['src/tests/**/*.ts', 'src/features/**/testHelpers/**/*.ts'],
+        files: ['src/tests/**/*.ts', 'src/fixtures/**/*.ts'],
         rules: {
             'playwright/expect-expect': 'off',
             'playwright/no-skipped-test': 'off',
@@ -38,6 +38,18 @@ export default tseslint.config(
                             group: ['**/features/*/services/**'],
                             message:
                                 'Presentation must not import feature services. Use same-feature state only.',
+                        },
+                        {
+                            group: [
+                                '../../auth/**',
+                                '../../cart/**',
+                                '../../catalog/**',
+                                '../../checkout/**',
+                                '../../home/**',
+                                '../../wishlist/**',
+                            ],
+                            message:
+                                'Presentation must not import other feature modules; compose in tests/fixtures.',
                         },
                     ],
                 },
@@ -58,6 +70,18 @@ export default tseslint.config(
                         {
                             group: ['**/features/*/services/**'],
                             message: 'State must not import feature services.',
+                        },
+                        {
+                            group: [
+                                '../../auth/**',
+                                '../../cart/**',
+                                '../../catalog/**',
+                                '../../checkout/**',
+                                '../../home/**',
+                                '../../wishlist/**',
+                            ],
+                            message:
+                                'State must not import other feature modules; compose in tests/fixtures.',
                         },
                     ],
                 },
@@ -95,6 +119,26 @@ export default tseslint.config(
                             ],
                             message:
                                 'Import from the feature barrel (index.ts), not internal layer paths.',
+                        },
+                    ],
+                },
+            ],
+        },
+    },
+    {
+        files: ['src/fixtures/**/*.ts'],
+        rules: {
+            'no-restricted-imports': [
+                'error',
+                {
+                    patterns: [
+                        {
+                            group: [
+                                '**/features/*/presentation/**',
+                                '**/features/*/state/**',
+                                '**/features/*/services/**',
+                            ],
+                            message: 'Fixtures import feature barrels only, not internal layer paths.',
                         },
                     ],
                 },

@@ -14,7 +14,7 @@ The wishlist E2E test (`src/tests/e2e/WishListFlow.spec.ts`) requires a register
   1. A GitHub Actions step that validates secrets before Playwright runs.
   2. `assertWishlistCredentialsInCi()` in `features/auth/state/credentials.ts` as a secondary guard.
 
-Credential resolution for tests is centralized in `features/auth/testHelpers/wishlistCredentials.ts` (`resolveWishlistCredentialsForTest()`).
+Credential resolution for tests lives in `src/fixtures/wishlistCredentials.ts` (`resolveWishlistCredentialsForTest()`), invoked by the `wishlistCredentials` fixture in `POMFixture`.
 
 ## Consequences
 

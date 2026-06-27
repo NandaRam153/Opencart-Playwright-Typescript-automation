@@ -1,6 +1,8 @@
 import { getSearchTerm, products } from '../../features/catalog';
 import { test } from '../../fixtures/POMFixture';
 
+test.describe.configure({ mode: 'serial' });
+
 test('Wishlist flow: search, add to wishlist, login, verify, delete, logout', async ({
     homePage,
     header,

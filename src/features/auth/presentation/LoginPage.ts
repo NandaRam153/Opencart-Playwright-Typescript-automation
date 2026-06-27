@@ -1,7 +1,6 @@
 import { BasePage, Wait } from '@opencart-auto/pw-core';
 import { AuthPaths } from '../state/paths';
-
-const LOGIN_ERROR_TEXT = 'No match for E-Mail Address and/or Password.';
+import { LOGIN_REJECTION_PATTERN } from '../state/loginErrors';
 
 export class LoginPage extends BasePage {
     async navigateToLogin() {
@@ -26,7 +25,7 @@ export class LoginPage extends BasePage {
     }
 
     private async wasLoginRejected(): Promise<boolean> {
-        const loginError = this.page.getByText(LOGIN_ERROR_TEXT);
+        const loginError = this.page.getByText(LOGIN_REJECTION_PATTERN);
         return loginError
             .waitFor({ state: 'visible', timeout: 3000 })
             .then(() => true)

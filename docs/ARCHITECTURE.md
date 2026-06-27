@@ -46,7 +46,7 @@ Each domain area is an **independent feature module** under `src/features/<name>
 | **checkout** | `billingData` | — | `CheckoutPage`, `OrderPlacementResultPage` |
 | **wishlist** | — | — | `WishListPage` |
 
-Auth also includes `testHelpers/wishlistCredentials.ts` for Playwright skip/fail behavior around env credentials.
+Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwright skip/fail wiring for wishlist E2E is in `src/fixtures/wishlistCredentials.ts`.
 
 ## Layer model (per feature)
 
@@ -157,6 +157,7 @@ Playwright fixtures act as the DI container. Shared helpers live in `src/fixture
 | ---- | ------- |
 | `POMFixture.ts` | Feature presentation classes, `sessionCartService`, `wishlistCredentials` |
 | `ApiFixture.ts` | `CartService`, `CatalogService` |
+| `wishlistCredentials.ts` | Wishlist credential resolution and local skip (uses auth state barrel) |
 
 UI and hybrid tests import `test` from `POMFixture`. API tests import `test` from `ApiFixture`. Avoid constructing services or page objects directly in specs when a fixture exists.
 

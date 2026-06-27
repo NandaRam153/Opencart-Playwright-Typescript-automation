@@ -2,10 +2,11 @@ import { test as base } from '@playwright/test';
 import { HomePage, Header, Footer } from '../features/home';
 import { Ribbon, ProductListingPage } from '../features/catalog';
 import { CheckoutPage, OrderPlacementResultPage } from '../features/checkout';
-import { LoginPage, LogoutPage, resolveWishlistCredentialsForTest } from '../features/auth';
+import { LoginPage, LogoutPage } from '../features/auth';
 import { WishListPage } from '../features/wishlist';
 import { CartService, CartPage } from '../features/cart';
 import { pageObject, serviceFromPageRequest } from './fixtureHelpers';
+import { resolveWishlistCredentialsForTest } from './wishlistCredentials';
 
 export const test = base.extend<{
     homePage: HomePage;

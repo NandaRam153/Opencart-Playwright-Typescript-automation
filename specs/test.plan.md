@@ -326,7 +326,7 @@ Second seed showcase: same generator workflow as Tablets, different ribbon categ
 
 - Architecture overview: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md). ADRs: [docs/adr/](../docs/adr/).
 - All tests use the Playwright test runner with feature-module Page Objects for maintainability.
-- Fixtures are defined in `src/fixtures/POMFixture.ts`.
+- Fixtures are defined in `src/fixtures/` (`POMFixture.ts`, `ApiFixture.ts`, `fixtureHelpers.ts`, `wishlistCredentials.ts`).
 - Product test data is in `src/features/catalog/state/products.ts`; billing details in `src/features/checkout/state/billingDetails.ts`.
 - HTTP route constants are in `src/shared/services/routes/`; feature services in `src/features/*/services/`.
 - Add new functional tests under `src/tests/functional/`, integration tests under `src/tests/integration/`, E2E tests under `src/tests/e2e/`, API tests under `src/tests/api/`, and hybrid tests under `src/tests/hybrid/`.

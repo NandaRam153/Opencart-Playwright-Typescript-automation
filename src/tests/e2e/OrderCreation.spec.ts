@@ -1,6 +1,6 @@
 import { billingData } from '../../features/checkout';
 import { test } from '../../fixtures/POMFixture';
-import { products } from '../../features/catalog';
+import { products, requireCategory } from '../../features/catalog';
 
 test('Order creation test', async ({
     homePage,
@@ -11,7 +11,7 @@ test('Order creation test', async ({
     orderPlacementResultPage,
 }) => {
     await homePage.navigateToURL();
-    await ribbon.openProductPage(products.NIKON_D300.category!);
+    await ribbon.openProductPage(requireCategory(products.NIKON_D300, 'NIKON_D300'));
     await productListingPage.addToCartProductByName(products.NIKON_D300.name);
     await productListingPage.productAddedMessage(products.NIKON_D300.name);
     await header.gotoCheckout();

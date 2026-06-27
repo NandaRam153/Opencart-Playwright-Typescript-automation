@@ -10,8 +10,8 @@ jobs:
         runs-on: ubuntu-latest
         env:
             CI: true
-            TEST_USER_EMAIL: ${{ fromJSON(toJSON(secrets)).TEST_USER_EMAIL }}
-            TEST_USER_PASSWORD: ${{ fromJSON(toJSON(secrets)).TEST_USER_PASSWORD }}
+            TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+            TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
@@ -28,13 +28,7 @@ jobs:
             - name: Install Playwright Browsers
               run: npx playwright install --with-deps
             - name: Verify wishlist E2E credentials
-              run: |
-                  if [ -z "$TEST_USER_EMAIL" ] || [ -z "$TEST_USER_PASSWORD" ] || \
-                     [ "$TEST_USER_EMAIL" = "your-email@example.com" ] || \
-                     [ "$TEST_USER_PASSWORD" = "your-password" ]; then
-                    echo "::error::Wishlist E2E requires TEST_USER_EMAIL and TEST_USER_PASSWORD repository secrets."
-                    exit 1
-                  fi
+              run: sh scripts/verify-wishlist-credentials.sh
             - name: Run Playwright tests
               run: npx playwright test
             - uses: actions/upload-artifact@v4

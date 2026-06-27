@@ -1,4 +1,4 @@
-import { Locator, expect } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 
 /**
  * Soft assertions collect multiple failures — use in audit/*Check methods.
@@ -66,10 +66,12 @@ export const HardAssertions = {
         const count = await locator.count();
         expect(count, message).toBeGreaterThan(0);
     },
-};
 
-/** @deprecated Use SoftAssertions or HardAssertions directly. */
-export class Assertions {
-    static soft = SoftAssertions;
-    static hard = HardAssertions;
-}
+    async hasTitle(page: Page, title: string | RegExp, message?: string) {
+        await expect(page, message).toHaveTitle(title);
+    },
+
+    async toHaveValue(locator: Locator, value: string, message?: string) {
+        await expect(locator, message).toHaveValue(value);
+    },
+};
