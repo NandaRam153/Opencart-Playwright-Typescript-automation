@@ -4,16 +4,16 @@ This project uses layered quality gates: local hooks, PR checks (fast), and main
 
 ## Gate matrix
 
-| Gate           | Command / job                               | Runs on                                            |
-| -------------- | ------------------------------------------- | -------------------------------------------------- |
-| **Static**     | `npm run verify:static`                     | PR, push, nightly, pre-push hook                   |
-| **SUT health** | `npm run verify:sut`                        | PR, push, nightly (before browser tests)           |
-| **API**        | `npm run verify:api`                        | PR only                                            |
-| **Smoke**      | `npm run verify:smoke` (`@smoke` tag)       | PR only                                            |
-| **Wishlist**   | `npm run verify:wishlist` (`@wishlist` tag) | Same-repo PRs with secrets; always on push/nightly |
-| **Full**       | `npm run verify:full`                       | Push to `main`/`master`, nightly schedule          |
+| Gate           | Command / job                                         | Runs on                                  |
+| -------------- | ----------------------------------------------------- | ---------------------------------------- |
+| **Static**     | `npm run verify:static`                               | PR, push, nightly, pre-push hook         |
+| **SUT health** | `npm run verify:sut`                                  | PR, push, nightly (before browser tests) |
+| **PR tests**   | `verify:api` + `verify:smoke` (+ wishlist if secrets) | PR only — **single job**                 |
+| **Full**       | `playwright test` (or `--grep-invert @wishlist`)      | Push to `main`/`master`, nightly         |
 
 Workflow file: [.github/workflows/quality-gates.yml](../.github/workflows/quality-gates.yml)
+
+**Design intent:** PRs get fast feedback (~5–15 min with browser cache). Full regression runs on merge to `main` and nightly — not duplicated on every PR job.
 
 Supporting scripts:
 
@@ -83,27 +83,29 @@ Install hooks after clone: `npm ci` (runs `prepare` → Husky).
 
 Require these checks before merging to `main` / `master`:
 
-**Pull requests**
+**Pull requests (minimum — fast merge path)**
 
 - Static analysis
 - SUT health
-- API tests
-- Smoke tests (@smoke)
-- Wishlist E2E (@wishlist) — optional if secrets configured; skipped on fork PRs
+- PR tests (API + smoke)
 
-**Direct push / nightly**
+Do **not** require old job names (“API tests”, “Smoke tests”, “Wishlist E2E”) if you updated the workflow — they are combined into **PR tests (API + smoke)**. Wishlist runs as a step inside that job when secrets exist.
+
+**After merge (push to main)**
 
 - Static analysis
 - SUT health
 - Full Playwright suite
 
+Optional: do **not** block PR merge on “Full Playwright suite” — let that run post-merge and on nightly only.
+
 Configure at: **Settings → Branches → Branch protection rules → Require status checks**.
 
 ## Fork and contributor workflow
 
-- Fork PRs **do not** receive repository secrets; the Wishlist job is **skipped** when `head.repo != base.repo`.
-- Static, SUT health, API, and smoke gates still apply — sufficient for most changes.
-- Maintainers merging to `main` trigger the **full suite** including wishlist (secrets required on push).
+- Fork PRs **do not** receive repository secrets; the wishlist step is **skipped** inside PR tests.
+- Static, SUT health, and PR tests still apply — sufficient for most changes.
+- Maintainers merging to `main` trigger the **full suite** (with or without wishlist depending on secrets).
 
 Details: [CONTRIBUTING.md](CONTRIBUTING.md).
 
