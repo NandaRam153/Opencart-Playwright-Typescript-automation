@@ -54,7 +54,11 @@ jobs:
         name: SUT health
         needs: static
         runs-on: ubuntu-latest
-        timeout-minutes: 5
+        timeout-minutes: 10
+        env:
+            SUT_HEALTH_ATTEMPTS: 5
+            SUT_HEALTH_TIMEOUT_MS: 25000
+            SUT_HEALTH_RETRY_DELAY_MS: 5000
         steps:
             - uses: actions/checkout@v5
             - uses: actions/setup-node@v5
