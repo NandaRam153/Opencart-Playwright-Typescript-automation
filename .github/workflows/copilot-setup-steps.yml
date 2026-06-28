@@ -1,14 +1,8 @@
 name: 'Copilot Setup Steps'
 
-# Validates the Copilot agent environment. Not required for merge — use Quality Gates for CI.
+# Manual only — validates Copilot agent environment. Does not run on push/PR.
 on:
     workflow_dispatch:
-    push:
-        paths:
-            - .github/workflows/copilot-setup-steps.yml
-    pull_request:
-        paths:
-            - .github/workflows/copilot-setup-steps.yml
 
 jobs:
     copilot-setup-steps:
