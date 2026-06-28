@@ -222,11 +222,11 @@ There is no separate unit-test runner; `pw-core` is validated via `npm run build
 
 Layered gates via [.github/workflows/quality-gates.yml](.github/workflows/quality-gates.yml):
 
-| Event                   | Jobs                                                                               |
-| ----------------------- | ---------------------------------------------------------------------------------- |
-| **Pull request**        | Static → SUT health → API + `@smoke` (+ `@wishlist` on same-repo PRs with secrets) |
-| **Push to main**        | Static → SUT health → full Playwright suite                                        |
-| **Nightly (06:00 UTC)** | Same as push to main                                                               |
+| Event                   | Jobs                                                              | Typical duration            |
+| ----------------------- | ----------------------------------------------------------------- | --------------------------- |
+| **Pull request**        | Static → SUT health ∥ wishlist probe → **PR tests (API + smoke)** | ~5–15 min (cached browsers) |
+| **Push to main**        | Static → SUT → full suite                                         | ~15–25 min                  |
+| **Nightly (06:00 UTC)** | Same as push to main                                              | ~15–25 min                  |
 
 Details: [docs/QUALITY-GATES.md](docs/QUALITY-GATES.md). Pre-PR checklist: [docs/VERIFICATION.md](docs/VERIFICATION.md). Contributors: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
 

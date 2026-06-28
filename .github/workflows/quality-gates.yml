@@ -30,18 +30,6 @@ jobs:
             - run: npm ci
             - run: npm run verify:static
 
-    sut-health:
-        name: SUT health
-        needs: static
-        runs-on: ubuntu-latest
-        timeout-minutes: 5
-        steps:
-            - uses: actions/checkout@v5
-            - uses: actions/setup-node@v5
-              with:
-                  node-version: lts/*
-            - run: npm run verify:sut
-
     wishlist-secrets:
         name: Wishlist credentials probe
         runs-on: ubuntu-latest
@@ -59,15 +47,28 @@ jobs:
                     echo "configured=true" >> "$GITHUB_OUTPUT"
                   else
                     echo "configured=false" >> "$GITHUB_OUTPUT"
-                    echo "::notice::Wishlist E2E skipped — add TEST_USER_EMAIL and TEST_USER_PASSWORD repository secrets (Settings → Secrets and variables → Actions) to enable."
+                    echo "::notice::Wishlist E2E skipped — add TEST_USER_EMAIL and TEST_USER_PASSWORD repository secrets to enable."
                   fi
 
-    test-api:
-        name: API tests
+    sut-health:
+        name: SUT health
         needs: static
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: lts/*
+            - run: npm run verify:sut
+
+    # PR: one browser job (single npm ci + one Playwright install) — API + smoke + optional wishlist
+    test-pr:
+        name: PR tests (API + smoke)
+        needs: [static, sut-health, wishlist-secrets]
         if: github.event_name == 'pull_request'
         runs-on: ubuntu-latest
-        timeout-minutes: 15
+        timeout-minutes: 25
         steps:
             - uses: actions/checkout@v5
             - uses: actions/setup-node@v5
@@ -75,80 +76,65 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
-            - run: npx playwright install --with-deps chromium
+            - name: Cache Playwright browsers
+              uses: actions/cache@v4
+              id: playwright-cache
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+            - name: Install Playwright Chromium
+              if: steps.playwright-cache.outputs.cache-hit != 'true'
+              run: npx playwright install --with-deps chromium
             - run: npm run verify:api
-
-    test-smoke:
-        name: Smoke tests (@smoke)
-        needs: sut-health
-        if: github.event_name == 'pull_request'
-        runs-on: ubuntu-latest
-        timeout-minutes: 30
-        steps:
-            - uses: actions/checkout@v5
-            - uses: actions/setup-node@v5
-              with:
-                  node-version: lts/*
-                  cache: npm
-            - run: npm ci
-            - run: npx playwright install --with-deps chromium
             - run: npm run verify:smoke
-            - uses: actions/upload-artifact@v5
-              if: failure()
-              with:
-                  name: smoke-test-results
-                  path: test-results/
-                  retention-days: 7
-
-    test-wishlist:
-        name: Wishlist E2E (@wishlist)
-        needs: [sut-health, wishlist-secrets]
-        if: >-
-            github.event_name == 'pull_request' &&
-            github.event.pull_request.head.repo.full_name == github.repository &&
-            needs.wishlist-secrets.outputs.configured == 'true'
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
-        env:
-            TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
-            TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-        steps:
-            - uses: actions/checkout@v5
-            - uses: actions/setup-node@v5
-              with:
-                  node-version: lts/*
-                  cache: npm
-            - run: npm ci
-            - run: sh scripts/verify-wishlist-credentials.sh
-            - run: npx playwright install --with-deps chromium
-            - run: npm run verify:wishlist
-
-    test-full:
-        name: Full Playwright suite
-        needs: [sut-health, wishlist-secrets]
-        if: github.event_name == 'push' || github.event_name == 'schedule'
-        runs-on: ubuntu-latest
-        timeout-minutes: 60
-        steps:
-            - uses: actions/checkout@v5
-            - uses: actions/setup-node@v5
-              with:
-                  node-version: lts/*
-                  cache: npm
-            - run: npm ci
-            - name: Verify wishlist credentials
-              if: needs.wishlist-secrets.outputs.configured == 'true'
+            - name: Wishlist E2E (@wishlist)
+              if: >-
+                  github.event.pull_request.head.repo.full_name == github.repository &&
+                  needs.wishlist-secrets.outputs.configured == 'true'
               env:
                   TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
                   TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-              run: sh scripts/verify-wishlist-credentials.sh
-            - run: npx playwright install --with-deps
+              run: |
+                  sh scripts/verify-wishlist-credentials.sh
+                  npm run verify:wishlist
+            - uses: actions/upload-artifact@v5
+              if: failure()
+              with:
+                  name: pr-test-results
+                  path: test-results/
+                  retention-days: 7
+
+    # main / nightly: full suite (static + sut already passed in sibling jobs)
+    test-full:
+        name: Full Playwright suite
+        needs: [static, sut-health, wishlist-secrets]
+        if: github.event_name == 'push' || github.event_name == 'schedule'
+        runs-on: ubuntu-latest
+        timeout-minutes: 45
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: lts/*
+                  cache: npm
+            - run: npm ci
+            - name: Cache Playwright browsers
+              uses: actions/cache@v4
+              id: playwright-cache
+              with:
+                  path: ~/.cache/ms-playwright
+                  key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+            - name: Install Playwright Chromium
+              if: steps.playwright-cache.outputs.cache-hit != 'true'
+              run: npx playwright install --with-deps chromium
             - name: Run full suite (with wishlist)
               if: needs.wishlist-secrets.outputs.configured == 'true'
               env:
                   TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
                   TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-              run: npm run verify:full
+              run: |
+                  sh scripts/verify-wishlist-credentials.sh
+                  npx playwright test
             - name: Run suite without wishlist
               if: needs.wishlist-secrets.outputs.configured != 'true'
               run: npx playwright test --grep-invert @wishlist
