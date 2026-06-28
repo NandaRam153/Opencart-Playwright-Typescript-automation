@@ -12,7 +12,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 - Environment-based configuration (`BASE_URL`, credentials via `.env`)
 - TypeScript strict mode, ESLint, and Prettier
 - HTML test reports, traces on failure, Docker support
-- GitHub Actions quality gates ([docs/QUALITY-GATES.md](docs/QUALITY-GATES.md))
+- GitHub Actions CI ([`.github/workflows/playwright.yml`](.github/workflows/playwright.yml))
 
 ## Documentation
 
@@ -194,45 +194,45 @@ Test results and HTML reports are written to `playwright-report/` and `test-resu
 | `TEST_USER_PASSWORD` | CI + wishlist E2E | Password for the registered user                               |
 
 - **Local:** copy `.env.example` to `.env` and fill in real values.
-- **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets (Settings → Secrets and variables → Actions). CI **fails fast** if these are missing or still set to the `.env.example` placeholders.
+- **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets to run the wishlist E2E in CI. Without secrets, CI runs all other tests and skips `@wishlist`.
 
 The wishlist E2E test **skips locally** when credentials are missing or still set to the `.env.example` placeholders.
 
 ## Code Quality
 
-| Command                   | Description                                             |
-| ------------------------- | ------------------------------------------------------- |
-| `npm run verify:static`   | Build + typecheck + lint + format check (pre-push hook) |
-| `npm run verify:sut`      | HEAD check against `BASE_URL`                           |
-| `npm run verify:api`      | API tests only                                          |
-| `npm run verify:smoke`    | `@smoke` tagged tests (PR gate)                         |
-| `npm run verify:wishlist` | `@wishlist` E2E (needs credentials)                     |
-| `npm run verify`          | PR-equivalent: static + sut + api + smoke               |
-| `npm run verify:full`     | Full suite (push / nightly gate)                        |
-| `npm run build`           | Build the `pw-core` workspace package                   |
-| `npm run typecheck`       | TypeScript strict check (`tsc --noEmit`)                |
-| `npm run lint`            | ESLint (TypeScript + Playwright rules)                  |
-| `npm run lint:fix`        | ESLint with auto-fix                                    |
-| `npm run format`          | Prettier format all files                               |
-| `npm run format:check`    | Prettier check without writing                          |
+| Command                   | Description                                              |
+| ------------------------- | -------------------------------------------------------- |
+| `npm run verify:static`   | Build + typecheck + lint + format check (local optional) |
+| `npm run verify:sut`      | HEAD check against `BASE_URL` (local optional)           |
+| `npm run verify:api`      | API tests only                                           |
+| `npm run verify:smoke`    | `@smoke` tagged tests                                    |
+| `npm run verify:wishlist` | `@wishlist` E2E (needs credentials)                      |
+| `npm run verify`          | Local: static + sut + api + smoke                        |
+| `npm run verify:full`     | Local: static + sut + full Playwright suite              |
+| `npm run build`           | Build the `pw-core` workspace package                    |
+| `npm run typecheck`       | TypeScript strict check (`tsc --noEmit`)                 |
+| `npm run lint`            | ESLint (TypeScript + Playwright rules)                   |
+| `npm run lint:fix`        | ESLint with auto-fix                                     |
+| `npm run format`          | Prettier format all files                                |
+| `npm run format:check`    | Prettier check without writing                           |
 
 There is no separate unit-test runner; `pw-core` is validated via `npm run build` and exercised indirectly through Playwright specs. Root `npm run typecheck` runs `tsc --noEmit` on the test project; both are included in `verify:static`.
 
-### Quality gates (CI)
+### CI (GitHub Actions)
 
-Layered gates via [.github/workflows/quality-gates.yml](.github/workflows/quality-gates.yml):
+Single workflow: [.github/workflows/playwright.yml](.github/workflows/playwright.yml)
 
-| Event                   | Jobs                                                              | Typical duration            |
-| ----------------------- | ----------------------------------------------------------------- | --------------------------- |
-| **Pull request**        | Static → SUT health ∥ wishlist probe → **PR tests (API + smoke)** | ~5–15 min (cached browsers) |
-| **Push to main**        | Static → SUT → full suite                                         | ~15–25 min                  |
-| **Nightly (06:00 UTC)** | Same as push to main                                              | ~15–25 min                  |
+On every push/PR to `main` or `master`:
 
-Details: [docs/QUALITY-GATES.md](docs/QUALITY-GATES.md). Pre-PR checklist: [docs/VERIFICATION.md](docs/VERIFICATION.md). Contributors: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md).
+1. `npm ci`, build, typecheck, lint
+2. Install Playwright Chromium (cached)
+3. Run full Playwright suite (wishlist skipped if secrets are not configured)
 
-**Local hooks (Husky):** `pre-commit` runs lint-staged; `pre-push` runs `verify:static`. Installed via `npm ci` (`prepare` script).
+**Branch protection:** require the **Playwright Tests** check only. Remove old Quality Gates / Copilot Setup Steps required checks if still listed.
 
-CI runs with `CI=true` (enables retries and single worker). Failed runs upload traces and HTML reports.
+**Copilot Setup Steps** is manual (`workflow_dispatch` only) and does not block merges.
+
+CI runs with `CI=true` (retries + single worker). Failed runs upload traces and HTML reports.
 
 > `packages/pw-core/dist/` is gitignored and built locally/CI via `npm run build` — never commit compiled output.
 
