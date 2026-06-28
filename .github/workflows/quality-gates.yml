@@ -42,6 +42,26 @@ jobs:
                   node-version: lts/*
             - run: npm run verify:sut
 
+    wishlist-secrets:
+        name: Wishlist credentials probe
+        runs-on: ubuntu-latest
+        outputs:
+            configured: ${{ steps.probe.outputs.configured }}
+        steps:
+            - id: probe
+              env:
+                  TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+                  TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+              run: |
+                  if [ -n "$TEST_USER_EMAIL" ] && [ -n "$TEST_USER_PASSWORD" ] && \
+                     [ "$TEST_USER_EMAIL" != "your-email@example.com" ] && \
+                     [ "$TEST_USER_PASSWORD" != "your-password" ]; then
+                    echo "configured=true" >> "$GITHUB_OUTPUT"
+                  else
+                    echo "configured=false" >> "$GITHUB_OUTPUT"
+                    echo "::notice::Wishlist E2E skipped — add TEST_USER_EMAIL and TEST_USER_PASSWORD repository secrets (Settings → Secrets and variables → Actions) to enable."
+                  fi
+
     test-api:
         name: API tests
         needs: static
@@ -82,15 +102,16 @@ jobs:
 
     test-wishlist:
         name: Wishlist E2E (@wishlist)
-        needs: sut-health
+        needs: [sut-health, wishlist-secrets]
         if: >-
             github.event_name == 'pull_request' &&
-            github.event.pull_request.head.repo.full_name == github.repository
+            github.event.pull_request.head.repo.full_name == github.repository &&
+            needs.wishlist-secrets.outputs.configured == 'true'
         runs-on: ubuntu-latest
         timeout-minutes: 20
         env:
-            TEST_USER_EMAIL: ${{ fromJSON(toJSON(secrets)).TEST_USER_EMAIL }}
-            TEST_USER_PASSWORD: ${{ fromJSON(toJSON(secrets)).TEST_USER_PASSWORD }}
+            TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+            TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
@@ -104,13 +125,10 @@ jobs:
 
     test-full:
         name: Full Playwright suite
-        needs: sut-health
+        needs: [sut-health, wishlist-secrets]
         if: github.event_name == 'push' || github.event_name == 'schedule'
         runs-on: ubuntu-latest
         timeout-minutes: 60
-        env:
-            TEST_USER_EMAIL: ${{ fromJSON(toJSON(secrets)).TEST_USER_EMAIL }}
-            TEST_USER_PASSWORD: ${{ fromJSON(toJSON(secrets)).TEST_USER_PASSWORD }}
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
@@ -118,9 +136,22 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
-            - run: sh scripts/verify-wishlist-credentials.sh
+            - name: Verify wishlist credentials
+              if: needs.wishlist-secrets.outputs.configured == 'true'
+              env:
+                  TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+                  TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+              run: sh scripts/verify-wishlist-credentials.sh
             - run: npx playwright install --with-deps
-            - run: npm run verify:full
+            - name: Run full suite (with wishlist)
+              if: needs.wishlist-secrets.outputs.configured == 'true'
+              env:
+                  TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
+                  TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+              run: npm run verify:full
+            - name: Run suite without wishlist
+              if: needs.wishlist-secrets.outputs.configured != 'true'
+              run: npx playwright test --grep-invert @wishlist
             - uses: actions/upload-artifact@v4
               if: ${{ !cancelled() }}
               with:
