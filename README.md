@@ -76,19 +76,20 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 
 ### Layer rules (per feature module)
 
-| Layer            | Responsibility                             | May import from                       |
-| ---------------- | ------------------------------------------ | ------------------------------------- |
-| **presentation** | Page objects, locators, UI actions         | Same feature `state` only             |
-| **state**        | Test data, path constants, env credentials | `shared` routes/types, pw-core models |
-| **services**     | HTTP calls, API assertions                 | `shared`, same feature `state`        |
-| **tests**        | Orchestration                              | Feature public APIs via `index.ts`    |
+| Layer            | Responsibility                             | May import from                                                       |
+| ---------------- | ------------------------------------------ | --------------------------------------------------------------------- |
+| **presentation** | Page objects, locators, UI actions         | Same feature `state` only                                             |
+| **state**        | Test data, path constants, env credentials | `shared` routes/types, pw-core models                                 |
+| **services**     | HTTP calls, API assertions                 | `shared`, same feature `state`                                        |
+| **tests**        | Orchestration                              | Feature barrels (state/services), fixtures — not presentation classes |
 
-Features stay independent — tests compose flows through fixtures and feature barrel exports, not cross-feature internal imports. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for diagrams and the full feature map.
+Features stay independent — tests compose flows through fixtures and feature barrel exports, not cross-feature internal imports. ESLint enforces layer boundaries (`eslint.config.mjs`). See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for diagrams and the full feature map.
 
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) (v18+ recommended)
 - [npm](https://www.npmjs.com/)
+- [Playwright](https://playwright.dev/) **1.61.1** (installed via `npm ci`; browsers via `npx playwright install chromium`)
 - [Docker](https://www.docker.com/) (optional, for containerized runs)
 
 ## Setup
@@ -120,7 +121,7 @@ Features stay independent — tests compose flows through fixtures and feature b
 
     Edit `.env` and set:
     - `BASE_URL` — optional; defaults to `https://awesomeqa.com/ui/`
-    - `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` — required for wishlist E2E locally; **required in CI** (see [docs/adr/002-ci-wishlist-credentials.md](docs/adr/002-ci-wishlist-credentials.md))
+    - `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` — required for wishlist E2E locally; optional in GitHub Actions (see [docs/adr/002-ci-wishlist-credentials.md](docs/adr/002-ci-wishlist-credentials.md))
 
 ## Running Tests
 
@@ -175,7 +176,9 @@ docker-compose up --build
 
 - `CI=true` is set in the image and Compose file (enables retries and single worker, same as GitHub Actions).
 - `BASE_URL` defaults to `https://awesomeqa.com/ui/` when unset.
-- With `CI=true`, valid wishlist credentials are **required** (same as GitHub Actions). Pass via `.env` or `--env-file`:
+- With `CI=true`, valid wishlist credentials are **required when the full suite runs `@wishlist`** (Docker default). GitHub Actions skips `@wishlist` when repository secrets are missing.
+
+Pass credentials via `.env` or `--env-file`:
 
 ```sh
 docker run --rm -e CI=true --env-file .env playwright-tests
@@ -187,11 +190,11 @@ Test results and HTML reports are written to `playwright-report/` and `test-resu
 
 ## Environment Variables
 
-| Variable             | Required          | Description                                                    |
-| -------------------- | ----------------- | -------------------------------------------------------------- |
-| `BASE_URL`           | No                | OpenCart store root URL (default: `https://awesomeqa.com/ui/`) |
-| `TEST_USER_EMAIL`    | CI + wishlist E2E | Registered user email on the OpenCart demo store               |
-| `TEST_USER_PASSWORD` | CI + wishlist E2E | Password for the registered user                               |
+| Variable             | Required     | Description                                                    |
+| -------------------- | ------------ | -------------------------------------------------------------- |
+| `BASE_URL`           | No           | OpenCart store root URL (default: `https://awesomeqa.com/ui/`) |
+| `TEST_USER_EMAIL`    | Wishlist E2E | Registered user email on the OpenCart demo store               |
+| `TEST_USER_PASSWORD` | Wishlist E2E | Password for the registered user                               |
 
 - **Local:** copy `.env.example` to `.env` and fill in real values.
 - **CI:** add `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` as repository secrets to run the wishlist E2E in CI. Without secrets, CI runs all other tests and skips `@wishlist`.
@@ -255,7 +258,17 @@ Use `Wait` from `@opencart-auto/pw-core` for safe clicks and load-state synchron
 
 ## Test Data
 
-Product catalog and search terms live in `src/features/catalog/state/products.ts`. Ribbon menu labels live in `src/features/catalog/state/ribbonMenu.ts`:
+Product catalog and search terms live in `src/features/catalog/state/products.ts`. Related state modules:
+
+| Feature  | State files (examples)                                                          |
+| -------- | ------------------------------------------------------------------------------- |
+| catalog  | `products.ts`, `ribbonMenu.ts`, `searchMessages.ts`, `alertMessages.ts`         |
+| home     | `uiConstants.ts`, `headerRoutes.ts`, `footerContent.ts`                         |
+| auth     | `paths.ts`, `loginErrors.ts`, `loginForm.ts`, `logoutForm.ts`, `credentials.ts` |
+| checkout | `billingDetails.ts`, `paths.ts`, `uiConstants.ts`                               |
+| wishlist | `paths.ts`, `uiConstants.ts`                                                    |
+
+Full index: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#state-module-reference).
 
 ```typescript
 import { getSearchTerm, products, requireCategory, requireProductId } from '../../features/catalog';
@@ -287,10 +300,12 @@ Use `sessionCartService` from `POMFixture` in hybrid tests (not standalone `requ
 
 ### Auth and wishlist behavior
 
+- `Header.openWishlist()` opens the wishlist route (home presentation — click only).
+- `LoginPage.assertLoginFormVisible()` asserts the Returning Customer form (auth presentation).
 - `LoginPage.login()` submits credentials and fails on credential rejection only (no flow-specific landing assertion).
 - `WishListPage.assertLoaded()` verifies the wishlist page after login in wishlist E2E.
 - Wishlist E2E uses the `wishlistCredentials` fixture from `POMFixture` (see `src/fixtures/wishlistCredentials.ts`).
-- Credential resolution: `features/auth/state/credentials.ts`.
+- Credential resolution: `features/auth/state/credentials.ts`. CI policy: [docs/adr/002-ci-wishlist-credentials.md](docs/adr/002-ci-wishlist-credentials.md).
 
 ## System under test (SUT)
 
@@ -310,7 +325,7 @@ Operational risk: third-party demo downtime or catalog changes will fail tests u
 - E2E tests → `src/tests/e2e/`
 - API tests → `src/tests/api/`
 - Hybrid tests → `src/tests/hybrid/`
-- Page objects → `src/features/<feature>/presentation/`
+- Page objects → `src/features/<feature>/presentation/` (use via fixtures in tests, not barrel imports)
 - Fixtures → `src/fixtures/` (`POMFixture.ts`, `ApiFixture.ts`, `fixtureHelpers.ts`, `wishlistCredentials.ts`)
 - Test data → `src/features/<feature>/state/`
 - Scenario reference → [specs/test.plan.md](specs/test.plan.md)

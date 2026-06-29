@@ -10,7 +10,7 @@ A change is complete when all **applicable** items below are satisfied.
 ## Code and architecture
 
 - [ ] Respects feature-module layers (`10-architecture.mdc`)
-- [ ] Imports use feature `index.ts` barrels from tests (not internal layer paths)
+- [ ] Imports use feature barrels from tests for state/services only (presentation via fixtures)
 - [ ] TypeScript strict mode — no unjustified `any`
 - [ ] `npm run typecheck` passes
 - [ ] `npm run lint` passes
@@ -37,4 +37,4 @@ A change is complete when all **applicable** items below are satisfied.
 ## CI alignment
 
 - [ ] Changes compatible with `.github/workflows/quality-gates.yml`
-- [ ] Wishlist E2E: CI requires valid `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` (see ADR-002)
+- [ ] Wishlist E2E: credential policy per ADR-002 (local skip; GitHub skips without secrets; Docker fails when `@wishlist` runs)

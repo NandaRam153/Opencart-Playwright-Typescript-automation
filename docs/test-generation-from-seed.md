@@ -105,7 +105,8 @@ flowchart LR
 
 After generation, always:
 
-1. Replace `@playwright/test` fixture imports with `POMFixture` where UI page objects apply.
+1. Replace `@playwright/test` fixture imports with `POMFixture` (which re-exports `expect`) where UI page objects apply.
 2. Move locators into presentation classes under `src/features/*/presentation/`; move labels, paths, and test data into the same feature's `state/`.
-3. Add or update the scenario in `specs/test.plan.md`.
-4. Run `npm run verify:static` and the new spec; add `@smoke` only if the test belongs in the PR smoke gate (see [QUALITY-GATES.md](QUALITY-GATES.md)).
+3. Do not import presentation classes from feature barrels in tests — register new page objects in `POMFixture.ts`.
+4. Add or update the scenario in `specs/test.plan.md`.
+5. Run `npm run verify:static` and the new spec; add `@smoke` only if the test belongs in the PR smoke gate (see [QUALITY-GATES.md](QUALITY-GATES.md)).

@@ -198,7 +198,7 @@ Playwright fixtures act as the DI container. Shared helpers live in `src/fixture
 | `ApiFixture.ts`          | `CartService`, `CatalogService`                                           |
 | `wishlistCredentials.ts` | Wishlist credential resolution and local skip (uses auth state barrel)    |
 
-UI and hybrid tests import `test` from `POMFixture`. API tests import `test` from `ApiFixture`. Avoid constructing services or page objects directly in specs when a fixture exists.
+UI and hybrid tests import `test` and `expect` from `POMFixture`. API tests import `test` from `ApiFixture`. Page objects and services are injected via fixtures — specs must not import presentation classes from feature barrels (ESLint enforced).
 
 ## CI and quality gates
 
@@ -206,20 +206,18 @@ UI and hybrid tests import `test` from `POMFixture`. API tests import `test` fro
 flowchart TB
     subgraph pr [Pull request]
         S1[Static analysis] --> S2[SUT health]
-        S2 --> S3[API tests]
-        S2 --> S4[Smoke @smoke]
-        S2 --> S5[Wishlist @wishlist — same-repo only]
+        S2 --> S3["PR tests (API + smoke + optional wishlist)"]
     end
 
     subgraph main [Push main / nightly]
         M1[Static analysis] --> M2[SUT health]
-        M2 --> M3[Full Playwright suite]
+        M2 --> M3["Full suite (or invert @wishlist without secrets)"]
     end
 ```
 
 Workflow: [.github/workflows/quality-gates.yml](../.github/workflows/quality-gates.yml).
 
-When `CI=true`, push/nightly runs **fail** if wishlist credentials are missing or placeholder (see [adr/002-ci-wishlist-credentials.md](adr/002-ci-wishlist-credentials.md)). Fork PRs skip the wishlist job without failing.
+**Wishlist credentials:** GitHub Actions skips `@wishlist` when repository secrets are missing (main/nightly runs `--grep-invert @wishlist`). Docker and local `verify:wishlist` with `CI=true` fail when the wishlist test runs without valid credentials. See [adr/002-ci-wishlist-credentials.md](adr/002-ci-wishlist-credentials.md).
 
 Local verification: [VERIFICATION.md](VERIFICATION.md). Contributor workflow: [CONTRIBUTING.md](CONTRIBUTING.md).
 

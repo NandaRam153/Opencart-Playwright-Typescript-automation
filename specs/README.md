@@ -12,12 +12,12 @@ Used by the `playwright-test-planner` and `playwright-test-generator` agents (`.
 
 ## Related documentation
 
-| Document                                                                  | Purpose                                |
-| ------------------------------------------------------------------------- | -------------------------------------- |
-| [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)                           | Feature modules, layer rules, diagrams |
-| [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md)                         | CI jobs, `@smoke` / `@wishlist` tags   |
-| [docs/VERIFICATION.md](../docs/VERIFICATION.md)                           | Pre-PR verification checklist          |
-| [docs/CONTRIBUTING.md](../docs/CONTRIBUTING.md)                           | Contributor workflow                   |
-| [docs/test-generation-from-seed.md](../docs/test-generation-from-seed.md) | Seed → generator → refactor workflow   |
-| [docs/adr/README.md](../docs/adr/README.md)                               | ADR index                              |
-| [README.md](../README.md)                                                 | Setup and commands                     |
+| Document                                                                  | Purpose                                                        |
+| ------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)                           | Feature modules, layer rules, ESLint import rules, state index |
+| [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md)                         | CI jobs, `@smoke` / `@wishlist` tags                           |
+| [docs/VERIFICATION.md](../docs/VERIFICATION.md)                           | Pre-PR verification checklist                                  |
+| [docs/CONTRIBUTING.md](../docs/CONTRIBUTING.md)                           | Contributor workflow                                           |
+| [docs/test-generation-from-seed.md](../docs/test-generation-from-seed.md) | Seed → generator → refactor workflow                           |
+| [docs/adr/README.md](../docs/adr/README.md)                               | ADR index                                                      |
+| [README.md](../README.md)                                                 | Setup and commands                                             |
