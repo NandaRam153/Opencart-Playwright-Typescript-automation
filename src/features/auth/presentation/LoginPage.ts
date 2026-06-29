@@ -1,6 +1,10 @@
 import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
 import { AuthPaths } from '../state/paths';
-import { LOGIN_CREDENTIAL_FAILURE_MESSAGE, LOGIN_REJECTION_PATTERN } from '../state/loginErrors';
+import {
+    LOGIN_CREDENTIAL_FAILURE_MESSAGE,
+    LOGIN_REJECTION_PATTERN,
+    LOGIN_REJECTION_TIMEOUT_MS,
+} from '../state/loginErrors';
 import { RETURNING_CUSTOMER_HEADING, RETURNING_CUSTOMER_HEADING_LEVEL } from '../state/loginForm';
 
 export class LoginPage extends BasePage {
@@ -35,7 +39,7 @@ export class LoginPage extends BasePage {
     private async wasLoginRejected(): Promise<boolean> {
         const loginError = this.page.getByText(LOGIN_REJECTION_PATTERN);
         return loginError
-            .waitFor({ state: 'visible', timeout: 3000 })
+            .waitFor({ state: 'visible', timeout: LOGIN_REJECTION_TIMEOUT_MS })
             .then(() => true)
             .catch(() => false);
     }

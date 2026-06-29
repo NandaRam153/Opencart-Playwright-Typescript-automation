@@ -6,10 +6,10 @@ export function resolveWishlistCredentialsForTest(): { email: string; password: 
     const credentials = getWishlistCredentials();
     assertWishlistCredentialsInCi(credentials);
 
-    if (credentials.status !== 'ok') {
-        test.skip(true, credentials.reason);
-        throw new Error('Test skipped due to missing wishlist credentials');
+    if (credentials.status === 'ok') {
+        return credentials;
     }
 
-    return credentials;
+    test.skip(true, credentials.reason);
+    throw new Error(credentials.reason);
 }

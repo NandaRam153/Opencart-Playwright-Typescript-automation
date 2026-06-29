@@ -21,6 +21,12 @@ export default tseslint.config(
         },
     },
     {
+        files: ['packages/pw-core/src/utils/assertions.ts'],
+        rules: {
+            'playwright/valid-expect': 'off',
+        },
+    },
+    {
         files: ['src/tests/**/*.ts', 'src/fixtures/**/*.ts'],
         rules: {
             'playwright/expect-expect': 'off',
@@ -122,6 +128,38 @@ export default tseslint.config(
             'no-restricted-imports': [
                 'error',
                 {
+                    paths: [
+                        {
+                            name: '../../features/home',
+                            importNames: ['HomePage', 'Header', 'Footer'],
+                            message: 'Import page objects from fixtures, not feature barrels.',
+                        },
+                        {
+                            name: '../../features/catalog',
+                            importNames: ['ProductListingPage', 'Ribbon'],
+                            message: 'Import page objects from fixtures, not feature barrels.',
+                        },
+                        {
+                            name: '../../features/cart',
+                            importNames: ['CartPage'],
+                            message: 'Import page objects from fixtures, not feature barrels.',
+                        },
+                        {
+                            name: '../../features/auth',
+                            importNames: ['LoginPage', 'LogoutPage'],
+                            message: 'Import page objects from fixtures, not feature barrels.',
+                        },
+                        {
+                            name: '../../features/checkout',
+                            importNames: ['CheckoutPage', 'OrderPlacementResultPage'],
+                            message: 'Import page objects from fixtures, not feature barrels.',
+                        },
+                        {
+                            name: '../../features/wishlist',
+                            importNames: ['WishListPage'],
+                            message: 'Import page objects from fixtures, not feature barrels.',
+                        },
+                    ],
                     patterns: [
                         {
                             group: [

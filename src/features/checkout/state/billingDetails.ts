@@ -5,7 +5,7 @@ export type CheckoutBillingDetails = IBillingDetails;
 export const billingData: CheckoutBillingDetails = {
     firstName: 'Nanda',
     lastName: 'Ram',
-    email: 'test123@email.com',
+    email: 'test123@example.com',
     phone: '647-555-5555',
     address: '123 Main Street',
     city: 'Toronto',

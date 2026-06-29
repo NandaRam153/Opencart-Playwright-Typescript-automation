@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
-# Optional preflight when wishlist credentials are required (e.g. Docker with CI=true).
-# Exits 0 when credentials are missing — wishlist tests are skipped in CI instead.
+# Informational notice when wishlist credentials are not configured.
+# GitHub Actions gates wishlist via the wishlist-secrets job; this script does not fail the workflow.
+# Docker/full-suite CI still fails when @wishlist runs without credentials (assertWishlistCredentialsInCi).
 set -e
 if [ "$CI" != "true" ]; then
   exit 0

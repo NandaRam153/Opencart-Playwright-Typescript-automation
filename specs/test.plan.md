@@ -66,7 +66,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 
 - Valid `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` in `.env` (local) or GitHub Actions secrets (CI).
 - Locally: test **skips** if credentials are missing or still `.env.example` placeholders.
-- CI: workflow **fails** before Playwright if credentials are missing (see `docs/adr/002-ci-wishlist-credentials.md`).
+- **GitHub Actions:** wishlist runs when repository secrets are configured (same-repo PRs and main/nightly); otherwise `@wishlist` is skipped and other tests still run. See `docs/adr/002-ci-wishlist-credentials.md`.
 
 **Steps:**
 

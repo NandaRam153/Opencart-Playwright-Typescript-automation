@@ -41,32 +41,40 @@ flowchart TB
 
 Each domain area is an **independent feature module** under `src/features/<name>/`. Modules expose a public API through `index.ts` only.
 
-| Feature      | State                                                                                                | Services                             | Presentation                               |
-| ------------ | ---------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------ |
-| **home**     | `HomePaths`, `HeaderRoutes`, `uiConstants` (`SEARCH_PLACEHOLDER`, `STORE_PAGE_TITLE`)                | —                                    | `HomePage`, `Header`, `Footer`             |
-| **catalog**  | `products`, `ribbonMenu`, `ribbonCategories`, `getSearchTerm`, `requireProductId`, `requireCategory` | `CatalogService`, catalog assertions | `ProductListingPage`, `Ribbon`             |
-| **cart**     | `CartPaths`                                                                                          | `CartService`, cart assertions       | `CartPage`                                 |
-| **auth**     | `credentials`, `AuthPaths`, `AUTH_LOGOUT_URL_PATTERN`, `LOGIN_REJECTION_PATTERN`                     | —                                    | `LoginPage`, `LogoutPage`                  |
-| **checkout** | `billingData`, `CheckoutBillingDetails`                                                              | —                                    | `CheckoutPage`, `OrderPlacementResultPage` |
-| **wishlist** | `WishlistPaths`                                                                                      | —                                    | `WishListPage`                             |
+| Feature      | State                                                                                                               | Services                             | Presentation                               |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------ |
+| **home**     | `HomePaths`, `HeaderRoutes`, `uiConstants`, `footerContent`                                                         | —                                    | `HomePage`, `Header`, `Footer`             |
+| **catalog**  | `products`, `ribbonMenu`, `searchMessages`, `alertMessages`, `getSearchTerm`, `requireProductId`, `requireCategory` | `CatalogService`, catalog assertions | `ProductListingPage`, `Ribbon`             |
+| **cart**     | `CartPaths`                                                                                                         | `CartService`, cart assertions       | `CartPage`                                 |
+| **auth**     | `credentials`, `AuthPaths`, URL patterns, `loginErrors`, `loginForm`, `logoutForm`                                  | —                                    | `LoginPage`, `LogoutPage`                  |
+| **checkout** | `billingData`, `CheckoutBillingDetails`, `paths`, `uiConstants`                                                     | —                                    | `CheckoutPage`, `OrderPlacementResultPage` |
+| **wishlist** | `WishlistPaths`, `uiConstants`                                                                                      | —                                    | `WishListPage`                             |
 
 Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwright skip/fail wiring for wishlist E2E is in `src/fixtures/wishlistCredentials.ts`.
 
 ### State module reference
 
-| File                               | Feature  | Purpose                                                 |
-| ---------------------------------- | -------- | ------------------------------------------------------- |
-| `home/state/paths.ts`              | home     | `HomePaths.home` from shared routes                     |
-| `home/state/headerRoutes.ts`       | home     | Cart/checkout href fragments for header assertions      |
-| `home/state/uiConstants.ts`        | home     | Search placeholder, store page title                    |
-| `catalog/state/products.ts`        | catalog  | Product catalog, helpers, `ribbonCategories`            |
-| `catalog/state/ribbonMenu.ts`      | catalog  | Ribbon dropdown and link labels (Software empty on SUT) |
-| `cart/state/paths.ts`              | cart     | `CartPaths`                                             |
-| `auth/state/paths.ts`              | auth     | Login/logout paths, logout URL glob                     |
-| `auth/state/credentials.ts`        | auth     | Wishlist credential resolution                          |
-| `auth/state/loginErrors.ts`        | auth     | `LOGIN_REJECTION_PATTERN`                               |
-| `checkout/state/billingDetails.ts` | checkout | Guest billing fixture data and type                     |
-| `wishlist/state/paths.ts`          | wishlist | `WishlistPaths.list`                                    |
+| File                               | Feature  | Purpose                                                       |
+| ---------------------------------- | -------- | ------------------------------------------------------------- |
+| `home/state/paths.ts`              | home     | `HomePaths.home` from shared routes                           |
+| `home/state/headerRoutes.ts`       | home     | Cart/checkout href fragments for header assertions            |
+| `home/state/uiConstants.ts`        | home     | Brand title, search placeholder, store title, currency labels |
+| `home/state/footerContent.ts`      | home     | Footer column headings and link labels                        |
+| `catalog/state/products.ts`        | catalog  | Product catalog, helpers, `ribbonCategories`                  |
+| `catalog/state/ribbonMenu.ts`      | catalog  | Ribbon dropdown and link labels (Software empty on SUT)       |
+| `catalog/state/searchMessages.ts`  | catalog  | Empty search results message                                  |
+| `catalog/state/alertMessages.ts`   | catalog  | Add-to-cart success alert fragments                           |
+| `cart/state/paths.ts`              | cart     | `CartPaths`                                                   |
+| `auth/state/paths.ts`              | auth     | Login/logout paths, login/logout URL patterns                 |
+| `auth/state/credentials.ts`        | auth     | Wishlist credential resolution                                |
+| `auth/state/loginErrors.ts`        | auth     | Login rejection pattern, failure message, timeout             |
+| `auth/state/loginForm.ts`          | auth     | Returning Customer heading constants                          |
+| `auth/state/logoutForm.ts`         | auth     | Account Logout heading and Continue link                      |
+| `checkout/state/billingDetails.ts` | checkout | Guest billing fixture data and type                           |
+| `checkout/state/paths.ts`          | checkout | Post-order Continue URL pattern                               |
+| `checkout/state/uiConstants.ts`    | checkout | Order success heading and Continue link                       |
+| `wishlist/state/paths.ts`          | wishlist | `WishlistPaths.list`                                          |
+| `wishlist/state/uiConstants.ts`    | wishlist | Wishlist page heading                                         |
 
 ## Layer model (per feature)
 
@@ -112,16 +120,16 @@ flowchart LR
 
 ### Import rules
 
-| Layer            | May import                                     | Must not import                                    |
-| ---------------- | ---------------------------------------------- | -------------------------------------------------- |
-| **presentation** | Same-feature `state`, `@opencart-auto/pw-core` | Other features, `services`, test specs             |
-| **state**        | `shared` routes/types, pw-core models          | `presentation`, `services`, other features' state  |
-| **services**     | `shared`, same-feature `state`                 | `presentation`, other features' internals          |
-| **tests**        | Feature `index.ts`, fixtures                   | Feature `presentation/` or `state/` paths directly |
+| Layer            | May import                                     | Must not import                                                                      |
+| ---------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **presentation** | Same-feature `state`, `@opencart-auto/pw-core` | Other features, `services`, test specs                                               |
+| **state**        | `shared` routes/types, pw-core models          | `presentation`, `services`, other features' state                                    |
+| **services**     | `shared`, same-feature `state`                 | `presentation`, other features' internals                                            |
+| **tests**        | Feature `index.ts`, fixtures                   | Feature `presentation/` or `state/` paths directly; presentation classes via barrels |
 
 **Cross-feature composition** happens in tests and fixtures (e.g. order flow uses catalog + cart + checkout page objects injected together).
 
-Layer boundaries are enforced in `eslint.config.mjs` via `no-restricted-imports` on presentation, state, services, and tests (feature barrels and `index.ts` re-exports are exempt).
+Layer boundaries are enforced in `eslint.config.mjs` via `no-restricted-imports` on presentation, state, services, and tests. Tests must not import presentation classes from feature barrels (use fixtures instead).
 
 ## Shared layer
 
