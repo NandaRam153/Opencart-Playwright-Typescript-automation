@@ -23,7 +23,8 @@ test(
         await productListingPage.checkProductListed(products.MACBOOK_PRO.name);
         await productListingPage.addToWishListProductByName(products.MACBOOK_PRO.name);
 
-        await header.gotoWishlist();
+        await header.openWishlist();
+        await loginPage.assertLoginFormVisible();
         await loginPage.login(email, password);
         await wishListPage.assertLoaded();
 

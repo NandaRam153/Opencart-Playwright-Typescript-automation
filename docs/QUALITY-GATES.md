@@ -17,10 +17,10 @@ Workflow file: [.github/workflows/quality-gates.yml](../.github/workflows/qualit
 
 Supporting scripts:
 
-| Script                                   | Purpose                                 |
-| ---------------------------------------- | --------------------------------------- |
-| `scripts/sut-health-check.mjs`           | HEAD preflight against `BASE_URL`       |
-| `scripts/verify-wishlist-credentials.sh` | Fail-fast credential check in CI/Docker |
+| Script                                   | Purpose                                                                                           |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `scripts/sut-health-check.mjs`           | HEAD/GET preflight against `BASE_URL` (retries, IPv4-first on CI)                                 |
+| `scripts/verify-wishlist-credentials.sh` | Informational notice when credentials missing; workflow gates wishlist via `wishlist-secrets` job |
 
 ## Test tags
 
@@ -105,13 +105,24 @@ Configure at: **Settings → Branches → Branch protection rules → Require st
 
 - Fork PRs **do not** receive repository secrets; the wishlist step is **skipped** inside PR tests.
 - Static, SUT health, and PR tests still apply — sufficient for most changes.
-- Maintainers merging to `main` trigger the **full suite** (with or without wishlist depending on secrets).
+- Maintainers merging to `main` trigger the **full suite** (with wishlist when secrets exist; otherwise `--grep-invert @wishlist`).
 
-Details: [CONTRIBUTING.md](CONTRIBUTING.md).
+Details: [CONTRIBUTING.md](CONTRIBUTING.md). Credential policy: [adr/002-ci-wishlist-credentials.md](adr/002-ci-wishlist-credentials.md).
+
+## ESLint layer enforcement
+
+`eslint.config.mjs` enforces:
+
+- Presentation / state / services cannot import sibling features.
+- Presentation cannot import services.
+- Tests cannot import internal layer paths — use feature barrels for **state and services only**.
+- Tests cannot import **presentation classes** from feature barrels — use `POMFixture` / `ApiFixture` instead.
+
+Details: [ARCHITECTURE.md](ARCHITECTURE.md#import-rules).
 
 ## Nightly regression
 
-Scheduled at **06:00 UTC** daily (`cron: '0 6 * * *'`). Runs the same gates as push to `main`: full Playwright suite against the live demo store.
+Scheduled at **06:00 UTC** daily (`cron: '0 6 * * *'`). Same as push to `main`: full suite when secrets exist; otherwise `--grep-invert @wishlist`.
 
 ## Operational notes
 
@@ -119,6 +130,7 @@ Scheduled at **06:00 UTC** daily (`cron: '0 6 * * *'`). Runs the same gates as p
 - CI uses `retries: 2` and `workers: 1` (`playwright.config.ts` when `CI=true`).
 - Failed CI uploads `test-results/` and HTML report artifacts.
 - Typecheck runs root `tsc --noEmit` only; `pw-core` is validated via `npm run build` (included in `verify:static`).
+- Playwright **1.61.1** pinned across root, `pw-core`, and Docker (`v1.61.1-jammy`).
 
 ## Related ADRs
 

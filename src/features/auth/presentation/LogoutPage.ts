@@ -1,5 +1,10 @@
 import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
 import { AUTH_LOGOUT_URL_PATTERN } from '../state/paths';
+import {
+    ACCOUNT_LOGOUT_HEADING,
+    ACCOUNT_LOGOUT_HEADING_LEVEL,
+    LOGOUT_CONTINUE_LINK,
+} from '../state/logoutForm';
 
 export class LogoutPage extends BasePage {
     async checkLogoutComplete() {
@@ -8,8 +13,11 @@ export class LogoutPage extends BasePage {
         await this.page.mouse.move(0, 0);
 
         await HardAssertions.visible(
-            this.page.getByRole('heading', { name: 'Account Logout', level: 1 })
+            this.page.getByRole('heading', {
+                name: ACCOUNT_LOGOUT_HEADING,
+                level: ACCOUNT_LOGOUT_HEADING_LEVEL,
+            })
         );
-        await Wait.click(this.page.getByRole('link', { name: 'Continue' }));
+        await Wait.click(this.page.getByRole('link', { name: LOGOUT_CONTINUE_LINK }));
     }
 }

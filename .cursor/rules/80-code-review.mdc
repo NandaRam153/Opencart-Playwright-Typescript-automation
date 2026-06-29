@@ -13,12 +13,14 @@ Apply when reviewing PRs, refactors, or significant feature work. Adapt AI-Inves
 - Presentation does not import services or other features' state
 - HTTP logic in feature `services/`, not page objects
 - Routes/types in `src/shared/` only
+- Tests do not import presentation classes from feature barrels (use fixtures)
 - No revival of deleted flat `src/pages/`, `src/api/`, `src/data/`
 
 ## 2. Code quality
 
 - Clear naming (`*Check` soft audit, `assert*` hard, action verbs for flows)
 - Role/label-based locators preferred
+- UI strings and URL patterns in feature `state/`, not presentation
 - No unjustified duplication across features
 - No over-abstraction (match existing POM style)
 
@@ -27,13 +29,15 @@ Apply when reviewing PRs, refactors, or significant feature work. Adapt AI-Inves
 - New logic has matching Playwright coverage
 - API tests use `CatalogService` / `CartService`, not monolithic clients
 - Negative paths assert meaningful payloads (not only `success === undefined`)
-- Credential-dependent tests: local skip vs CI fail-fast documented
+- Credential-dependent tests: local skip vs CI policy documented in [adr/002](../../docs/adr/002-ci-wishlist-credentials.md)
+- UI specs import `test` / `expect` from `POMFixture` where applicable
 
 ## 4. Design
 
 - Abstractions justified (feature services, fixtures, pw-core)
 - Tests orchestrate; page objects do not encode multi-flow business rules
 - `LoginPage.login()` stays generic; flow-specific landing checks on destination pages
+- Cross-feature actions compose in tests (e.g. `Header.openWishlist()` + `LoginPage.assertLoginFormVisible()`)
 
 ## 5. Type safety
 
@@ -44,7 +48,7 @@ Apply when reviewing PRs, refactors, or significant feature work. Adapt AI-Inves
 ## 6. Performance
 
 - Avoid `waitForTimeout`; use `Wait` or Playwright auto-waiting
-- Avoid unnecessary `networkidle` unless justified
+- Avoid `networkidle` (removed from `pw-core` `Wait` utilities)
 
 ## 7. Security
 
@@ -65,3 +69,7 @@ Classify findings: **HIGH** | **MEDIUM** | **LOW**
 One of: **APPROVE** | **APPROVE_WITH_NOTES** | **REQUEST_CHANGES** | **REJECT**
 
 Do not approve broken layer boundaries or missing tests for new behavior.
+
+## CI alignment
+
+Changes must pass [.github/workflows/quality-gates.yml](../../.github/workflows/quality-gates.yml): static → SUT → PR tests (API + smoke) on PRs; full suite on main/nightly.

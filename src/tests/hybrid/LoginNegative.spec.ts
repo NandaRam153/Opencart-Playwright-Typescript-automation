@@ -1,4 +1,4 @@
-import { LOGIN_REJECTION_PATTERN } from '../../features/auth';
+import { AUTH_LOGIN_URL_PATTERN, AuthPaths, LOGIN_REJECTION_PATTERN } from '../../features/auth';
 import { expect, test } from '../../fixtures/POMFixture';
 
 test(
@@ -9,8 +9,7 @@ test(
 
         const loginResponsePromise = page.waitForResponse(
             (response) =>
-                response.request().method() === 'POST' &&
-                response.url().includes('route=account/login')
+                response.request().method() === 'POST' && response.url().includes(AuthPaths.login)
         );
 
         await loginPage.submitCredentials(`invalid-${Date.now()}@example.com`, 'wrong-password');
@@ -19,10 +18,8 @@ test(
         expect(loginResponse.status()).toBe(200);
         expect(loginResponse.url()).not.toContain('route=account/account');
 
-        await expect(
-            page.getByRole('heading', { name: 'Returning Customer', level: 2 })
-        ).toBeVisible();
+        await loginPage.assertLoginFormVisible();
         await expect(page.getByText(LOGIN_REJECTION_PATTERN)).toBeVisible();
-        await expect(page).toHaveURL(/route=account\/login/);
+        await expect(page).toHaveURL(AUTH_LOGIN_URL_PATTERN);
     }
 );

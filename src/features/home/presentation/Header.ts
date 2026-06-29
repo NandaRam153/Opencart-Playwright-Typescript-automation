@@ -1,6 +1,6 @@
 import { BaseComponent, HardAssertions, SoftAssertions, Wait } from '@opencart-auto/pw-core';
 import { HeaderRoutes } from '../state/headerRoutes';
-import { SEARCH_PLACEHOLDER } from '../state/uiConstants';
+import { CURRENCY_LABELS, SEARCH_PLACEHOLDER } from '../state/uiConstants';
 
 export class Header extends BaseComponent {
     private get searchForm() {
@@ -18,7 +18,7 @@ export class Header extends BaseComponent {
             );
             await SoftAssertions.containsText(
                 this.page.locator('button.currency-select'),
-                ['€ Euro', '£ Pound Sterling', '$ US Dollar'],
+                [...CURRENCY_LABELS],
                 'Currency types are not correct'
             );
         }
@@ -67,11 +67,8 @@ export class Header extends BaseComponent {
         await Wait.click(this.searchForm.getByRole('button'));
     }
 
-    async gotoWishlist() {
+    async openWishlist() {
         await Wait.click(this.page.locator('#wishlist-total'));
-        await HardAssertions.visible(
-            this.page.getByRole('heading', { name: 'Returning Customer', level: 2 })
-        );
     }
 
     async verifyCartCount(expectedCount: number) {

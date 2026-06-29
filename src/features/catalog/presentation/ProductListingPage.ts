@@ -1,4 +1,5 @@
 import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
+import { CART_SUCCESS_ALERT_FRAGMENT } from '../state/alertMessages';
 
 export class ProductListingPage extends BasePage {
     productCards = this.page.locator('.product-thumb');
@@ -34,7 +35,7 @@ export class ProductListingPage extends BasePage {
     async productAddedMessage(product: string) {
         const message = this.page.locator('.alert.alert-success.alert-dismissible');
         await HardAssertions.containsText(message, product);
-        await HardAssertions.containsText(message, 'shopping cart');
+        await HardAssertions.containsText(message, CART_SUCCESS_ALERT_FRAGMENT);
     }
 
     async getProductCount(): Promise<number> {

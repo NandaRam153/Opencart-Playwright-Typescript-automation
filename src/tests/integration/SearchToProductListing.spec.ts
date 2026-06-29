@@ -1,5 +1,4 @@
-import { test } from '../../fixtures/POMFixture';
-import { expect } from '@playwright/test';
+import { test, expect } from '../../fixtures/POMFixture';
 import { getSearchTerm, products } from '../../features/catalog';
 
 test.describe('Search → Product Listing', () => {

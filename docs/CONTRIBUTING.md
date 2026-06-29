@@ -67,14 +67,15 @@ To exercise wishlist E2E locally, set valid `TEST_USER_EMAIL` and `TEST_USER_PAS
 
 ## Layer rules (summary)
 
-| Layer                | May import                                             | Must not import                                               |
-| -------------------- | ------------------------------------------------------ | ------------------------------------------------------------- |
-| **presentation**     | Same-feature `state`, `@opencart-auto/pw-core`         | Other features, `services`                                    |
-| **state**            | `shared` routes/types, `@opencart-auto/pw-core` models | `presentation`, `services`, other features                    |
-| **services**         | `shared`, same-feature `state`                         | `presentation`, other features                                |
-| **tests / fixtures** | Feature `index.ts` barrels, fixtures                   | Internal layer paths (`presentation/`, `state/`, `services/`) |
+| Layer            | May import                                             | Must not import                                         |
+| ---------------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| **presentation** | Same-feature `state`, `@opencart-auto/pw-core`         | Other features, `services`                              |
+| **state**        | `shared` routes/types, `@opencart-auto/pw-core` models | `presentation`, `services`, other features              |
+| **services**     | `shared`, same-feature `state`                         | `presentation`, other features                          |
+| **tests**        | Feature barrels (state/services/types), fixtures       | Internal layer paths; presentation classes from barrels |
+| **fixtures**     | Feature barrels (including presentation for DI)        | Internal layer paths                                    |
 
-Cross-feature flows compose in **tests** and **fixtures** only.
+Cross-feature flows compose in **tests** and **fixtures** only. UI specs import `test` (and `expect`) from `POMFixture`; API specs from `ApiFixture`.
 
 ## Adding a feature module
 

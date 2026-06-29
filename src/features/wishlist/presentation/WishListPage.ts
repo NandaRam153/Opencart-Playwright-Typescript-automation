@@ -1,8 +1,11 @@
 import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
+import { WISHLIST_PAGE_HEADING } from '../state/uiConstants';
 
 export class WishListPage extends BasePage {
     async assertLoaded() {
-        await HardAssertions.visible(this.page.getByRole('heading', { name: 'My Wish List' }));
+        await HardAssertions.visible(
+            this.page.getByRole('heading', { name: WISHLIST_PAGE_HEADING })
+        );
     }
 
     async checkForProductByName(product: string) {

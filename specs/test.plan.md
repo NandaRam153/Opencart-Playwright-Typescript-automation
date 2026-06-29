@@ -66,7 +66,7 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 
 - Valid `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` in `.env` (local) or GitHub Actions secrets (CI).
 - Locally: test **skips** if credentials are missing or still `.env.example` placeholders.
-- CI: workflow **fails** before Playwright if credentials are missing (see `docs/adr/002-ci-wishlist-credentials.md`).
+- **GitHub Actions:** wishlist runs when repository secrets are configured (same-repo PRs and main/nightly); otherwise `@wishlist` is skipped and other tests still run. See `docs/adr/002-ci-wishlist-credentials.md`.
 
 **Steps:**
 
@@ -74,13 +74,14 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 2. Search for "MacBook Pro" using the header search.
 3. Verify that "MacBook Pro" is listed in the search results.
 4. Add "MacBook Pro" to the wish list from the product listing page.
-5. Navigate to the wish list page via the header.
-6. Login using registered user credentials (`LoginPage.login` — credential rejection only).
-7. Assert wishlist page loaded (`WishListPage.assertLoaded`).
-8. Verify that "MacBook Pro" is present in the wish list.
-9. Remove "MacBook Pro" from the wish list.
-10. Logout via the header.
-11. Verify logout is complete.
+5. Open wishlist via header (`Header.openWishlist()`).
+6. Assert login form visible (`LoginPage.assertLoginFormVisible()`).
+7. Login using registered user credentials (`LoginPage.login` — credential rejection only).
+8. Assert wishlist page loaded (`WishListPage.assertLoaded`).
+9. Verify that "MacBook Pro" is present in the wish list.
+10. Remove "MacBook Pro" from the wish list.
+11. Logout via the header.
+12. Verify logout is complete.
 
 ---
 
@@ -317,8 +318,8 @@ Second seed showcase: same generator workflow as Tablets, different ribbon categ
 1. Navigate directly to the login route.
 2. Submit invalid credentials with a unique email and wait for login POST response.
 3. Assert response status 200 and login did not reach account dashboard.
-4. Assert Returning Customer form is still visible.
-5. Assert UI shows login failure (credential mismatch or demo rate-limit warning) and user remains on login page.
+4. Assert Returning Customer form via `LoginPage.assertLoginFormVisible()`.
+5. Assert UI shows login failure (credential mismatch or demo rate-limit warning) and user remains on login page (`AUTH_LOGIN_URL_PATTERN`).
 
 ---
 
@@ -328,8 +329,9 @@ Second seed showcase: same generator workflow as Tablets, different ribbon categ
 - Quality gates and tags: [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md). Verification: [docs/VERIFICATION.md](../docs/VERIFICATION.md).
 - All tests use the Playwright test runner with feature-module Page Objects for maintainability.
 - Fixtures are defined in `src/fixtures/` (`POMFixture.ts`, `ApiFixture.ts`, `fixtureHelpers.ts`, `wishlistCredentials.ts`).
-- Product test data: `src/features/catalog/state/products.ts`, `ribbonMenu.ts`; billing: `src/features/checkout/state/billingDetails.ts`; home UI constants: `src/features/home/state/uiConstants.ts`.
-- HTTP route constants: `src/shared/services/routes/openCartRoutes.ts`; feature path slices in each feature's `state/paths.ts`.
+- Product test data: `src/features/catalog/state/` (`products.ts`, `ribbonMenu.ts`, `searchMessages.ts`, `alertMessages.ts`); home: `uiConstants.ts`, `footerContent.ts`, `headerRoutes.ts`; auth: `loginForm.ts`, `logoutForm.ts`, `loginErrors.ts`, `paths.ts`; checkout: `billingDetails.ts`, `uiConstants.ts`, `paths.ts`; wishlist: `uiConstants.ts`, `paths.ts`.
+- HTTP route constants: `src/shared/services/routes/openCartRoutes.ts`; feature path slices in each feature's `state/paths.ts` where present.
+- UI tests import `test` and `expect` from `POMFixture`; API tests from `ApiFixture`. Page objects come from fixtures only (ESLint enforced).
 - Add new functional tests under `src/tests/functional/`, integration tests under `src/tests/integration/`, E2E tests under `src/tests/e2e/`, API tests under `src/tests/api/`, and hybrid tests under `src/tests/hybrid/`.
 
 ---
@@ -350,9 +352,9 @@ PR smoke subset (`npm run verify:smoke` — 8 tests):
 
 Full suite only (not in PR smoke):
 
-| Spec                                     | Notes                             |
-| ---------------------------------------- | --------------------------------- |
-| `e2e/WishListFlow.spec.ts`               | `@wishlist` — needs credentials   |
-| Remaining integration / functional specs | Full regression on push / nightly |
+| Spec                                     | Notes                                                                      |
+| ---------------------------------------- | -------------------------------------------------------------------------- |
+| `e2e/WishListFlow.spec.ts`               | `@wishlist` — needs credentials; skipped in GitHub Actions without secrets |
+| Remaining integration / functional specs | Full regression on push / nightly                                          |
 
 See [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md) for CI job mapping.

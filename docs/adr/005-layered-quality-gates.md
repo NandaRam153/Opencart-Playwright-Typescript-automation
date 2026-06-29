@@ -11,14 +11,12 @@ The project previously used a single GitHub Actions workflow that ran typecheck,
 
 Introduce **layered quality gates**:
 
-| Gate       | Mechanism                                                         | When                                                   |
-| ---------- | ----------------------------------------------------------------- | ------------------------------------------------------ |
-| Static     | `npm run verify:static` (build + typecheck + lint + format:check) | PR, push, nightly, pre-push hook                       |
-| SUT health | `npm run verify:sut` (`scripts/sut-health-check.mjs`)             | Before browser tests in CI                             |
-| API        | `npm run verify:api`                                              | PR only                                                |
-| Smoke      | `npm run verify:smoke` (`@smoke` Playwright tag)                  | PR only                                                |
-| Wishlist   | `npm run verify:wishlist` (`@wishlist` tag)                       | Same-repo PRs with secrets; full suite on push/nightly |
-| Full       | `npm run verify:full`                                             | Push to `main`/`master`, nightly cron                  |
+| Gate       | Mechanism                                                         | When                                  |
+| ---------- | ----------------------------------------------------------------- | ------------------------------------- |
+| Static     | `npm run verify:static` (build + typecheck + lint + format:check) | PR, push, nightly, pre-push hook      |
+| SUT health | `npm run verify:sut` (`scripts/sut-health-check.mjs`)             | Before browser tests in CI            |
+| PR tests   | `verify:api` + `verify:smoke` (+ `verify:wishlist` if secrets)    | PR only — **single job**              |
+| Full       | `playwright test` (or `--grep-invert @wishlist`)                  | Push to `main`/`master`, nightly cron |
 
 Implementation:
 
@@ -28,13 +26,15 @@ Implementation:
 
 PR-equivalent local command: `npm run verify`.
 
+Wishlist credential policy: [adr/002-ci-wishlist-credentials.md](002-ci-wishlist-credentials.md).
+
 ## Consequences
 
 **Positive**
 
 - Faster PR feedback (8 smoke + 3 API vs 22 full tests).
 - Clear mapping from job names to branch protection rules.
-- Fork PRs skip wishlist job without failing when secrets are unavailable.
+- Fork PRs and PRs without secrets skip the wishlist step without failing.
 
 **Negative**
 
@@ -46,3 +46,4 @@ PR-equivalent local command: `npm run verify`.
 - Smoke tag applied to: home functional, API suite, Tablets integration, hybrid cart/login, order E2E.
 - Wishlist tag applied to: `WishListFlow.spec.ts` only.
 - `seed.spec.ts` remains excluded via `testIgnore`.
+- Playwright pinned at **1.61.1** across root, `pw-core`, and Docker image.

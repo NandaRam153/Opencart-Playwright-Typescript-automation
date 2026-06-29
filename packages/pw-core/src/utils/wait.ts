@@ -31,9 +31,4 @@ export class Wait {
         await this.forVisible(locator);
         await locator.click();
     }
-
-    // Wait for network to be idle (use sparingly)
-    static async forNetworkIdle(page: Page) {
-        await page.waitForLoadState('networkidle');
-    }
 }

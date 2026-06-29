@@ -28,7 +28,7 @@ export default defineConfig({
     testDir: './src/tests',
     testIgnore: ['**/seed.spec.ts'],
     /* Tag subsets: npm run verify:smoke (@smoke), verify:wishlist (@wishlist). See docs/QUALITY-GATES.md. */
-    // 30 sec is default acrosss tests
+    // 30 sec is default across tests
     timeout: 30 * 1000,
     expect: {
         timeout: 5 * 1000,
