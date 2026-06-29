@@ -7,3 +7,6 @@ export const AuthPaths = {
 
 /** Playwright URL glob for post-logout navigation. */
 export const AUTH_LOGOUT_URL_PATTERN = '**/logout**';
+
+/** Playwright URL pattern while the login form is shown (derived from `OpenCartRoutes.login`). */
+export const AUTH_LOGIN_URL_PATTERN = /route=account\/login/;

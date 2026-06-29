@@ -1,6 +1,6 @@
 import { BasePage, HardAssertions, SoftAssertions } from '@opencart-auto/pw-core';
 import { HomePaths } from '../state/paths';
-import { SEARCH_PLACEHOLDER, STORE_PAGE_TITLE } from '../state/uiConstants';
+import { BRAND_TITLE, SEARCH_PLACEHOLDER, STORE_PAGE_TITLE } from '../state/uiConstants';
 
 export class HomePage extends BasePage {
     async navigateToURL(): Promise<void> {
@@ -9,7 +9,7 @@ export class HomePage extends BasePage {
     }
 
     async homePageCheck() {
-        await this.waitForSoftVisible(this.page.getByTitle('TheTestingAcademy eCommerce'));
+        await this.waitForSoftVisible(this.page.getByTitle(BRAND_TITLE));
         await this.waitForSoftVisible(this.page.getByPlaceholder(SEARCH_PLACEHOLDER));
         await this.waitForSoftVisible(this.page.locator('#cart-total'));
         await this.waitForSoftVisible(this.page.locator('#slideshow0'));

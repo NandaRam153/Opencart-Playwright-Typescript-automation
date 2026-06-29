@@ -99,6 +99,18 @@ export default tseslint.config(
                             group: ['**/features/*/presentation/**'],
                             message: 'Services must not import presentation.',
                         },
+                        {
+                            group: [
+                                '../../auth/**',
+                                '../../cart/**',
+                                '../../catalog/**',
+                                '../../checkout/**',
+                                '../../home/**',
+                                '../../wishlist/**',
+                            ],
+                            message:
+                                'Services must not import other feature modules; compose in tests/fixtures.',
+                        },
                     ],
                 },
             ],

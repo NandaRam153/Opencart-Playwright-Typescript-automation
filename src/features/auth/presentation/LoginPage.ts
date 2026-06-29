@@ -1,6 +1,7 @@
-import { BasePage, Wait } from '@opencart-auto/pw-core';
+import { BasePage, HardAssertions, Wait } from '@opencart-auto/pw-core';
 import { AuthPaths } from '../state/paths';
-import { LOGIN_REJECTION_PATTERN } from '../state/loginErrors';
+import { LOGIN_CREDENTIAL_FAILURE_MESSAGE, LOGIN_REJECTION_PATTERN } from '../state/loginErrors';
+import { RETURNING_CUSTOMER_HEADING, RETURNING_CUSTOMER_HEADING_LEVEL } from '../state/loginForm';
 
 export class LoginPage extends BasePage {
     async navigateToLogin() {
@@ -13,14 +14,21 @@ export class LoginPage extends BasePage {
         await Wait.click(this.page.getByRole('button', { name: 'Login' }));
     }
 
+    async assertLoginFormVisible() {
+        await HardAssertions.visible(
+            this.page.getByRole('heading', {
+                name: RETURNING_CUSTOMER_HEADING,
+                level: RETURNING_CUSTOMER_HEADING_LEVEL,
+            })
+        );
+    }
+
     /** Submit credentials and fail fast when the store rejects them. */
     async login(user: string, password: string) {
         await this.submitCredentials(user, password);
 
         if (await this.wasLoginRejected()) {
-            throw new Error(
-                'Login failed: invalid credentials. Update TEST_USER_EMAIL and TEST_USER_PASSWORD in .env'
-            );
+            throw new Error(LOGIN_CREDENTIAL_FAILURE_MESSAGE);
         }
     }
 
