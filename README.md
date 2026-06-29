@@ -12,7 +12,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 - Environment-based configuration (`BASE_URL`, credentials via `.env`)
 - TypeScript strict mode, ESLint, and Prettier
 - HTML test reports, traces on failure, Docker support
-- GitHub Actions CI ([`.github/workflows/playwright.yml`](.github/workflows/playwright.yml))
+- Layered GitHub Actions CI ([`.github/workflows/quality-gates.yml`](.github/workflows/quality-gates.yml))
 
 ## Documentation
 
@@ -220,17 +220,19 @@ There is no separate unit-test runner; `pw-core` is validated via `npm run build
 
 ### CI (GitHub Actions)
 
-Single workflow: [.github/workflows/playwright.yml](.github/workflows/playwright.yml)
+Workflow: [.github/workflows/quality-gates.yml](.github/workflows/quality-gates.yml)
 
-On every push/PR to `main` or `master`:
+| Event                         | Jobs                                                                               |
+| ----------------------------- | ---------------------------------------------------------------------------------- |
+| **Pull request**              | Static analysis → SUT health → PR tests (API + smoke; wishlist when secrets exist) |
+| **Push to `main` / `master`** | Static analysis → SUT health → full Playwright suite                               |
+| **Nightly (06:00 UTC)**       | Same as push to main                                                               |
 
-1. `npm ci`, build, typecheck, lint
-2. Install Playwright Chromium (cached)
-3. Run full Playwright suite (wishlist skipped if secrets are not configured)
+**Branch protection (PRs):** require **Static analysis**, **SUT health**, and **PR tests (API + smoke)**. Do not require **Full Playwright suite** on PRs — it runs after merge and nightly.
 
-**Branch protection:** require the **Playwright Tests** check only. Remove old Quality Gates / Copilot Setup Steps required checks if still listed.
+**Wishlist E2E:** runs inside PR tests when `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` secrets are configured; skipped for fork PRs and when secrets are missing.
 
-**Copilot Setup Steps** is manual (`workflow_dispatch` only) and does not block merges.
+See [docs/QUALITY-GATES.md](docs/QUALITY-GATES.md) for local `verify:*` commands and Husky hooks.
 
 CI runs with `CI=true` (retries + single worker). Failed runs upload traces and HTML reports.
 

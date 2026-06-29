@@ -6,6 +6,8 @@
  * IPv6 ENETUNREACH against external demo hosts.
  */
 import dns from 'node:dns';
+import https from 'node:https';
+import { URL } from 'node:url';
 
 if (process.env.CI === 'true') {
     dns.setDefaultResultOrder('ipv4first');
@@ -31,28 +33,58 @@ function formatError(error) {
     return String(error);
 }
 
-async function request(method) {
-    return fetch(baseURL, {
-        method,
-        redirect: 'follow',
-        signal: AbortSignal.timeout(attemptTimeoutMs),
-        headers: {
-            'User-Agent': 'opencart-playwright-automation/sut-health',
-        },
+function request(method, urlString, redirectCount = 0) {
+    return new Promise((resolve, reject) => {
+        const url = new URL(urlString);
+        const req = https.request(
+            {
+                method,
+                hostname: url.hostname,
+                port: url.port || 443,
+                path: `${url.pathname}${url.search}`,
+                headers: {
+                    'User-Agent': 'opencart-playwright-automation/sut-health',
+                },
+                timeout: attemptTimeoutMs,
+            },
+            (res) => {
+                res.resume();
+                if (
+                    res.statusCode >= 300 &&
+                    res.statusCode < 400 &&
+                    res.headers.location &&
+                    redirectCount < 5
+                ) {
+                    const next = new URL(res.headers.location, url).href;
+                    resolve(request(method, next, redirectCount + 1));
+                    return;
+                }
+                resolve({
+                    ok: res.statusCode >= 200 && res.statusCode < 300,
+                    status: res.statusCode,
+                    statusText: res.statusMessage ?? '',
+                });
+            }
+        );
+        req.on('timeout', () => {
+            req.destroy(new Error(`Request timed out after ${attemptTimeoutMs}ms`));
+        });
+        req.on('error', reject);
+        req.end();
     });
 }
 
 /** HEAD first; fall back to GET when HEAD is unsupported or fails at the network layer. */
 async function probeStore() {
     try {
-        const head = await request('HEAD');
+        const head = await request('HEAD', baseURL);
         if (head.ok) return head;
         if (head.status === 405 || head.status === 501) {
-            return request('GET');
+            return request('GET', baseURL);
         }
         return head;
     } catch {
-        return request('GET');
+        return request('GET', baseURL);
     }
 }
 
