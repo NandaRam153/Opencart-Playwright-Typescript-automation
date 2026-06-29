@@ -36,5 +36,5 @@ A change is complete when all **applicable** items below are satisfied.
 
 ## CI alignment
 
-- [ ] Changes compatible with `.github/workflows/playwright.yml`
+- [ ] Changes compatible with `.github/workflows/quality-gates.yml`
 - [ ] Wishlist E2E: CI requires valid `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` (see ADR-002)

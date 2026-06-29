@@ -37,17 +37,25 @@ See [VERIFICATION.md](VERIFICATION.md) for the full checklist including accessib
 
 Configure branch protection to require these job names from [.github/workflows/quality-gates.yml](../.github/workflows/quality-gates.yml):
 
+**Pull requests**
+
 - Static analysis
 - SUT health
-- API tests
-- Smoke tests (@smoke)
-- Wishlist E2E (@wishlist) — when repository secrets are configured
+- PR tests (API + smoke)
+
+Wishlist runs as a step inside **PR tests (API + smoke)** when repository secrets are configured. Do not require **Full Playwright suite** on PRs.
+
+**After merge to `main` / `master`**
+
+- Static analysis
+- SUT health
+- Full Playwright suite
 
 ### Fork PRs
 
 - Fork PRs **do not** receive repository secrets.
-- The **Wishlist E2E** job is **skipped** (not failed) when the PR head branch is from a fork.
-- Static, SUT health, API, and smoke gates still run — sufficient for most contributions (page objects, integration tests, API tests, docs).
+- The wishlist step inside **PR tests (API + smoke)** is **skipped** (not failed) when the PR head branch is from a fork.
+- Static, SUT health, and PR tests still run — sufficient for most contributions (page objects, integration tests, API tests, docs).
 
 To exercise wishlist E2E locally, set valid `TEST_USER_EMAIL` and `TEST_USER_PASSWORD` in `.env`.
 
