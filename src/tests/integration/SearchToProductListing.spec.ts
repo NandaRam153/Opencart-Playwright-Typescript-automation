@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/POMFixture';
+import { test } from '../../fixtures/POMFixture';
 import { getSearchTerm, products } from '../../features/catalog';
 
 test.describe('Search → Product Listing', () => {
@@ -21,8 +21,7 @@ test.describe('Search → Product Listing', () => {
     }) => {
         await header.searchForProduct(getSearchTerm(products.CANON_EOS_5D));
 
-        const count = await productListingPage.getProductCount();
-        expect(count).toBeGreaterThanOrEqual(1);
+        await productListingPage.verifyAtLeastOneProduct();
     });
 
     test('searching by brand name lists a known product from that brand', async ({

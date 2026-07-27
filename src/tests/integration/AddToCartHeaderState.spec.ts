@@ -47,6 +47,7 @@ test.describe('Add to Cart → Header Cart State', () => {
         await ribbon.openProductPage(camerasCategory);
 
         await productListingPage.addToCartProductByName(products.NIKON_D300.name);
+        await productListingPage.productAddedMessage(products.NIKON_D300.name);
         await header.gotoCheckout();
     });
 });
