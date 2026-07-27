@@ -87,7 +87,6 @@ jobs:
                   path: ~/.cache/ms-playwright
                   key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
             - name: Install Playwright Browsers
-              if: steps.playwright-cache.outputs.cache-hit != 'true'
               run: npx playwright install --with-deps chromium webkit firefox
             - run: npm run verify:api
             - run: npm run verify:smoke
@@ -129,7 +128,6 @@ jobs:
                   path: ~/.cache/ms-playwright
                   key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
             - name: Install Playwright Browsers
-              if: steps.playwright-cache.outputs.cache-hit != 'true'
               run: npx playwright install --with-deps chromium webkit firefox
             - name: Run full suite (with wishlist)
               if: needs.wishlist-secrets.outputs.configured == 'true'
