@@ -3,3 +3,8 @@ packages/pw-core/dist
 playwright-report
 test-results
 package-lock.json
+
+# Vendored Playwright skill packs (third-party guides; do not reformat)
+.agents/skills/
+.claude/skills/
+skills-lock.json
