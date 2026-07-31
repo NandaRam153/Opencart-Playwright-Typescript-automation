@@ -19,6 +19,22 @@ cp .env.example .env   # optional; required for wishlist E2E locally
 
 `npm ci` runs `postinstall` (builds `pw-core`) and `prepare` (installs Husky hooks).
 
+## IDE and AI tooling
+
+Workspace recommendations live in [`.vscode/extensions.json`](../.vscode/extensions.json). Install prompted extensions (or open the Extensions view and search “Recommended”).
+
+| Tooling                                                    | Purpose                                                                                |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Playwright Test, ESLint, Prettier                          | Run/debug specs; match CI lint/format                                                  |
+| IronBee DevTools                                           | Live browser verification for agents (preferred over other browser MCPs for UI checks) |
+| GitHub Pull Requests / Actions                             | Review PRs and CI locally                                                              |
+| MCP (`.vscode/mcp.json`)                                   | `playwright-test`, `chrome-devtools`, `github` — enable under Cursor Settings → MCP    |
+| Skills (`.agents/skills/playwright-skill/`)                | Agent guides for core / POM / CI / CLI                                                 |
+| Debug playbook (`.cursor/skills/opencart-debug-playbook/`) | Systematic fail/flake triage for this repo                                             |
+| Agents (`.github/agents/`)                                 | Planner, generator, healer workflows                                                   |
+
+Cursor workspace settings (format on save, ESLint fix) are in [`.vscode/settings.json`](../.vscode/settings.json).
+
 ## Development workflow
 
 | Step                | Command / action                                             |

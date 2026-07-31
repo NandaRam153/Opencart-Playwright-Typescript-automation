@@ -6,14 +6,14 @@
             "args": ["playwright", "run-test-mcp-server"]
         },
         "chrome-devtools": {
+            "type": "stdio",
             "command": "npx",
             "args": ["-y", "chrome-devtools-mcp@latest"]
         },
         "github": {
             "type": "http",
-            "url": "https://api.githubcopilot.com/mcp/insiders"
+            "url": "https://api.githubcopilot.com/mcp/"
         }
     },
-
     "inputs": []
 }

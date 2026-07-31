@@ -1,0 +1,15 @@
+{
+    "recommendations": [
+        "ms-playwright.playwright",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "github.vscode-pull-request-github",
+        "github.vscode-github-actions",
+        "ms-azuretools.vscode-containers",
+        "ironbee-ai.ironbee-devtools-vscode",
+        "usernamehw.errorlens",
+        "eamodio.gitlens",
+        "EditorConfig.EditorConfig"
+    ],
+    "unwantedRecommendations": []
+}

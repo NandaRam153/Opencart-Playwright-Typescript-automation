@@ -91,6 +91,7 @@ Features stay independent — tests compose flows through fixtures and feature b
 - [npm](https://www.npmjs.com/)
 - [Playwright](https://playwright.dev/) **1.61.1** (installed via `npm ci`; browsers via `npx playwright install chromium`)
 - [Docker](https://www.docker.com/) (optional, for containerized runs)
+- Cursor/VS Code extensions from [`.vscode/extensions.json`](.vscode/extensions.json) (Playwright Test, ESLint, Prettier, IronBee, GitHub PR) — see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md#ide-and-ai-tooling)
 
 ## Setup
 
