@@ -32,8 +32,10 @@ Workspace recommendations live in [`.vscode/extensions.json`](../.vscode/extensi
 | Skills (`.agents/skills/playwright-skill/`)                | Agent guides for core / POM / CI / CLI                                                 |
 | Debug playbook (`.cursor/skills/opencart-debug-playbook/`) | Systematic fail/flake triage for this repo                                             |
 | Agents (`.github/agents/`)                                 | Planner, generator, healer workflows                                                   |
+| [AGENTS.md](../AGENTS.md) / [CLAUDE.md](../CLAUDE.md)      | Shared + Claude Code entry points (thin; link to docs/skills, don’t duplicate rules)   |
 
 Cursor workspace settings (format on save, ESLint fix) are in [`.vscode/settings.json`](../.vscode/settings.json).
+**Cursor** loads `.cursor/rules/`; **Claude Code** loads `CLAUDE.md` → `AGENTS.md`.
 
 ## Development workflow
 
