@@ -2,6 +2,7 @@
 # Playwright
 node_modules/
 /test-results/
+/src/tests/interviewSamples/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
