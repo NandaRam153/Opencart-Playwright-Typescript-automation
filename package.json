@@ -12,7 +12,8 @@
         "lint:fix": "eslint . --fix",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
-        "verify:static": "npm run build && npm run typecheck && npm run lint && npm run format:check",
+        "test:unit": "vitest run",
+        "verify:static": "npm run build && npm run typecheck && npm run lint && npm run format:check && npm run test:unit",
         "verify:sut": "node scripts/sut-health-check.mjs",
         "verify:api": "playwright test src/tests/api/",
         "verify:smoke": "playwright test --grep @smoke",
@@ -60,7 +61,8 @@
         "playwright": "^1.61.1",
         "prettier": "^3.5.3",
         "typescript": "^5.8.2",
-        "typescript-eslint": "^8.26.0"
+        "typescript-eslint": "^8.26.0",
+        "vitest": "^4.1.11"
     },
     "lint-staged": {
         "*.{ts,mjs,js}": [

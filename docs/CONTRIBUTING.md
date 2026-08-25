@@ -100,7 +100,7 @@ Cross-feature flows compose in **tests** and **fixtures** only. UI specs import 
 1. Create `src/features/<name>/` with `state/`, `presentation/`, and optionally `services/`.
 2. Export public API from `index.ts`.
 3. Register page objects in `POMFixture.ts` when tests need them.
-4. Add tests under the appropriate `src/tests/<layer>/` folder.
+4. Add Playwright tests under the appropriate `src/tests/<layer>/` folder. Add Vitest extras under `src/unit/<feature>/` for pure helpers.
 5. Document in `specs/test.plan.md`.
 6. Add an ADR if the decision is non-trivial — see [adr/README.md](adr/README.md).
 

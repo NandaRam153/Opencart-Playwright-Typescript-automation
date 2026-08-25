@@ -6,7 +6,7 @@ This project uses layered quality gates: local hooks, PR checks (fast), and main
 
 | Gate           | Command / job                                         | Runs on                                  |
 | -------------- | ----------------------------------------------------- | ---------------------------------------- |
-| **Static**     | `npm run verify:static`                               | PR, push, nightly, pre-push hook         |
+| **Static**     | `npm run verify:static` (includes `test:unit`)        | PR, push, nightly, pre-push hook         |
 | **SUT health** | `npm run verify:sut`                                  | PR, push, nightly (before browser tests) |
 | **PR tests**   | `verify:api` + `verify:smoke` (+ wishlist if secrets) | PR only — **single job**                 |
 | **Full**       | `playwright test` (or `--grep-invert @wishlist`)      | Push to `main`/`master`, nightly         |
@@ -54,11 +54,12 @@ npx playwright test --grep @smoke
 ## Local commands
 
 ```sh
-npm run verify:static   # build + typecheck + lint + format:check
+npm run verify:static   # build + typecheck + lint + format:check + unit
 npm run verify:sut      # HEAD request to BASE_URL
 npm run verify:api      # API tests only
 npm run verify:smoke    # @smoke tagged tests
 npm run verify:wishlist # @wishlist (needs .env credentials locally or skips)
+npm run test:unit       # Vitest extras (also included in verify:static)
 npm run verify          # static + sut + api + smoke (PR-equivalent)
 npm run verify:full     # static + sut + full Playwright suite
 ```

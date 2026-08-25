@@ -11,12 +11,12 @@ The project previously used a single GitHub Actions workflow that ran typecheck,
 
 Introduce **layered quality gates**:
 
-| Gate       | Mechanism                                                         | When                                  |
-| ---------- | ----------------------------------------------------------------- | ------------------------------------- |
-| Static     | `npm run verify:static` (build + typecheck + lint + format:check) | PR, push, nightly, pre-push hook      |
-| SUT health | `npm run verify:sut` (`scripts/sut-health-check.mjs`)             | Before browser tests in CI            |
-| PR tests   | `verify:api` + `verify:smoke` (+ `verify:wishlist` if secrets)    | PR only — **single job**              |
-| Full       | `playwright test` (or `--grep-invert @wishlist`)                  | Push to `main`/`master`, nightly cron |
+| Gate       | Mechanism                                                                | When                                  |
+| ---------- | ------------------------------------------------------------------------ | ------------------------------------- |
+| Static     | `npm run verify:static` (build + typecheck + lint + format:check + unit) | PR, push, nightly, pre-push hook      |
+| SUT health | `npm run verify:sut` (`scripts/sut-health-check.mjs`)                    | Before browser tests in CI            |
+| PR tests   | `verify:api` + `verify:smoke` (+ `verify:wishlist` if secrets)           | PR only — **single job**              |
+| Full       | `playwright test` (or `--grep-invert @wishlist`)                         | Push to `main`/`master`, nightly cron |
 
 Implementation:
 

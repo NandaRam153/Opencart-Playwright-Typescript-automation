@@ -37,6 +37,6 @@ Requires the `playwright-test` MCP server (see `.vscode/mcp.json`).
 
 ## Verify
 
-- Static: `npm run verify:static`
+- Static: `npm run verify:static` (includes Vitest `test:unit`)
 - Relevant Playwright tests for the change
 - UI behavior: IronBee browser tools only (see `ironbee-devtools-use.mdc`)

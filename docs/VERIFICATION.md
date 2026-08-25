@@ -26,14 +26,20 @@ Runs static checks, SUT health, then the full Playwright suite (22 tests; `seed.
 | 2. Typecheck            | `npm run typecheck`       | Root project TypeScript (`tsc --noEmit`)                        |
 | 3. Unit / library build | `npm run build`           | `@opencart-auto/pw-core` compiles (`packages/pw-core`)          |
 | 4. Format               | `npm run format:check`    | Prettier (included in `verify:static`)                          |
-| 5. SUT health           | `npm run verify:sut`      | HEAD/GET request to `BASE_URL` (`scripts/sut-health-check.mjs`) |
-| 6. API tests            | `npm run verify:api`      | 3 HTTP specs in `src/tests/api/`                                |
-| 7. Smoke E2E            | `npm run verify:smoke`    | 8 `@smoke`-tagged specs                                         |
-| 8. Wishlist E2E         | `npm run verify:wishlist` | `@wishlist` spec (needs `.env` credentials locally or skips)    |
+| 5. Unit extras          | `npm run test:unit`       | Vitest helpers in `src/unit/` (included in `verify:static`)     |
+| 6. SUT health           | `npm run verify:sut`      | HEAD/GET request to `BASE_URL` (`scripts/sut-health-check.mjs`) |
+| 7. API tests            | `npm run verify:api`      | 3 HTTP specs in `src/tests/api/`                                |
+| 8. Smoke E2E            | `npm run verify:smoke`    | 8 `@smoke`-tagged specs                                         |
+| 9. Wishlist E2E         | `npm run verify:wishlist` | `@wishlist` spec (needs `.env` credentials locally or skips)    |
 
 ### Unit tests
 
-There is **no separate Jest/Vitest suite**. The `pw-core` workspace package is the shared library under test:
+Vitest extras live in `src/unit/` (see [ADR 007](adr/007-vitest-unit-layer.md)):
+
+- **Catalog:** `requireProductId`, `requireCategory`, `getSearchTerm`
+- **Auth:** `getWishlistCredentials`, `assertWishlistCredentialsInCi`
+
+`packages/pw-core` stays Playwright-bound:
 
 - **Compile gate:** `npm run build` (also runs on `postinstall` and `pretest`).
 - **Behavior gate:** Playwright specs exercise assertions, `Wait`, and page objects indirectly.
@@ -44,6 +50,7 @@ There is **no separate Jest/Vitest suite**. The `pw-core` workspace package is t
 | ------------------------------------ | ---------------------------------- | --------------------------------------------------- |
 | functional, integration, e2e, hybrid | `POMFixture` (re-exports `expect`) | Injected fixtures only — never from feature barrels |
 | api                                  | `ApiFixture`                       | `CartService`, `CatalogService` via fixtures        |
+| unit                                 | Vitest                             | Feature barrels (state helpers only)                |
 
 ESLint blocks presentation class imports (e.g. `LoginPage`, `HomePage`) from feature barrels in `src/tests/**`.
 
