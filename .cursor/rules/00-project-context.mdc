@@ -30,6 +30,7 @@ src/features/<name>/   presentation · state · services (per domain)
 src/shared/            routes and HTTP types only
 src/fixtures/          Playwright fixture wiring
 src/tests/             functional | integration | e2e | api | hybrid
+src/unit/              Vitest extras for pure state helpers
 packages/pw-core/      BasePage, assertions, Wait, shared interfaces
 ```
 

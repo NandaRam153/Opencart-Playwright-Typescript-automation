@@ -17,7 +17,7 @@ Playwright/TypeScript **test automation** for the [OpenCart demo store](https://
 
 - Feature layout: `src/features/<name>/{presentation,state,services}` + barrel `index.ts`
 - **Do not** reintroduce flat `src/pages/`, `src/api/`, `src/data/`, or `src/components/`
-- Tests live under `src/tests/{functional,integration,e2e,api,hybrid}`
+- Tests live under `src/tests/{functional,integration,e2e,api,hybrid}`; Vitest unit tests live under `src/unit/`
 - UI tests use `POMFixture`; API tests use `ApiFixture` / `@playwright/test` `{ request }`
 - AI-generated code is unverified until `typecheck`, `lint`, and relevant Playwright tests pass
 - Do not weaken assertions or bypass CI to make tests green
@@ -50,7 +50,7 @@ Requires `playwright-test` MCP (see `.vscode/mcp.json`).
 ## Verify before done
 
 ```sh
-npm run verify:static    # build + typecheck + lint + prettier
+npm run verify:static    # build + typecheck + lint + prettier + unit
 npm run verify           # + SUT health + API + @smoke
 ```
 

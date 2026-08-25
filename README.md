@@ -51,6 +51,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 │       ├── e2e/                  # Full user journeys
 │       ├── api/                  # Pure HTTP route tests (Playwright request)
 │       └── hybrid/               # API setup + UI verification
+│   ├── unit/                     # Vitest extras for pure state helpers
 ├── docs/
 │   ├── ARCHITECTURE.md           # Diagrams, feature map, layer rules
 │   ├── QUALITY-GATES.md          # CI matrix, tags, Husky
@@ -67,6 +68,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 ├── specs/
 │   └── test.plan.md              # Test plan and scenario documentation
 ├── playwright.config.ts
+├── vitest.config.mts
 ├── tsconfig.json
 ├── eslint.config.mjs
 ├── .prettierrc
@@ -129,12 +131,13 @@ Features stay independent — tests compose flows through fixtures and feature b
 
 ### Locally
 
-| Command               | Description                                             |
-| --------------------- | ------------------------------------------------------- |
-| `npm test`            | Run all tests headless (builds `pw-core` via `pretest`) |
-| `npm run test:headed` | Run with visible browser                                |
-| `npm run test:debug`  | Run in Playwright debug mode                            |
-| `npm run report`      | Open the HTML report                                    |
+| Command               | Description                                                        |
+| --------------------- | ------------------------------------------------------------------ |
+| `npm test`            | Run all Playwright tests headless (builds `pw-core` via `pretest`) |
+| `npm run test:unit`   | Run Vitest extras (`src/unit/`) — no browser                       |
+| `npm run test:headed` | Run with visible browser                                           |
+| `npm run test:debug`  | Run in Playwright debug mode                                       |
+| `npm run report`      | Open the HTML report                                               |
 
 The suite runs **22 tests** (`seed.spec.ts` is excluded via `testIgnore`; wishlist E2E skips without valid credentials).
 
@@ -205,23 +208,24 @@ The wishlist E2E test **skips locally** when credentials are missing or still se
 
 ## Code Quality
 
-| Command                   | Description                                              |
-| ------------------------- | -------------------------------------------------------- |
-| `npm run verify:static`   | Build + typecheck + lint + format check (local optional) |
-| `npm run verify:sut`      | HEAD check against `BASE_URL` (local optional)           |
-| `npm run verify:api`      | API tests only                                           |
-| `npm run verify:smoke`    | `@smoke` tagged tests                                    |
-| `npm run verify:wishlist` | `@wishlist` E2E (needs credentials)                      |
-| `npm run verify`          | Local: static + sut + api + smoke                        |
-| `npm run verify:full`     | Local: static + sut + full Playwright suite              |
-| `npm run build`           | Build the `pw-core` workspace package                    |
-| `npm run typecheck`       | TypeScript strict check (`tsc --noEmit`)                 |
-| `npm run lint`            | ESLint (TypeScript + Playwright rules)                   |
-| `npm run lint:fix`        | ESLint with auto-fix                                     |
-| `npm run format`          | Prettier format all files                                |
-| `npm run format:check`    | Prettier check without writing                           |
+| Command                   | Description                                          |
+| ------------------------- | ---------------------------------------------------- |
+| `npm run verify:static`   | Build + typecheck + lint + format check + unit tests |
+| `npm run verify:sut`      | HEAD check against `BASE_URL` (local optional)       |
+| `npm run verify:api`      | API tests only                                       |
+| `npm run verify:smoke`    | `@smoke` tagged tests                                |
+| `npm run verify:wishlist` | `@wishlist` E2E (needs credentials)                  |
+| `npm run verify`          | Local: static + sut + api + smoke                    |
+| `npm run verify:full`     | Local: static + sut + full Playwright suite          |
+| `npm run test:unit`       | Vitest extras for catalog/auth state helpers         |
+| `npm run build`           | Build the `pw-core` workspace package                |
+| `npm run typecheck`       | TypeScript strict check (`tsc --noEmit`)             |
+| `npm run lint`            | ESLint (TypeScript + Playwright rules)               |
+| `npm run lint:fix`        | ESLint with auto-fix                                 |
+| `npm run format`          | Prettier format all files                            |
+| `npm run format:check`    | Prettier check without writing                       |
 
-There is no separate unit-test runner; `pw-core` is validated via `npm run build` and exercised indirectly through Playwright specs. Root `npm run typecheck` runs `tsc --noEmit` on the test project; both are included in `verify:static`.
+`pw-core` is validated via `npm run build` and exercised indirectly through Playwright specs. Pure catalog/auth helpers have extra Vitest coverage (`npm run test:unit`, also part of `verify:static`). Root `npm run typecheck` runs `tsc --noEmit` on the test project.
 
 ### CI (GitHub Actions)
 

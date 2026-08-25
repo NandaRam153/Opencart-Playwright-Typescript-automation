@@ -50,6 +50,7 @@ Public API per feature: `src/features/<name>/index.ts` only.
 | functional / integration / e2e / hybrid | `src/tests/...` | `POMFixture` |
 | api | `src/tests/api/` | `@playwright/test` `{ request }` |
 | hybrid (session) | `src/tests/hybrid/` | `POMFixture` + `page.request` |
+| unit (pure helpers) | `src/unit/<feature>/` | Vitest (`npm run test:unit`) |
 
 ## Architectural decisions
 

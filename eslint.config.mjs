@@ -123,7 +123,16 @@ export default tseslint.config(
         },
     },
     {
-        files: ['src/tests/**/*.ts'],
+        files: ['src/unit/**/*.ts'],
+        rules: {
+            'playwright/expect-expect': 'off',
+            'playwright/no-standalone-expect': 'off',
+            'playwright/valid-expect': 'off',
+            'playwright/no-skipped-test': 'off',
+        },
+    },
+    {
+        files: ['src/tests/**/*.ts', 'src/unit/**/*.ts'],
         rules: {
             'no-restricted-imports': [
                 'error',

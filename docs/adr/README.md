@@ -10,6 +10,7 @@ Recorded design decisions for the OpenCart Playwright automation suite.
 | [004](004-login-presentation-separation.md) | Generic login vs flow-specific landing assertions                 | Accepted |
 | [005](005-layered-quality-gates.md)         | Layered quality gates (CI jobs, `@smoke` / `@wishlist`, Husky)    | Accepted |
 | [006](006-presentation-state-separation.md) | Extract test data and routes from presentation into feature state | Accepted |
+| [007](007-vitest-unit-layer.md)             | Vitest extras for pure catalog/auth state helpers                 | Accepted |
 
 ## Related documentation
 

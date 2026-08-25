@@ -150,7 +150,7 @@ Feature `state` modules re-export route slices as domain paths (`CartPaths`, `Au
 - `SoftAssertions`, `HardAssertions`, `Wait`
 - Generic interfaces: `IProduct`, `IBillingDetails`
 
-It is built via `npm run build` (also `postinstall` / `pretest`). Output lives in `packages/pw-core/dist/` (gitignored). There is no separate unit-test runner; compile + Playwright specs validate behavior.
+It is built via `npm run build` (also `postinstall` / `pretest`). Output lives in `packages/pw-core/dist/` (gitignored). `pw-core` stays Playwright-bound; extra Vitest coverage is for feature **state** helpers under `src/unit/` ([ADR 007](adr/007-vitest-unit-layer.md)).
 
 ## Test taxonomy
 
@@ -164,18 +164,24 @@ flowchart TD
         H[hybrid — API setup + UI verify via page.request]
     end
 
+    subgraph unit [src/unit]
+        U[Vitest — pure state helpers]
+    end
+
     F --> POMFixture
     I --> POMFixture
     E --> POMFixture
     H --> POMFixture
     A --> ApiFixture
+    U --> Barrels[Feature barrels]
 ```
 
-| Layer                          | Fixture      | Typical imports                                      |
-| ------------------------------ | ------------ | ---------------------------------------------------- |
-| functional / integration / e2e | `POMFixture` | Page objects via fixtures                            |
-| hybrid                         | `POMFixture` | Page objects + `sessionCartService` (`page.request`) |
-| api                            | `ApiFixture` | `cartService`, `catalogService` (isolated `request`) |
+| Layer                          | Fixture / runner | Typical imports                                      |
+| ------------------------------ | ---------------- | ---------------------------------------------------- |
+| functional / integration / e2e | `POMFixture`     | Page objects via fixtures                            |
+| hybrid                         | `POMFixture`     | Page objects + `sessionCartService` (`page.request`) |
+| api                            | `ApiFixture`     | `cartService`, `catalogService` (isolated `request`) |
+| unit                           | Vitest           | Feature barrels (state helpers only)                 |
 
 `src/tests/seed.spec.ts` is generator scaffolding only (`testIgnore` in `playwright.config.ts`).
 
@@ -226,7 +232,7 @@ Local verification: [VERIFICATION.md](VERIFICATION.md). Contributor workflow: [C
 1. Create `src/features/<name>/` with `state/`, `presentation/`, and optionally `services/`.
 2. Export public API from `src/features/<name>/index.ts`.
 3. Register presentation classes in `POMFixture.ts` if tests need them.
-4. Add tests under the appropriate `src/tests/<layer>/` folder; tag with `@smoke` only when appropriate for PR gates.
+4. Add Playwright tests under `src/tests/<layer>/` (tag with `@smoke` only when appropriate for PR gates); add Vitest extras under `src/unit/<feature>/` for pure helpers.
 5. Document scenarios in `specs/test.plan.md`.
 6. Add an ADR for non-trivial boundary or CI decisions.
 
@@ -239,6 +245,6 @@ Local verification: [VERIFICATION.md](VERIFICATION.md). Contributor workflow: [C
 | [003](adr/003-feature-scoped-api-services.md)   | Feature-scoped HTTP services         |
 | [004](adr/004-login-presentation-separation.md) | Login vs wishlist landing assertions |
 | [005](adr/005-layered-quality-gates.md)         | Layered CI, tags, Husky              |
-| [006](adr/006-presentation-state-separation.md) | State extraction from presentation   |
+| [007](adr/007-vitest-unit-layer.md)             | Vitest extras for pure state helpers |
 
 Full index: [adr/README.md](adr/README.md).
