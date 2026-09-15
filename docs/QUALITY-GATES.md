@@ -24,10 +24,10 @@ Supporting scripts:
 
 ## Test tags
 
-| Tag         | Purpose                                | Specs                                              |
-| ----------- | -------------------------------------- | -------------------------------------------------- |
-| `@smoke`    | Fast PR UI/API signal                  | See [smoke inventory](#smoke-test-inventory) below |
-| `@wishlist` | Authenticated flow (needs credentials) | `WishListFlow.spec.ts`                             |
+| Tag         | Purpose                                | Specs                                                                             |
+| ----------- | -------------------------------------- | --------------------------------------------------------------------------------- |
+| `@smoke`    | Fast PR UI/API signal                  | See [smoke inventory](#smoke-test-inventory) below                                |
+| `@wishlist` | Authenticated flows (need credentials) | `WishListFlow.spec.ts`, `auth.setup.ts`, `StorageStateDemo.spec.ts` (see ADR-008) |
 
 Run tagged subsets:
 

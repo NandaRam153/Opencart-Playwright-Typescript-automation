@@ -2,6 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 import { existsSync, readFileSync } from 'fs';
 import path from 'path';
+import { AUTH_STORAGE_STATE_PATH } from './src/fixtures/authStorageState';
 
 const envPath = path.resolve(__dirname, '.env');
 if (existsSync(envPath)) {
@@ -23,6 +24,17 @@ if (existsSync(envPath)) {
  * See https://playwright.dev/docs/test-configuration.
  */
 const baseURL = process.env.BASE_URL ?? 'https://awesomeqa.com/ui/';
+
+/** Auth setup + storageState demo only (not mixed into multi-browser suites). */
+const storageStateDemoIgnore = ['**/auth.setup.ts', '**/StorageStateDemo.spec.ts'] as const;
+
+const browserProjectUse = {
+    headless: true,
+    screenshot: 'only-on-failure' as const,
+    video: 'off' as const,
+    trace: 'retain-on-first-failure' as const,
+    actionTimeout: 5 * 1000,
+};
 
 export default defineConfig({
     testDir: './src/tests',
@@ -54,38 +66,47 @@ export default defineConfig({
     /* Configure projects for major browsers */
     projects: [
         {
-            name: 'chromium',
+            name: 'setup',
+            testMatch: /auth\.setup\.ts/,
             use: {
                 ...devices['Desktop Chrome'],
-                headless: true,
-                screenshot: 'only-on-failure',
-                video: 'off',
-                trace: 'retain-on-first-failure',
-                actionTimeout: 5 * 1000,
+                ...browserProjectUse,
+            },
+        },
+        {
+            name: 'chromium-storage-state-demo',
+            dependencies: ['setup'],
+            testMatch: /StorageStateDemo\.spec\.ts/,
+            use: {
+                ...devices['Desktop Chrome'],
+                ...browserProjectUse,
+                storageState: AUTH_STORAGE_STATE_PATH,
+            },
+        },
+        {
+            name: 'chromium',
+            testIgnore: [...storageStateDemoIgnore],
+            use: {
+                ...devices['Desktop Chrome'],
+                ...browserProjectUse,
             },
         },
 
         {
             name: 'firefox',
+            testIgnore: [...storageStateDemoIgnore],
             use: {
                 ...devices['Desktop Firefox'],
-                headless: true,
-                screenshot: 'only-on-failure',
-                video: 'off',
-                trace: 'retain-on-first-failure',
-                actionTimeout: 5 * 1000,
+                ...browserProjectUse,
             },
         },
 
         {
             name: 'webkit',
+            testIgnore: [...storageStateDemoIgnore],
             use: {
                 ...devices['Desktop Safari'],
-                headless: true,
-                screenshot: 'only-on-failure',
-                video: 'off',
-                trace: 'retain-on-first-failure',
-                actionTimeout: 5 * 1000,
+                ...browserProjectUse,
             },
         },
 

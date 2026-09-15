@@ -41,6 +41,7 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 │   ├── shared/                   # Cross-cutting routes and HTTP types
 │   ├── fixtures/
 │   │   ├── fixtureHelpers.ts     # pageObject / service fixture factories
+│   │   ├── authStorageState.ts    # path to gitignored storageState JSON (ADR-008)
 │   │   ├── wishlistCredentials.ts # wishlist E2E credential resolution + local skip
 │   │   ├── POMFixture.ts         # UI page objects + sessionCartService + wishlistCredentials
 │   │   └── ApiFixture.ts         # cartService + catalogService (API)
@@ -311,6 +312,7 @@ Use `sessionCartService` from `POMFixture` in hybrid tests (not standalone `requ
 - `LoginPage.login()` submits credentials and fails on credential rejection only (no flow-specific landing assertion).
 - `WishListPage.assertLoaded()` verifies the wishlist page after login in wishlist E2E.
 - Wishlist E2E uses the `wishlistCredentials` fixture from `POMFixture` (see `src/fixtures/wishlistCredentials.ts`).
+- Optional `storageState` demo: `auth.setup.ts` + `StorageStateDemo.spec.ts` (Chromium project chain; ADR-008). Does not replace the wishlist login-gate E2E.
 - Credential resolution: `features/auth/state/credentials.ts`. CI policy: [docs/adr/002-ci-wishlist-credentials.md](docs/adr/002-ci-wishlist-credentials.md).
 
 ## System under test (SUT)

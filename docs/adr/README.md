@@ -11,6 +11,7 @@ Recorded design decisions for the OpenCart Playwright automation suite.
 | [005](005-layered-quality-gates.md)         | Layered quality gates (CI jobs, `@smoke` / `@wishlist`, Husky)    | Accepted |
 | [006](006-presentation-state-separation.md) | Extract test data and routes from presentation into feature state | Accepted |
 | [007](007-vitest-unit-layer.md)             | Vitest extras for pure catalog/auth state helpers                 | Accepted |
+| [008](008-storage-state-auth-demo.md)       | Optional storageState auth reuse demo (setup project)             | Accepted |
 
 ## Related documentation
 
