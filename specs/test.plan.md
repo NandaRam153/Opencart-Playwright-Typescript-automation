@@ -85,6 +85,24 @@ This plan documents the automated Playwright tests for the OpenCart demo store. 
 
 ---
 
+### 4b. Storage State Auth Demo (E2E)
+
+**Files:** `src/tests/auth.setup.ts`, `src/tests/e2e/StorageStateDemo.spec.ts`  
+**Projects:** `setup` → `chromium-storage-state-demo`  
+**ADR:** [docs/adr/008-storage-state-auth-demo.md](../docs/adr/008-storage-state-auth-demo.md)
+
+**Scenario:** Login once, save `storageState`, open wishlist already authenticated
+
+**Preconditions:** Same credential policy as Wish List Flow (`@wishlist` / ADR-002). Does **not** replace the wishlist login-gate coverage above.
+
+**Steps:**
+
+1. **Setup:** Navigate to login, submit valid credentials, assert URL leaves the login route, save cookies to `playwright/.auth/user.json`.
+2. **Demo:** With `use.storageState` loaded, go to the wishlist route (no `LoginPage.login()`).
+3. Assert wishlist page loaded (`WishListPage.assertLoaded`).
+
+---
+
 ### 5. Add to Cart → Header Cart State (Integration)
 
 **File:** `src/tests/integration/AddToCartHeaderState.spec.ts`
@@ -352,9 +370,10 @@ PR smoke subset (`npm run verify:smoke` — 8 tests):
 
 Full suite only (not in PR smoke):
 
-| Spec                                     | Notes                                                                      |
-| ---------------------------------------- | -------------------------------------------------------------------------- |
-| `e2e/WishListFlow.spec.ts`               | `@wishlist` — needs credentials; skipped in GitHub Actions without secrets |
-| Remaining integration / functional specs | Full regression on push / nightly                                          |
+| Spec                                             | Notes                                                                      |
+| ------------------------------------------------ | -------------------------------------------------------------------------- |
+| `e2e/WishListFlow.spec.ts`                       | `@wishlist` — needs credentials; skipped in GitHub Actions without secrets |
+| `auth.setup.ts` + `e2e/StorageStateDemo.spec.ts` | `@wishlist` — storageState demo (ADR-008); Chromium-only project chain     |
+| Remaining integration / functional specs         | Full regression on push / nightly                                          |
 
 See [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md) for CI job mapping.

@@ -50,7 +50,7 @@ Each domain area is an **independent feature module** under `src/features/<name>
 | **checkout** | `billingData`, `CheckoutBillingDetails`, `paths`, `uiConstants`                                                     | —                                    | `CheckoutPage`, `OrderPlacementResultPage` |
 | **wishlist** | `WishlistPaths`, `uiConstants`                                                                                      | —                                    | `WishListPage`                             |
 
-Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwright skip/fail wiring for wishlist E2E is in `src/fixtures/wishlistCredentials.ts`.
+Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwright skip/fail wiring for wishlist E2E is in `src/fixtures/wishlistCredentials.ts`. Optional `storageState` reuse (setup project + Chromium demo) is documented in [adr/008-storage-state-auth-demo.md](adr/008-storage-state-auth-demo.md).
 
 ### State module reference
 
@@ -201,8 +201,9 @@ Playwright fixtures act as the DI container. Shared helpers live in `src/fixture
 | File                     | Injects                                                                   |
 | ------------------------ | ------------------------------------------------------------------------- |
 | `POMFixture.ts`          | Feature presentation classes, `sessionCartService`, `wishlistCredentials` |
-| `ApiFixture.ts`          | `CartService`, `CatalogService`                                           |
+| `authStorageState.ts`    | Path to gitignored `playwright/.auth/user.json` (ADR-008)                 |
 | `wishlistCredentials.ts` | Wishlist credential resolution and local skip (uses auth state barrel)    |
+| `ApiFixture.ts`          | `CartService`, `CatalogService`                                           |
 
 UI and hybrid tests import `test` and `expect` from `POMFixture`. API tests import `test` from `ApiFixture`. Page objects and services are injected via fixtures — specs must not import presentation classes from feature barrels (ESLint enforced).
 
