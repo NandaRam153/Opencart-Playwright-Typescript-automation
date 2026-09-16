@@ -1,4 +1,5 @@
 export * from './state/products';
+export { CatalogPaths } from './state/paths';
 export { CatalogService } from './services/catalogService';
 export * from './services/catalogAssertions';
 export { ProductListingPage } from './presentation/ProductListingPage';

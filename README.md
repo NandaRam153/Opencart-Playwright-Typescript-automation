@@ -267,13 +267,14 @@ Use `Wait` from `@opencart-auto/pw-core` for safe clicks and load-state synchron
 
 Product catalog and search terms live in `src/features/catalog/state/products.ts`. Related state modules:
 
-| Feature  | State files (examples)                                                          |
-| -------- | ------------------------------------------------------------------------------- |
-| catalog  | `products.ts`, `ribbonMenu.ts`, `searchMessages.ts`, `alertMessages.ts`         |
-| home     | `uiConstants.ts`, `headerRoutes.ts`, `footerContent.ts`                         |
-| auth     | `paths.ts`, `loginErrors.ts`, `loginForm.ts`, `logoutForm.ts`, `credentials.ts` |
-| checkout | `billingDetails.ts`, `paths.ts`, `uiConstants.ts`                               |
-| wishlist | `paths.ts`, `uiConstants.ts`                                                    |
+| Feature  | State files (examples)                                                              |
+| -------- | ----------------------------------------------------------------------------------- |
+| catalog  | `products.ts`, `paths.ts`, `ribbonMenu.ts`, `searchMessages.ts`, `alertMessages.ts` |
+| home     | `uiConstants.ts`, `headerRoutes.ts`, `footerContent.ts`                             |
+| cart     | `paths.ts`, `networkMocks.ts` (ADR-009 mock payloads)                               |
+| auth     | `paths.ts`, `loginErrors.ts`, `loginForm.ts`, `logoutForm.ts`, `credentials.ts`     |
+| checkout | `billingDetails.ts`, `paths.ts`, `uiConstants.ts`                                   |
+| wishlist | `paths.ts`, `uiConstants.ts`                                                        |
 
 Full index: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#state-module-reference).
 
@@ -334,7 +335,7 @@ Operational risk: third-party demo downtime or catalog changes will fail tests u
 - API tests → `src/tests/api/`
 - Hybrid tests → `src/tests/hybrid/`
 - Page objects → `src/features/<feature>/presentation/` (use via fixtures in tests, not barrel imports)
-- Fixtures → `src/fixtures/` (`POMFixture.ts`, `ApiFixture.ts`, `fixtureHelpers.ts`, `wishlistCredentials.ts`)
+- Fixtures → `src/fixtures/` (`POMFixture.ts`, `ApiFixture.ts`, `fixtureHelpers.ts`, `wishlistCredentials.ts`, `networkMockHelpers.ts`, `authStorageState.ts`)
 - Test data → `src/features/<feature>/state/`
 - Scenario reference → [specs/test.plan.md](specs/test.plan.md)
 
