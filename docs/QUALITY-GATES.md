@@ -28,12 +28,14 @@ Supporting scripts:
 | ----------- | -------------------------------------- | --------------------------------------------------------------------------------- |
 | `@smoke`    | Fast PR UI/API signal                  | See [smoke inventory](#smoke-test-inventory) below                                |
 | `@wishlist` | Authenticated flows (need credentials) | `WishListFlow.spec.ts`, `auth.setup.ts`, `StorageStateDemo.spec.ts` (see ADR-008) |
+| `@mock`     | Browser `route.fulfill` demos          | `NetworkMockDemo.spec.ts` (ADR-009) — not part of smoke                           |
 
 Run tagged subsets:
 
 ```sh
 npm run verify:smoke
 npm run verify:wishlist
+npx playwright test --grep "@mock"
 npx playwright test --grep @smoke
 ```
 

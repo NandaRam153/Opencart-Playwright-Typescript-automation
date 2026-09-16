@@ -37,4 +37,12 @@ export class CartPage extends BasePage {
                 .or(this.content.getByRole('link', { name: 'Proceed to Checkout' }))
         );
     }
+
+    async assertCheckoutActionHidden() {
+        await HardAssertions.count(this.content.getByRole('link', { name: 'Checkout' }), 0);
+        await HardAssertions.count(
+            this.content.getByRole('link', { name: 'Proceed to Checkout' }),
+            0
+        );
+    }
 }

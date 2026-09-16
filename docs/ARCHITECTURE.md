@@ -41,16 +41,16 @@ flowchart TB
 
 Each domain area is an **independent feature module** under `src/features/<name>/`. Modules expose a public API through `index.ts` only.
 
-| Feature      | State                                                                                                               | Services                             | Presentation                               |
-| ------------ | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------ |
-| **home**     | `HomePaths`, `HeaderRoutes`, `uiConstants`, `footerContent`                                                         | —                                    | `HomePage`, `Header`, `Footer`             |
-| **catalog**  | `products`, `ribbonMenu`, `searchMessages`, `alertMessages`, `getSearchTerm`, `requireProductId`, `requireCategory` | `CatalogService`, catalog assertions | `ProductListingPage`, `Ribbon`             |
-| **cart**     | `CartPaths`                                                                                                         | `CartService`, cart assertions       | `CartPage`                                 |
-| **auth**     | `credentials`, `AuthPaths`, URL patterns, `loginErrors`, `loginForm`, `logoutForm`                                  | —                                    | `LoginPage`, `LogoutPage`                  |
-| **checkout** | `billingData`, `CheckoutBillingDetails`, `paths`, `uiConstants`                                                     | —                                    | `CheckoutPage`, `OrderPlacementResultPage` |
-| **wishlist** | `WishlistPaths`, `uiConstants`                                                                                      | —                                    | `WishListPage`                             |
+| Feature      | State                                                                                                                               | Services                             | Presentation                               |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------ |
+| **home**     | `HomePaths`, `HeaderRoutes`, `uiConstants`, `footerContent`                                                                         | —                                    | `HomePage`, `Header`, `Footer`             |
+| **catalog**  | `products`, `CatalogPaths`, `ribbonMenu`, `searchMessages`, `alertMessages`, `getSearchTerm`, `requireProductId`, `requireCategory` | `CatalogService`, catalog assertions | `ProductListingPage`, `Ribbon`             |
+| **cart**     | `CartPaths`, `networkMocks` (ADR-009)                                                                                               | `CartService`, cart assertions       | `CartPage`                                 |
+| **auth**     | `credentials`, `AuthPaths`, URL patterns, `loginErrors`, `loginForm`, `logoutForm`                                                  | —                                    | `LoginPage`, `LogoutPage`                  |
+| **checkout** | `billingData`, `CheckoutBillingDetails`, `paths`, `uiConstants`                                                                     | —                                    | `CheckoutPage`, `OrderPlacementResultPage` |
+| **wishlist** | `WishlistPaths`, `uiConstants`                                                                                                      | —                                    | `WishListPage`                             |
 
-Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwright skip/fail wiring for wishlist E2E is in `src/fixtures/wishlistCredentials.ts`. Optional `storageState` reuse (setup project + Chromium demo) is documented in [adr/008-storage-state-auth-demo.md](adr/008-storage-state-auth-demo.md).
+Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwright skip/fail wiring for wishlist E2E is in `src/fixtures/wishlistCredentials.ts`. Optional `storageState` reuse (setup project + Chromium demo) is documented in [adr/008-storage-state-auth-demo.md](adr/008-storage-state-auth-demo.md). Hybrid `route.fulfill` empty/error demos: [adr/009-network-mock-demos.md](adr/009-network-mock-demos.md).
 
 ### State module reference
 
@@ -61,10 +61,12 @@ Auth credential **state** lives in `features/auth/state/credentials.ts`. Playwri
 | `home/state/uiConstants.ts`        | home     | Brand title, search placeholder, store title, currency labels |
 | `home/state/footerContent.ts`      | home     | Footer column headings and link labels                        |
 | `catalog/state/products.ts`        | catalog  | Product catalog, helpers, `ribbonCategories`                  |
+| `catalog/state/paths.ts`           | catalog  | `CatalogPaths.search` from shared routes                      |
 | `catalog/state/ribbonMenu.ts`      | catalog  | Ribbon dropdown and link labels (Software empty on SUT)       |
 | `catalog/state/searchMessages.ts`  | catalog  | Empty search results message                                  |
 | `catalog/state/alertMessages.ts`   | catalog  | Add-to-cart success alert fragments                           |
 | `cart/state/paths.ts`              | cart     | `CartPaths`                                                   |
+| `cart/state/networkMocks.ts`       | cart     | `route.fulfill` empty/error payloads (ADR-009)                |
 | `auth/state/paths.ts`              | auth     | Login/logout paths, login/logout URL patterns                 |
 | `auth/state/credentials.ts`        | auth     | Wishlist credential resolution                                |
 | `auth/state/loginErrors.ts`        | auth     | Login rejection pattern, failure message, timeout             |
@@ -201,6 +203,7 @@ Playwright fixtures act as the DI container. Shared helpers live in `src/fixture
 | File                     | Injects                                                                   |
 | ------------------------ | ------------------------------------------------------------------------- |
 | `POMFixture.ts`          | Feature presentation classes, `sessionCartService`, `wishlistCredentials` |
+| `networkMockHelpers.ts`  | `page.route` / `fulfill` + dialog helpers for `@mock` demos (ADR-009)     |
 | `authStorageState.ts`    | Path to gitignored `playwright/.auth/user.json` (ADR-008)                 |
 | `wishlistCredentials.ts` | Wishlist credential resolution and local skip (uses auth state barrel)    |
 | `ApiFixture.ts`          | `CartService`, `CatalogService`                                           |
@@ -247,5 +250,7 @@ Local verification: [VERIFICATION.md](VERIFICATION.md). Contributor workflow: [C
 | [004](adr/004-login-presentation-separation.md) | Login vs wishlist landing assertions |
 | [005](adr/005-layered-quality-gates.md)         | Layered CI, tags, Husky              |
 | [007](adr/007-vitest-unit-layer.md)             | Vitest extras for pure state helpers |
+| [008](adr/008-storage-state-auth-demo.md)       | storageState auth reuse demo         |
+| [009](adr/009-network-mock-demos.md)            | Hybrid `route.fulfill` mock demos    |
 
 Full index: [adr/README.md](adr/README.md).

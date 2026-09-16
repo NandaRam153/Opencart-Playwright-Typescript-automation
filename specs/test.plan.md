@@ -341,6 +341,29 @@ Second seed showcase: same generator workflow as Tablets, different ribbon categ
 
 ---
 
+### 12. Network mocks — empty cart + cart-add error (Hybrid)
+
+**File:** `src/tests/hybrid/NetworkMockDemo.spec.ts`  
+**ADR:** [docs/adr/009-network-mock-demos.md](../docs/adr/009-network-mock-demos.md)  
+**Tag:** `@mock` (full suite / targeted runs — not PR smoke)
+
+**Scenario A:** Empty cart document from `route.fulfill`
+
+1. Register empty-cart HTML fulfill via `fulfillEmptyCartDocument` (`networkMockHelpers`).
+2. Navigate via `CartPage.navigateToCart()` and assert empty state + no checkout action.
+3. Spec orchestrates only; locators stay on `CartPage`.
+
+**Scenario B:** Cart-add HTTP error from `route.fulfill`
+
+1. Register cart/add HTTP 500 fulfill via `fulfillCartAddHttpError`.
+2. Open search results via `ProductListingPage.openSearchResults`, add product, assert dialog + no success alert.
+3. Dialog handling lives in `expectDialogContains`; UI asserts on `ProductListingPage`.
+
+Does **not** replace live API coverage in `CartAdd.spec.ts` / `CartApiToUi.spec.ts`.
+Note: this demo store’s `cart.add` surfaces HTTP failures via `alert()`, not a Bootstrap danger alert.
+
+---
+
 ## Notes
 
 - Architecture overview: [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md). ADRs: [docs/adr/](../docs/adr/).
@@ -374,6 +397,7 @@ Full suite only (not in PR smoke):
 | ------------------------------------------------ | -------------------------------------------------------------------------- |
 | `e2e/WishListFlow.spec.ts`                       | `@wishlist` — needs credentials; skipped in GitHub Actions without secrets |
 | `auth.setup.ts` + `e2e/StorageStateDemo.spec.ts` | `@wishlist` — storageState demo (ADR-008); Chromium-only project chain     |
+| `hybrid/NetworkMockDemo.spec.ts`                 | `@mock` — `route.fulfill` empty cart + cart-add HTTP error (ADR-009)       |
 | Remaining integration / functional specs         | Full regression on push / nightly                                          |
 
 See [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md) for CI job mapping.
