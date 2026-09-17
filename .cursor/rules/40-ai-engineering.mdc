@@ -1,19 +1,48 @@
 ---
 description: How AI assistants may be used in this test automation repository.
-alwaysApply: false
+alwaysApply: true
 ---
 
 # AI engineering (test automation)
 
 > AI accelerates work; tests and architecture rules enforce correctness.
+> Full policy: [AGENTS.md](../../AGENTS.md) and [ADR-010](../../docs/adr/010-skills-first-test-authoring.md).
+
+## Skills first (default)
+
+When writing or changing tests, page objects, or locators:
+
+1. Load `.cursor/skills/opencart-qa-workflow/SKILL.md`
+2. Load TestDino `core` and `pom` from `.agents/skills/playwright-skill/`
+3. Extend existing `src/features/<name>/` and use `POMFixture` (UI) or `ApiFixture` / `{ request }` (API)
+4. Verify with `npx playwright test`; live UI checks in Cursor use **IronBee only** (`ironbee-devtools-use.mdc`)
 
 ## Allowed
 
-- Page object and test spec generation
+- Page object and test spec generation via skills + existing patterns
 - Refactoring within feature module boundaries
 - Documentation and ADR drafts
-- `.github/agents/` workflows (planner, generator, healer)
-- Debugging flaky tests and locator improvements
+- Debugging flaky tests and locator improvements (prefer `opencart-debug-playbook`)
+- `.github/agents/` planner / generator / healer **only when the user explicitly requests them**
+
+## Forbidden
+
+- Bypassing CI quality gates or weakening assertions to make tests pass
+- Introducing `src/pages/`, `src/api/`, or flat layouts superseded by `src/features/`
+- Committing secrets or real credentials
+- Unreviewed changes to credential/CI policy without ADR
+- Playwright Test MCP (`playwright-test`, `browser_*`, `generator_*`, `planner_*`, `generator_write_test`) unless the user explicitly asks
+- chrome-devtools MCP for authoring or exploring specs unless the user explicitly asks
+- Using `playwright-cli` sessions as a substitute for a committed `POMFixture` / feature-module spec
+
+## Opt-in MCP agents
+
+- `.github/agents/playwright-test-planner.agent.md`
+- `.github/agents/playwright-test-generator.agent.md`
+- `.github/agents/playwright-test-healer.agent.md`
+- `src/tests/seed.spec.ts` — generator scaffold (`testIgnore` in config)
+
+These require enabling `playwright-test` MCP locally. Generated drafts must be refactored to `POMFixture` / feature services before commit. See [docs/test-generation-from-seed.md](../../docs/test-generation-from-seed.md).
 
 ## Required validation
 
@@ -23,19 +52,3 @@ All AI-generated code is **UNVERIFIED** until:
 - Relevant Playwright tests pass
 - Architecture rules in `10-architecture.mdc` are satisfied
 - Code review protocol applied for significant changes (`80-code-review.mdc`)
-
-## Forbidden
-
-- Bypassing CI quality gates or weakening assertions to make tests pass
-- Introducing `src/pages/`, `src/api/`, or flat layouts superseded by `src/features/`
-- Committing secrets or real credentials
-- Unreviewed changes to credential/CI policy without ADR
-
-## Agents in this repo
-
-- `.github/agents/playwright-test-planner.agent.md`
-- `.github/agents/playwright-test-generator.agent.md`
-- `.github/agents/playwright-test-healer.agent.md`
-- `src/tests/seed.spec.ts` — generator scaffold (`testIgnore` in config)
-
-Generated tests belong under `src/tests/<layer>/` and must use `POMFixture` or feature services per existing patterns.

@@ -1,6 +1,10 @@
 # Test generation from seed
 
-This project uses [Playwright Test Generator](https://playwright.dev/docs/test-agents)–style agents (see `.github/agents/playwright-test-generator.agent.md`) to draft specs from `specs/test.plan.md`. The **seed file** is the generator anchor; the **committed test** uses `POMFixture` and feature page objects.
+> **Opt-in workflow.** The default way to add tests is skills-first: TestDino `core` + `pom`, existing specs, and `POMFixture` / feature modules ([AGENTS.md](../AGENTS.md), [ADR-010](adr/010-skills-first-test-authoring.md)). Use this seed → generator path only when you explicitly want Playwright Test MCP recording.
+
+This project can use [Playwright Test Generator](https://playwright.dev/docs/test-agents)–style agents (see `.github/agents/playwright-test-generator.agent.md`) to draft specs from `specs/test.plan.md`. The **seed file** is the generator anchor; the **committed test** must still use `POMFixture` and feature page objects.
+
+**Prerequisites:** enable `playwright-test` MCP locally (it is not in default `.vscode/mcp.json`).
 
 ## Seed file
 

@@ -22,8 +22,9 @@ Automated functional, integration, and end-to-end (E2E) testing for the OpenCart
 | [docs/QUALITY-GATES.md](docs/QUALITY-GATES.md)                         | CI jobs, test tags, Husky hooks, branch protection                  |
 | [docs/VERIFICATION.md](docs/VERIFICATION.md)                           | Pre-PR verification checklist (lint, build, API, smoke, a11y notes) |
 | [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)                           | Fork/PR workflow, layer rules, adding features                      |
-| [AGENTS.md](AGENTS.md) / [CLAUDE.md](CLAUDE.md)                        | Shared AI agent entry + Claude Code pointer                         |
-| [docs/test-generation-from-seed.md](docs/test-generation-from-seed.md) | Seed file and generator showcase workflow                           |
+| [AGENTS.md](AGENTS.md) / [CLAUDE.md](CLAUDE.md)                        | Shared AI agent entry (skills-first) + Claude Code pointer          |
+| [.github/copilot-instructions.md](.github/copilot-instructions.md)     | GitHub Copilot: skills-first, Playwright MCP opt-in                 |
+| [docs/test-generation-from-seed.md](docs/test-generation-from-seed.md) | Opt-in seed → generator → POM refactor showcase                     |
 | [docs/adr/README.md](docs/adr/README.md)                               | ADR index and architectural decisions                               |
 | [specs/test.plan.md](specs/test.plan.md)                               | Test scenarios and step definitions                                 |
 

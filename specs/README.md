@@ -8,7 +8,7 @@ This directory contains test plans for the OpenCart Playwright automation suite.
 | ---------------------------- | -------------------------------------------------------------------------------------- |
 | [test.plan.md](test.plan.md) | Full test plan: functional, integration, E2E, API, hybrid scenarios, quality gate tags |
 
-Used by the `playwright-test-planner` and `playwright-test-generator` agents (`.github/agents/`).
+Humans and agents writing specs should follow this plan with the skills-first path ([AGENTS.md](../AGENTS.md)). The opt-in `playwright-test-planner` / `playwright-test-generator` agents (`.github/agents/`) may also consume it when explicitly requested.
 
 ## Related documentation
 

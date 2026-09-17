@@ -13,6 +13,7 @@ Recorded design decisions for the OpenCart Playwright automation suite.
 | [007](007-vitest-unit-layer.md)             | Vitest extras for pure catalog/auth state helpers                 | Accepted |
 | [008](008-storage-state-auth-demo.md)       | Optional storageState auth reuse demo (setup project)             | Accepted |
 | [009](009-network-mock-demos.md)            | Hybrid network mock demos (`route.fulfill` empty/error)           | Accepted |
+| [010](010-skills-first-test-authoring.md)   | Skills-first test authoring; Playwright MCP opt-in                | Accepted |
 
 ## Related documentation
 
