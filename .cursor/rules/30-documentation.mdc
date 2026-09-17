@@ -26,8 +26,9 @@ When unclear, default to **MEDIUM**.
 | [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md) | Features, layers, diagrams, import rules |
 | [docs/QUALITY-GATES.md](../docs/QUALITY-GATES.md) | CI jobs, test tags, Husky hooks |
 | [docs/VERIFICATION.md](../docs/VERIFICATION.md) | Pre-PR verification checklist |
-| [docs/CONTRIBUTING.md](../docs/CONTRIBUTING.md) | Fork/PR workflow, layer rules |
+| [docs/CONTRIBUTING.md](../docs/CONTRIBUTING.md) | Fork/PR workflow, layer rules, IDE/AI tooling |
 | [docs/adr/*.md](../docs/adr/) | Non-trivial design decisions |
+| [AGENTS.md](../AGENTS.md) / [CLAUDE.md](../CLAUDE.md) / [`.github/copilot-instructions.md`](../.github/copilot-instructions.md) | Shared AI agent policy (skills-first, MCP opt-in) |
 | [specs/test.plan.md](../specs/test.plan.md) | New/changed test scenarios |
 | [specs/README.md](../specs/README.md) | Specs folder purpose and links |
 | [.env.example](../.env.example) | New or changed environment variables |
@@ -39,6 +40,7 @@ When unclear, default to **MEDIUM**.
 - New feature module or layer boundary change
 - CI/credential policy change
 - HTTP client or test strategy pattern change
+- AI authoring / MCP vs skills policy change
 - Breaking change to `pw-core` public API
 
 ## Quality bar

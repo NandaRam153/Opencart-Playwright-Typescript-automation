@@ -14,7 +14,7 @@ Demonstrate Staff-level QA engineering through:
 - Feature-module architecture (presentation / state / services)
 - Layered Playwright tests (functional, integration, E2E, API, hybrid)
 - Reusable `@opencart-auto/pw-core` workspace package
-- CI/CD, Docker, and AI-assisted test workflows (`.github/agents/`)
+- CI/CD, Docker, and AI-assisted workflows (skills-first; optional seed/generator agents — see ADR-010)
 
 ## Documentation hierarchy (source of truth)
 

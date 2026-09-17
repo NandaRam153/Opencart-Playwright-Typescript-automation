@@ -17,6 +17,7 @@ A debug session is done when: root cause is named, fix is minimal and architectu
 
 - Weaken assertions or delete checks to “make it green”
 - Use Cursor built-in browser for UI verification — use **IronBee** (`ironbee-devtools-use.mdc`)
+- Reach for Playwright Test MCP / healer by default — prefer this playbook + TestDino `core/debugging.md` / traces / `npx playwright test`
 - Cross feature-layer boundaries when “fixing” locators/data
 - Commit secrets while debugging credentials
 
@@ -61,14 +62,14 @@ Prefer one browser (`--project=chromium`) until the failure is stable.
 
 Load deeper guides only as needed:
 
-| Symptom             | Guide                                                                    |
-| ------------------- | ------------------------------------------------------------------------ |
-| General failure     | `core/debugging.md`                                                      |
-| Intermittent        | `core/flaky-tests.md`                                                    |
-| Trace.zip deep dive | `core/trace-analysis.md`                                                 |
-| Locator strategy    | `core/locators.md`, `core/locator-strategy.md`                           |
-| Waits / races       | `core/assertions-and-waiting.md`                                         |
-| Agent heal loop     | `.github/agents/playwright-test-healer.agent.md` + `playwright-test` MCP |
+| Symptom             | Guide                                                                                                           |
+| ------------------- | --------------------------------------------------------------------------------------------------------------- |
+| General failure     | `core/debugging.md`                                                                                             |
+| Intermittent        | `core/flaky-tests.md`                                                                                           |
+| Trace.zip deep dive | `core/trace-analysis.md`                                                                                        |
+| Locator strategy    | `core/locators.md`, `core/locator-strategy.md`                                                                  |
+| Waits / races       | `core/assertions-and-waiting.md`                                                                                |
+| Agent heal loop     | Opt-in only: `.github/agents/playwright-test-healer.agent.md` + local `playwright-test` MCP (user must request) |
 
 ## Phase 3 — Hypothesize (one at a time)
 

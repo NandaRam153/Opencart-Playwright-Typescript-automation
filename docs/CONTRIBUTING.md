@@ -23,19 +23,21 @@ cp .env.example .env   # optional; required for wishlist E2E locally
 
 Workspace recommendations live in [`.vscode/extensions.json`](../.vscode/extensions.json). Install prompted extensions (or open the Extensions view and search “Recommended”).
 
-| Tooling                                                    | Purpose                                                                                |
-| ---------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Playwright Test, ESLint, Prettier                          | Run/debug specs; match CI lint/format                                                  |
-| IronBee DevTools                                           | Live browser verification for agents (preferred over other browser MCPs for UI checks) |
-| GitHub Pull Requests / Actions                             | Review PRs and CI locally                                                              |
-| MCP (`.vscode/mcp.json`)                                   | `playwright-test`, `chrome-devtools`, `github` — enable under Cursor Settings → MCP    |
-| Skills (`.agents/skills/playwright-skill/`)                | Agent guides for core / POM / CI / CLI                                                 |
-| Debug playbook (`.cursor/skills/opencart-debug-playbook/`) | Systematic fail/flake triage for this repo                                             |
-| Agents (`.github/agents/`)                                 | Planner, generator, healer workflows                                                   |
-| [AGENTS.md](../AGENTS.md) / [CLAUDE.md](../CLAUDE.md)      | Shared + Claude Code entry points (thin; link to docs/skills, don’t duplicate rules)   |
+| Tooling                                                                 | Purpose                                                                                                                   |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Playwright Test, ESLint, Prettier                                       | Run/debug specs; match CI lint/format                                                                                     |
+| Skills (`.agents/skills/playwright-skill/`)                             | **Default** agent guides for core / POM / CI / CLI (skills-first — see [ADR-010](adr/010-skills-first-test-authoring.md)) |
+| Workflow (`.cursor/skills/opencart-qa-workflow/`)                       | Repo architecture + which skill pack to load                                                                              |
+| Debug playbook (`.cursor/skills/opencart-debug-playbook/`)              | Systematic fail/flake triage for this repo                                                                                |
+| IronBee DevTools                                                        | Live browser **verification** in Cursor (not for MCP seed/generator authoring)                                            |
+| GitHub Pull Requests / Actions                                          | Review PRs and CI locally                                                                                                 |
+| MCP (`.vscode/mcp.json`)                                                | Default: `github` only. Re-add `playwright-test` locally for opt-in planner/generator/healer                              |
+| Agents (`.github/agents/`)                                              | Opt-in planner / generator / healer (user must request; needs local `playwright-test` MCP)                                |
+| [AGENTS.md](../AGENTS.md) / [CLAUDE.md](../CLAUDE.md)                   | Shared + Claude Code entry points                                                                                         |
+| [`.github/copilot-instructions.md`](../.github/copilot-instructions.md) | GitHub Copilot: skills-first, no Playwright MCP by default                                                                |
 
 Cursor workspace settings (format on save, ESLint fix) are in [`.vscode/settings.json`](../.vscode/settings.json).
-**Cursor** loads `.cursor/rules/`; **Claude Code** loads `CLAUDE.md` → `AGENTS.md`.
+**Cursor** loads `.cursor/rules/`; **Claude Code** loads `CLAUDE.md` → `AGENTS.md`; **Copilot** loads `.github/copilot-instructions.md`.
 
 ## Development workflow
 

@@ -35,6 +35,8 @@ mcp-servers:
             - '*'
 ---
 
+> **Opt-in only.** Do not invoke this agent unless the user explicitly requests the Playwright Test planner workflow. Default test authoring is skills-first ([AGENTS.md](../../AGENTS.md), [ADR-010](../../docs/adr/010-skills-first-test-authoring.md)). Requires enabling `playwright-test` MCP locally (not in default `.vscode/mcp.json`).
+
 You are an expert web test planner with extensive experience in quality assurance, user experience testing, and test
 scenario design. Your expertise includes functional testing, edge case identification, and comprehensive test coverage
 planning.

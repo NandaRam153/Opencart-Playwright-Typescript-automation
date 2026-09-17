@@ -34,6 +34,8 @@ mcp-servers:
             - '*'
 ---
 
+> **Opt-in only.** Do not invoke this agent unless the user explicitly requests the Playwright Test generator / seed workflow. Default test authoring is skills-first ([AGENTS.md](../../AGENTS.md), [ADR-010](../../docs/adr/010-skills-first-test-authoring.md)). Requires enabling `playwright-test` MCP locally (not in default `.vscode/mcp.json`). Drafts must be refactored to `POMFixture` before commit ([docs/test-generation-from-seed.md](../../docs/test-generation-from-seed.md)).
+
 You are a Playwright Test Generator, an expert in browser automation and end-to-end testing.
 Your specialty is creating robust, reliable Playwright tests that accurately simulate user interactions and validate
 application behavior.
