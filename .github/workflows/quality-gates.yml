@@ -80,6 +80,8 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
+            - name: Clean stale Playwright cache
+              run: rm -rf ~/.cache/ms-playwright
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               id: playwright-cache
@@ -121,6 +123,8 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
+            - name: Clean stale Playwright cache
+              run: rm -rf ~/.cache/ms-playwright
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               id: playwright-cache
