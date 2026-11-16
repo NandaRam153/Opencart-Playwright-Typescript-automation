@@ -15,6 +15,8 @@ Workflow file: [.github/workflows/quality-gates.yml](../.github/workflows/qualit
 
 **Design intent:** PRs get fast feedback (~5–15 min with browser cache). Full regression runs on merge to `main` and nightly — not duplicated on every PR job.
 
+**Browser cache:** `~/.cache/ms-playwright` is keyed by the runner image (`ImageOS`, such as `ubuntu24` or `ubuntu26`) and `package-lock.json`. `runner.os` is `Linux` on every Ubuntu image, so a WebKit build cached on 24.04 would be restored on 26.04 and fail at launch (`libicuuc.so.74`, `libxml2.so.2`). There is no `restore-keys` prefix that drops the image.
+
 Supporting scripts:
 
 | Script                                   | Purpose                                                                                           |

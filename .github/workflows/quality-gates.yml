@@ -80,12 +80,15 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
+            - name: Resolve runner image
+              id: runner-image
+              run: echo "os=${ImageOS:?ImageOS is not set on this runner}" >> "$GITHUB_OUTPUT"
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               id: playwright-cache
               with:
                   path: ~/.cache/ms-playwright
-                  key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+                  key: playwright-${{ steps.runner-image.outputs.os }}-${{ hashFiles('package-lock.json') }}
             - name: Install Playwright Browsers
               run: npx playwright install --with-deps chromium webkit firefox
             - run: npm run verify:api
@@ -121,12 +124,15 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
+            - name: Resolve runner image
+              id: runner-image
+              run: echo "os=${ImageOS:?ImageOS is not set on this runner}" >> "$GITHUB_OUTPUT"
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               id: playwright-cache
               with:
                   path: ~/.cache/ms-playwright
-                  key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+                  key: playwright-${{ steps.runner-image.outputs.os }}-${{ hashFiles('package-lock.json') }}
             - name: Install Playwright Browsers
               run: npx playwright install --with-deps chromium webkit firefox
             - name: Run full suite (with wishlist)
