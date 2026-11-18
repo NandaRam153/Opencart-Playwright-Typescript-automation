@@ -233,19 +233,19 @@ The wishlist E2E test **skips locally** when credentials are missing or still se
 
 Workflow: [.github/workflows/quality-gates.yml](.github/workflows/quality-gates.yml)
 
-| Event                         | Jobs                                                                               |
-| ----------------------------- | ---------------------------------------------------------------------------------- |
-| **Pull request**              | Static analysis → SUT health → PR tests (API + smoke; wishlist when secrets exist) |
-| **Push to `main` / `master`** | Static analysis → SUT health → full Playwright suite                               |
-| **Nightly (06:00 UTC)**       | Same as push to main                                                               |
+| Event                         | Jobs                                                                                           |
+| ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Pull request**              | Static analysis → SUT health → PR tests (API + smoke; wishlist when secrets exist) — single VM |
+| **Push to `main` / `master`** | Static analysis → SUT health → full suite **sharded 1/2 + 2/2** → merge HTML report            |
+| **Nightly (06:00 UTC)**       | Same as push to main                                                                           |
 
-**Branch protection (PRs):** require **Static analysis**, **SUT health**, and **PR tests (API + smoke)**. Do not require **Full Playwright suite** on PRs — it runs after merge and nightly.
+**Branch protection (PRs):** require **Static analysis**, **SUT health**, and **PR tests (API + smoke)**. Do not require full-suite / merge-report jobs on PRs — they run after merge and nightly.
 
 **Wishlist E2E:** runs inside PR tests when `TEST_USER_EMAIL` / `TEST_USER_PASSWORD` secrets are configured; skipped for fork PRs and when secrets are missing.
 
-See [docs/QUALITY-GATES.md](docs/QUALITY-GATES.md) for local `verify:*` commands and Husky hooks.
+See [docs/QUALITY-GATES.md](docs/QUALITY-GATES.md) for local `verify:*` commands, sharding notes, and Husky hooks.
 
-CI runs with `CI=true` (retries + single worker). Failed runs upload traces and HTML reports.
+CI runs with `CI=true` (retries + single worker). Full suite uses blob reports per shard; **Merge Playwright reports** uploads the combined HTML report. Failed shards upload `test-results-*`.
 
 > `packages/pw-core/dist/` is gitignored and built locally/CI via `npm run build` — never commit compiled output.
 

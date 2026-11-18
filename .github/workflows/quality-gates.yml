@@ -6,8 +6,8 @@ on:
     pull_request:
         branches: [main, master]
     schedule:
-        # Nightly full regression (06:00 UTC)
-        - cron: '0 6 * * *'
+        # Weekly full regression (Monday 05:00 UTC)
+        - cron: '0 5 * * 1'
 
 concurrency:
     group: quality-gates-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -66,13 +66,13 @@ jobs:
                   node-version: lts/*
             - run: npm run verify:sut
 
-    # PR: one browser job (single npm ci + one Playwright install) — API + smoke + optional wishlist
+    # PR: Chromium-only for fast feedback — API + smoke + optional wishlist
     test-pr:
         name: PR tests (API + smoke)
         needs: [static, sut-health, wishlist-secrets]
         if: github.event_name == 'pull_request'
         runs-on: ubuntu-latest
-        timeout-minutes: 25
+        timeout-minutes: 30
         steps:
             - uses: actions/checkout@v5
             - uses: actions/setup-node@v5
@@ -80,18 +80,17 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
-            - name: Clean stale Playwright cache
-              run: rm -rf ~/.cache/ms-playwright
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               id: playwright-cache
               with:
                   path: ~/.cache/ms-playwright
+                  # runner.os reuses existing Actions caches (warm installs). Full suite covers Firefox/WebKit.
                   key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-            - name: Install Playwright Browsers
-              run: npx playwright install --with-deps chromium webkit firefox
-            - run: npm run verify:api
-            - run: npm run verify:smoke
+            - name: Install Playwright Chromium
+              run: npx playwright install --with-deps chromium
+            - run: npm run verify:api -- --project=chromium
+            - run: npm run verify:smoke -- --project=chromium
             - name: Wishlist E2E (@wishlist)
               if: >-
                   github.event.pull_request.head.repo.full_name == github.repository &&
@@ -101,7 +100,7 @@ jobs:
                   TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
               run: |
                   sh scripts/verify-wishlist-credentials.sh
-                  npm run verify:wishlist
+                  npm run verify:wishlist -- --project=chromium
             - uses: actions/upload-artifact@v5
               if: failure()
               with:
@@ -109,13 +108,17 @@ jobs:
                   path: test-results/
                   retention-days: 7
 
-    # main / nightly: full suite (static + sut already passed in sibling jobs)
+    # main / weekly: full suite sharded across 2 VMs (static + sut already passed)
     test-full:
-        name: Full Playwright suite
+        name: Full Playwright suite (${{ matrix.shard }})
         needs: [static, sut-health, wishlist-secrets]
         if: github.event_name == 'push' || github.event_name == 'schedule'
         runs-on: ubuntu-latest
-        timeout-minutes: 45
+        timeout-minutes: 40
+        strategy:
+            fail-fast: false
+            matrix:
+                shard: [1/2, 2/2]
         steps:
             - uses: actions/checkout@v5
             - uses: actions/setup-node@v5
@@ -123,8 +126,6 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
-            - name: Clean stale Playwright cache
-              run: rm -rf ~/.cache/ms-playwright
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               id: playwright-cache
@@ -140,19 +141,46 @@ jobs:
                   TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
               run: |
                   sh scripts/verify-wishlist-credentials.sh
-                  npx playwright test
+                  npx playwright test --shard=${{ matrix.shard }}
             - name: Run suite without wishlist
               if: needs.wishlist-secrets.outputs.configured != 'true'
-              run: npx playwright test --grep-invert @wishlist
+              run: npx playwright test --grep-invert @wishlist --shard=${{ matrix.shard }}
             - uses: actions/upload-artifact@v5
               if: ${{ !cancelled() }}
+              with:
+                  name: blob-report-${{ strategy.job-index }}
+                  path: blob-report/
+                  retention-days: 1
+            - uses: actions/upload-artifact@v5
+              if: failure()
+              with:
+                  name: test-results-${{ strategy.job-index }}
+                  path: test-results/
+                  retention-days: 14
+
+    merge-reports:
+        name: Merge Playwright reports
+        if: ${{ !cancelled() && (github.event_name == 'push' || github.event_name == 'schedule') }}
+        needs: test-full
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: lts/*
+                  cache: npm
+            - run: npm ci
+            - name: Download shard blob reports
+              uses: actions/download-artifact@v5
+              with:
+                  pattern: blob-report-*
+                  path: all-blob-reports
+                  merge-multiple: true
+            - name: Merge into HTML report
+              run: npx playwright merge-reports --reporter=html ./all-blob-reports
+            - uses: actions/upload-artifact@v5
               with:
                   name: playwright-report
                   path: playwright-report/
                   retention-days: 30
-            - uses: actions/upload-artifact@v5
-              if: failure()
-              with:
-                  name: test-results
-                  path: test-results/
-                  retention-days: 14

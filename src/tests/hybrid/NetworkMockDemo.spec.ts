@@ -25,13 +25,16 @@ test.describe('Network mocks (route.fulfill)', { tag: '@mock' }, () => {
     }) => {
         await fulfillCartAddHttpError(page);
 
-        // This OpenCart build's cart.add uses window.alert on jQuery ajax HTTP errors.
-        const dialogPromise = page.waitForEvent('dialog');
-
         await productListingPage.openSearchResults(getSearchTerm(products.NIKON_D300));
         await productListingPage.checkProductListed(products.NIKON_D300.name);
-        await productListingPage.addToCartProductByName(products.NIKON_D300.name);
-        await expectDialogContains(dialogPromise, MOCK_CART_ADD_ERROR_BODY);
+
+        // cart.add shows window.alert on HTTP errors; dismiss in parallel with click so
+        // Playwright's post-click navigation wait is not blocked by the modal dialog.
+        const dialogPromise = page.waitForEvent('dialog');
+        await Promise.all([
+            expectDialogContains(dialogPromise, MOCK_CART_ADD_ERROR_BODY),
+            productListingPage.addToCartProductByName(products.NIKON_D300.name),
+        ]);
         await productListingPage.assertNoAddToCartSuccess();
     });
 });

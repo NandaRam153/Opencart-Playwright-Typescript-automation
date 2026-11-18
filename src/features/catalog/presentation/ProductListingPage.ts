@@ -26,7 +26,8 @@ export class ProductListingPage extends BasePage {
 
     async addToCartProductByName(name: string) {
         const card = this.getProductByName(name);
-        await Wait.click(card.getByRole('button', { name: 'Add to Cart' }));
+        // cart.add is AJAX (onclick); skip post-click navigation wait — alerts would deadlock it.
+        await Wait.click(card.getByRole('button', { name: 'Add to Cart' }), { noWaitAfter: true });
     }
 
     private wishListButton(productCard: ReturnType<ProductListingPage['getProductByName']>) {

@@ -28,6 +28,16 @@ const baseURL = process.env.BASE_URL ?? 'https://awesomeqa.com/ui/';
 /** Auth setup + storageState demo only (not mixed into multi-browser suites). */
 const storageStateDemoIgnore = ['**/auth.setup.ts', '**/StorageStateDemo.spec.ts'] as const;
 
+/**
+ * Project-level `testIgnore` replaces the top-level list (does not merge).
+ * Keep seed / unit-test exclusions here so browser projects do not run them.
+ */
+const browserTestIgnore = [
+    ...storageStateDemoIgnore,
+    '**/seed.spec.ts',
+    '**/*.unit.test.ts',
+] as const;
+
 const browserProjectUse = {
     headless: true,
     screenshot: 'only-on-failure' as const,
@@ -53,8 +63,8 @@ export default defineConfig({
     retries: process.env.CI ? 2 : 0,
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
-    /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-    reporter: 'html',
+    /* CI: blob for shard merge + github annotations; local: HTML on failure. */
+    reporter: process.env.CI ? [['blob'], ['github']] : [['html', { open: 'on-failure' }]],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
         baseURL,
@@ -85,7 +95,7 @@ export default defineConfig({
         },
         {
             name: 'chromium',
-            testIgnore: [...storageStateDemoIgnore],
+            testIgnore: [...browserTestIgnore],
             use: {
                 ...devices['Desktop Chrome'],
                 ...browserProjectUse,
@@ -94,7 +104,7 @@ export default defineConfig({
 
         {
             name: 'firefox',
-            testIgnore: [...storageStateDemoIgnore],
+            testIgnore: [...browserTestIgnore],
             use: {
                 ...devices['Desktop Firefox'],
                 ...browserProjectUse,
@@ -103,7 +113,7 @@ export default defineConfig({
 
         {
             name: 'webkit',
-            testIgnore: [...storageStateDemoIgnore],
+            testIgnore: [...browserTestIgnore],
             use: {
                 ...devices['Desktop Safari'],
                 ...browserProjectUse,
