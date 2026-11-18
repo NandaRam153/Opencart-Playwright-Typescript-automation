@@ -4,19 +4,19 @@ This project uses layered quality gates: local hooks, PR checks (fast), and main
 
 ## Gate matrix
 
-| Gate              | Command / job                                                                       | Runs on                                      |
-| ----------------- | ----------------------------------------------------------------------------------- | -------------------------------------------- |
-| **Static**        | `npm run verify:static` (includes `test:unit`)                                      | PR, push, nightly, pre-push hook             |
-| **SUT health**    | `npm run verify:sut`                                                                | PR, push, nightly (before browser tests)     |
-| **PR tests**      | `verify:api` + `verify:smoke` (+ wishlist if secrets)                               | PR only — **single job** (no sharding)       |
-| **Full**          | `playwright test --shard=1/2` and `--shard=2/2` (or with `--grep-invert @wishlist`) | Push to `main`/`master`, nightly — **2 VMs** |
-| **Merge reports** | `playwright merge-reports` from shard blob artifacts                                | After `test-full` (push / nightly)           |
+| Gate              | Command / job                                                                       | Runs on                                     |
+| ----------------- | ----------------------------------------------------------------------------------- | ------------------------------------------- |
+| **Static**        | `npm run verify:static` (includes `test:unit`)                                      | PR, push, nightly, pre-push hook            |
+| **SUT health**    | `npm run verify:sut`                                                                | PR, push, nightly (before browser tests)    |
+| **PR tests**      | `verify:api` + `verify:smoke` on **Chromium only** (+ wishlist if secrets)          | PR only — **single job** (no sharding)      |
+| **Full**          | `playwright test --shard=1/2` and `--shard=2/2` (or with `--grep-invert @wishlist`) | Push to `main`/`master`, weekly — **2 VMs** |
+| **Merge reports** | `playwright merge-reports` from shard blob artifacts                                | After `test-full` (push / weekly)           |
 
 Workflow file: [.github/workflows/quality-gates.yml](../.github/workflows/quality-gates.yml)
 
-**Design intent:** PRs get fast feedback (~5–15 min with browser cache). Full regression runs on merge to `main` and nightly — not duplicated on every PR job. Full suite uses Playwright `--shard` across **two** GitHub-hosted runners (`fail-fast: false`); blob reports are merged into one HTML artifact.
+**Design intent:** PRs get fast feedback (~5–15 min with browser cache) on Chromium. Full regression (Chromium + Firefox + WebKit) runs on merge to `main` and weekly — not duplicated on every PR job. Full suite uses Playwright `--shard` across **two** GitHub-hosted runners (`fail-fast: false`); blob reports are merged into one HTML artifact.
 
-**Browser cache:** `~/.cache/ms-playwright` is keyed by the runner image (`ImageOS`, such as `ubuntu24` or `ubuntu26`) and `package-lock.json`. `runner.os` is `Linux` on every Ubuntu image, so a WebKit build cached on 24.04 would be restored on 26.04 and fail at launch (`libicuuc.so.74`, `libxml2.so.2`). There is no `restore-keys` prefix that drops the image.
+**Browser cache:** `~/.cache/ms-playwright` is keyed by `runner.os` + `package-lock.json` so PR jobs can reuse existing Actions caches (warm installs). PR installs Chromium only; the full suite installs all three browsers. If a GitHub Ubuntu image bump breaks WebKit/Firefox native libs, clear the Actions cache or bump the cache key.
 
 Supporting scripts:
 

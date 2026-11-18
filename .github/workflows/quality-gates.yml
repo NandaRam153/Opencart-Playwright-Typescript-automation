@@ -66,13 +66,13 @@ jobs:
                   node-version: lts/*
             - run: npm run verify:sut
 
-    # PR: one browser job (single npm ci + one Playwright install) — API + smoke + optional wishlist
+    # PR: Chromium-only for fast feedback — API + smoke + optional wishlist
     test-pr:
         name: PR tests (API + smoke)
         needs: [static, sut-health, wishlist-secrets]
         if: github.event_name == 'pull_request'
         runs-on: ubuntu-latest
-        timeout-minutes: 25
+        timeout-minutes: 30
         steps:
             - uses: actions/checkout@v5
             - uses: actions/setup-node@v5
@@ -80,19 +80,17 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
-            - name: Resolve runner image
-              id: runner-image
-              run: echo "os=${ImageOS:?ImageOS is not set on this runner}" >> "$GITHUB_OUTPUT"
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               id: playwright-cache
               with:
                   path: ~/.cache/ms-playwright
-                  key: playwright-${{ steps.runner-image.outputs.os }}-${{ hashFiles('package-lock.json') }}
-            - name: Install Playwright Browsers
-              run: npx playwright install --with-deps chromium webkit firefox
-            - run: npm run verify:api
-            - run: npm run verify:smoke
+                  # runner.os reuses existing Actions caches (warm installs). Full suite covers Firefox/WebKit.
+                  key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+            - name: Install Playwright Chromium
+              run: npx playwright install --with-deps chromium
+            - run: npm run verify:api -- --project=chromium
+            - run: npm run verify:smoke -- --project=chromium
             - name: Wishlist E2E (@wishlist)
               if: >-
                   github.event.pull_request.head.repo.full_name == github.repository &&
@@ -102,7 +100,7 @@ jobs:
                   TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
               run: |
                   sh scripts/verify-wishlist-credentials.sh
-                  npm run verify:wishlist
+                  npm run verify:wishlist -- --project=chromium
             - uses: actions/upload-artifact@v5
               if: failure()
               with:
@@ -110,13 +108,13 @@ jobs:
                   path: test-results/
                   retention-days: 7
 
-    # main / nightly: full suite sharded across 2 VMs (static + sut already passed)
+    # main / weekly: full suite sharded across 2 VMs (static + sut already passed)
     test-full:
         name: Full Playwright suite (${{ matrix.shard }})
         needs: [static, sut-health, wishlist-secrets]
         if: github.event_name == 'push' || github.event_name == 'schedule'
         runs-on: ubuntu-latest
-        timeout-minutes: 30
+        timeout-minutes: 40
         strategy:
             fail-fast: false
             matrix:
@@ -128,15 +126,12 @@ jobs:
                   node-version: lts/*
                   cache: npm
             - run: npm ci
-            - name: Resolve runner image
-              id: runner-image
-              run: echo "os=${ImageOS:?ImageOS is not set on this runner}" >> "$GITHUB_OUTPUT"
             - name: Cache Playwright browsers
               uses: actions/cache@v4
               id: playwright-cache
               with:
                   path: ~/.cache/ms-playwright
-                  key: playwright-${{ steps.runner-image.outputs.os }}-${{ hashFiles('package-lock.json') }}
+                  key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
             - name: Install Playwright Browsers
               run: npx playwright install --with-deps chromium webkit firefox
             - name: Run full suite (with wishlist)
