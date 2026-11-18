@@ -16,7 +16,10 @@ Workflow file: [.github/workflows/quality-gates.yml](../.github/workflows/qualit
 
 **Design intent:** PRs get fast feedback (~5–15 min with browser cache) on Chromium. Full regression (Chromium + Firefox + WebKit) runs on merge to `main` and weekly — not duplicated on every PR job. Full suite uses Playwright `--shard` across **two** GitHub-hosted runners (`fail-fast: false`); blob reports are merged into one HTML artifact.
 
-**Browser cache:** `~/.cache/ms-playwright` is keyed by `runner.os` + `package-lock.json` so PR jobs can reuse existing Actions caches (warm installs). PR installs Chromium only; the full suite installs all three browsers. If a GitHub Ubuntu image bump breaks WebKit/Firefox native libs, clear the Actions cache or bump the cache key.
+**Browser cache:**
+
+- **PR job:** Chromium only; cache key `playwright-chromium-${{ runner.os }}-${{ hashFiles('package-lock.json') }}` (fast, warm installs).
+- **Full suite:** Chromium + Firefox + WebKit; cache key includes runner **`ImageOS`** (e.g. `ubuntu24`) plus `package-lock.json`. A plain `runner.os` key (`Linux`) can restore WebKit built for another Ubuntu image and fail at launch (`libicuuc.so.74`, `libxml2.so.2`). Full suite also runs `npx playwright install-deps` after cache restore.
 
 Supporting scripts:
 
