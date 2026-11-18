@@ -26,9 +26,9 @@ export class Wait {
         await locator.first().waitFor({ state: 'attached' });
     }
 
-    // Safe click (waits before clicking)
-    static async click(locator: Locator) {
+    // Safe click (waits before clicking). Pass noWaitAfter for AJAX / dialog-triggering clicks.
+    static async click(locator: Locator, options?: { noWaitAfter?: boolean }) {
         await this.forVisible(locator);
-        await locator.click();
+        await locator.click(options);
     }
 }
