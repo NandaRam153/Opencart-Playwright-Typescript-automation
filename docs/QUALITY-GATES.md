@@ -130,7 +130,7 @@ Details: [ARCHITECTURE.md](ARCHITECTURE.md#import-rules).
 
 ## Nightly regression
 
-Scheduled at **06:00 UTC** daily (`cron: '0 6 * * *'`). Same as push to `main`: sharded full suite when secrets exist; otherwise `--grep-invert @wishlist` on each shard.
+Scheduled at **05:00 UTC** every Monday (`cron: '0 5 * * 1'`). Same as push to `main`: sharded full suite when secrets exist; otherwise `--grep-invert @wishlist` on each shard.
 
 ## Sharding (full suite only)
 

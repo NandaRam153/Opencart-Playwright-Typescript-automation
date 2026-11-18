@@ -99,7 +99,7 @@ GitHub Actions workflow: [.github/workflows/quality-gates.yml](../.github/workfl
 | ------------------------- | ------------------------------------------------------------------------ |
 | Pull request              | Static → SUT → PR tests (API + smoke; wishlist when same-repo + secrets) |
 | Push to `main` / `master` | Static → SUT → full suite (or `--grep-invert @wishlist` without secrets) |
-| Nightly 06:00 UTC         | Same as push to main                                                     |
+| Weekly Mon 05:00 UTC      | Same as push to main                                                     |
 
 ## When verification fails
 

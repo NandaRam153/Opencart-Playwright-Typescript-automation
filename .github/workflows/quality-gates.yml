@@ -6,8 +6,8 @@ on:
     pull_request:
         branches: [main, master]
     schedule:
-        # Nightly full regression (06:00 UTC)
-        - cron: '0 6 * * *'
+        # Weekly full regression (Monday 05:00 UTC)
+        - cron: '0 5 * * 1'
 
 concurrency:
     group: quality-gates-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
